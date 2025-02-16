@@ -1,0 +1,12 @@
+{
+  "name": "skill-sync-backend",
+  "version": "1.0.0",
+  "description": "This is the backend of the project SkillSync",
+  "license": "ISC",
+  "author": "Shahid & Benson",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "start"
+  }
+}
