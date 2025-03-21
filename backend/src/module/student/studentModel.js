@@ -13,13 +13,7 @@ const studentSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    username: {
-        type: String,
-        unique: true,
-        trim: true,
-        required: true,
-    },
-    fullName : {
+    fullName: {
         type: String,
         required: true,
     },
@@ -33,19 +27,27 @@ const studentSchema = new mongoose.Schema({
         default: '',
     },
     gender: {
-        type:String,
+        type: String,
         enum: ['Male', 'Female', 'None'],
         default: 'None',
     },
-    isBlock : {
-        type : Boolean,
-        default :false
+    isBlock: {
+        type: Boolean,
+        default: false
     },
     dob: {
         type: Date,
         required: true,
     },
-
+    phone: {
+        type: String,
+        required: true,
+        default: ''
+    },
+    skills: [{
+        type: String,
+        trim: true
+    }]
 })
 const Student = mongoose.model('User', studentSchema);
 export default Student;

@@ -1,5 +1,7 @@
 import { authServices } from "./authService.js";
-const {student,  admin, reviewer} = authServices
+const { studentAuthService, adminAuthService, reviewerAuthService } = authServices
+
+
 
 export const studentLogin = async (req, res, next) => {
     try {
@@ -12,7 +14,7 @@ export const studentLogin = async (req, res, next) => {
                     message: 'Invalid Crendtials',
                 })
         }
-        const {accessToken, refreshToken,username } =await student.login(email, password);
+        const { accessToken, refreshToken, username } = await studentAuthService.login(email, password);
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: false,
@@ -26,7 +28,7 @@ export const studentLogin = async (req, res, next) => {
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
-        res
+        return res
             .status(200)
             .json({
                 success: true,
@@ -43,8 +45,8 @@ export const studentLogin = async (req, res, next) => {
 
 export const studentRegister = async (req, res, next) => {
     try {
-        const { email, password, username, name,   } = req.body;
-        if (!email || !password || !username) {
+        const { email, password, fullName, phone, dob } = req.body;
+        if (!email || !password || !phone || !fullName || !dob) {
             return res
                 .status(406)
                 .json({
@@ -52,14 +54,32 @@ export const studentRegister = async (req, res, next) => {
                     message: 'Invalid Crendtials',
                 })
         }
-        await student.register(email, password, username);
-        res
+        let result = await studentAuthService.register({email,password,fullName,phone, dob});
+        if(!result){
+            return res
+            .status(400)
+            .json({
+                success: false,
+                message: 'Some thing is happened',
+            } )
+        }
+        return res
             .status(200)
             .json({
                 success: true,
                 message: "User Register Successfully",
             });
+
     } catch (error) {
         next(error)
     }
+}
+
+
+
+
+export const studentAuthController = {
+    studentLogin,
+    studentRegister,
+
 }

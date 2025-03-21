@@ -3,6 +3,11 @@ import cookieParser from 'cookie-parser';
 import connectMongoDb from './src/config/dbConfig.js';
 import corsConfig from './src/config/corsConfig.js';
 import {appConfig} from './src/config/appConfig.js';
+import errorHandler from './src/middleware/errorHandlerMiddleware.js';
+
+
+// Routers
+import authRouter from './src/module/auth/authRoute.js';
 
 const {port} = appConfig.app
 
@@ -13,21 +18,19 @@ app.use(express.json());
 app.use(corsConfig);
 
 
+app.use('/api/auth', authRouter )
+
+console.log('here')
 
 
-(async () => {
-    try {
+app.listen(port, async () => {
+  try {
+    await connectMongoDb();
+    process.stdout.write(`Server is running on port ${port}\n`);
+  } catch (error) {
+    process.stderr.write(`Failed to start server: ${error.message}\n`);
+    process.exit(1);
+  }
+});
 
-  
-      // Start the Express server only after Redis is ready
-      app.listen(port, () => {
-        console.log(`Server is running on port ${port}`);
-        connectMongoDb()
-      });
-  
-    } catch (error) {
-      console.error('Failed to connect to Redis:', error);
-      process.exit(1);  // Exit process if Redis fails to connect
-    }
-  })();
-  
+app.use(errorHandler)
