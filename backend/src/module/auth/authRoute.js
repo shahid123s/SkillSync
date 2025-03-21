@@ -4,4 +4,5 @@ const router = express.Router();
 
 router.post('/student/login', studentLogin);
 
+router.post('/student/register', studentRegister);
 export default router;

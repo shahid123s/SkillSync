@@ -38,4 +38,28 @@ export const studentLogin = async (req, res, next) => {
     } catch (error) {
         next(error)
     }
+
+}
+
+export const studentRegister = async (req, res, next) => {
+    try {
+        const { email, password, username, name,   } = req.body;
+        if (!email || !password || !username) {
+            return res
+                .status(406)
+                .json({
+                    success: false,
+                    message: 'Invalid Crendtials',
+                })
+        }
+        await student.register(email, password, username);
+        res
+            .status(200)
+            .json({
+                success: true,
+                message: "User Register Successfully",
+            });
+    } catch (error) {
+        next(error)
+    }
 }

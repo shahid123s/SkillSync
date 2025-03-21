@@ -1,9 +1,9 @@
 import CustomError from '../../utils/customError.js'
-import User from './userModel.js';
+import User from './studentModel.js';
 
 
 
-export const userRepository = {
+export const studentRepository = {
     findUserByEmailForAuthenticate: async (email) => {
         try {
             return await User.findOne(email);

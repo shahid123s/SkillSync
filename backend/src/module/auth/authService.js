@@ -1,5 +1,5 @@
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwtUtil";
-import { userRepository } from "../user/userRepository"
+import { userRepository } from "../student/studentRepository"
 import { comparePassword } from "./utils/bcryptUtils";
 
 
