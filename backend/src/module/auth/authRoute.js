@@ -1,6 +1,10 @@
 import express from 'express';
 const router = express.Router();
 import {
+    adminLogin,
+    adminLogout,
+    adminRefreshToken,
+    adminRegister,
     reviewerLogin,
     reviewerLogout,
     reviewerRegistration,
@@ -26,7 +30,10 @@ router.post('/reviewer/logout', reviewerLogout);
 
 
 // Admin Authentication 
-router.post('/admin/login', studentLogin);
-router.post('/admin/register', studentRegister);
+router.post('/admin/login', adminLogin);
+router.post('/admin/register', adminRegister);
+router.post('/admin/refresh-token', adminRefreshToken);
+router.post('/admin/logout', adminLogout);
+
 
 export default router;
