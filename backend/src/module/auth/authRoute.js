@@ -25,4 +25,8 @@ router.post('/reviewer/refresh-token', reviewrRefreshToken)
 router.post('/reviewer/logout', reviewerLogout);
 
 
+// Admin Authentication 
+router.post('/admin/login', studentLogin);
+router.post('/admin/register', studentRegister);
+
 export default router;

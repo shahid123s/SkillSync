@@ -2,7 +2,7 @@ import CustomError from "../../utils/customError.js";
 import { decodeRefreshToken, generateAccessToken, generateRefreshToken } from "../../utils/jwtUtil.js";
 import { reviewerRepository } from "../reviwer/reviwerRepository.js";
 import { studentRepository } from "../student/studentRepository.js";
-import { reviewrRefreshToken } from "./authController.js";
+import { adminLogin, adminRefreshToken, reviewrRefreshToken } from "./authController.js";
 import { comparePassword, hashPassword } from "./utils/bcryptUtils.js";
 
 
@@ -75,9 +75,6 @@ export const authServices = {
 
         
     },
-    adminAuthService: {
-
-    },
     reviewerAuthService: {
         reviewerLogin: async (email, password) => {
             try {
@@ -140,10 +137,65 @@ export const authServices = {
             }
         },
 
-        
 
-    }
 
+    },
+    adminAuthService: {
+
+        adminLogin: async (email, password) => {
+            try {
+                const reviewer = await adminRepository.getReviwerByEmailForAuthentication(email);
+                if (!reviewer || reviewer.role != 'admin') {
+                    throw new CustomError('Invalide Crendentials', 406);
+                }
+
+                const isMatch = await comparePassword(password, reviewer.password);
+                if (!isMatch) {
+                    throw new CustomError('Invalid Crendentials', 406);
+                };
+
+                const [accessToken, refreshToken] = await Promise.all([
+                    generateAccessToken(reviewer._id, reviewer.role),
+                    generateRefreshToken(reviewer._id, reviewer.role),
+                ]);
+
+                return { accessToken, refreshToken, username: reviewer.username }
+            } catch (error) {
+                throw new CustomError(
+                    error.message,
+                    500,
+                )
+            }
+
+        },
+
+        adminRegister: async (adminData) => {
+            try {
+                adminData.password = await hashPassword(adminData.password)
+                let admin = await adminRepository.createAdmin(adminData);
+                return admin;
+            } catch (error) {
+                throw new CustomError(
+                    error.message,
+                    500,
+                )
+            }
+        },
+
+        adminRefreshToken: async (refreshToken) => {
+            try {
+                const decoded = await decodeRefreshToken(refreshToken);
+                const accessToken = await generateAccessToken(decoded.userId, decoded.role);
+                return accessToken;
+            } catch (error) {
+                throw new CustomError(
+                    error.message,
+                    500,
+                )
+            }
+        }
+
+    },
 }
 
 
