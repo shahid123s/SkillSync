@@ -1,5 +1,5 @@
 import CustomError from "../../utils/customError.js";
-import { generateAccessToken, generateRefreshToken } from "../../utils/jwtUtil.js";
+import { decodeRefreshToken, generateAccessToken, generateRefreshToken } from "../../utils/jwtUtil.js";
 import { studentRepository } from "../student/studentRepository.js";
 import { comparePassword, hashPassword } from "./utils/bcryptUtils.js";
 
@@ -55,7 +55,23 @@ export const authServices = {
                     500,
                 )
             }
+        },
+
+
+        refreshTokeh: async (refreshToken) => {
+            try {
+                const decoded = await decodeRefreshToken(refreshToken);
+                const accessToken = await generateAccessToken(decoded.userId, decoded.role);
+                return accessToken;
+            } catch (error) {
+                throw new CustomError(
+                    error.message,
+                    500,
+                )
+            }
         }
+
+        
     },
     adminAuthService: {
 
