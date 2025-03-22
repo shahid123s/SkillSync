@@ -1,4 +1,4 @@
-import LandingPageHeader from "../components/user/LandingPageHeader";
+import LandingPageHeader from "../../components/user/LandingPageHeader";
 
 export default function LandingPage() {
   

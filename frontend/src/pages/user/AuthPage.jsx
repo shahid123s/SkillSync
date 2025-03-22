@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import AuthImage from "../components/user/AuthPage/AuthImage";
-import AuthForm from "../components/user/AuthPage/AuthForm";
+import AuthImage from "../../components/user/authPage/AuthImage";
+import AuthForm from "../../components/user/authPage/AuthForm";
 
 export default function AuthPage() {
   const location = useLocation();
