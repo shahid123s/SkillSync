@@ -1,6 +1,8 @@
 import CustomError from "../../utils/customError.js";
 import { decodeRefreshToken, generateAccessToken, generateRefreshToken } from "../../utils/jwtUtil.js";
+import { reviewerRepository } from "../reviwer/reviwerRepository.js";
 import { studentRepository } from "../student/studentRepository.js";
+import { reviewrRefreshToken } from "./authController.js";
 import { comparePassword, hashPassword } from "./utils/bcryptUtils.js";
 
 
@@ -77,6 +79,68 @@ export const authServices = {
 
     },
     reviewerAuthService: {
+        reviewerLogin: async (email, password) => {
+            try {
+                const reviewer = await reviewerRepository.getReviwerByEmailForAuthentication(email);
+                if (!reviewer || reviewer.role != 'reviewer') {
+                    throw new CustomError('Invalide Crendentials', 406);
+                }
+
+                const isMatch = await comparePassword(password, reviewer.password);
+                if (!isMatch) {
+                    throw new CustomError('Invalid Crendentials', 406);
+                };
+
+                const [accessToken, refreshToken] = await Promise.all([
+                    generateAccessToken(reviewer._id, reviewer.role),
+                    generateRefreshToken(reviewer._id, reviewer.role),
+                ]);
+
+                return { accessToken, refreshToken, username: reviewer.username }
+            } catch (error) {
+                throw new CustomError(
+                    error.message,
+                    500,
+                )
+            }
+
+        },
+        
+        createReviwer: async = async  (reviwerData) => {
+            try {
+                let [isEmailExist, isPhoneExists] = await Promise.all([
+                    reviewerRepository.findReviwerEmailForChecking(reviwerData.email),
+                    reviewerRepository.findReviwerPhoneForChecking(reviwerData.phone),
+                ]);
+                if(isEmailExist, isPhoneExists){
+                    throw new CustomError('Email or Phone number is already exists', 406)
+                }
+                reviwerData.password = await hashPassword(reviwerData.password)
+                let reviewer = await reviewerRepository.createReviwer(reviwerData);
+                return reviewer;
+
+            } catch (error) {
+                throw new CustomError(
+                    error.message,
+                    500,
+                )
+            }
+        },
+
+        reviewrRefreshToken: async (refreshToken) => {
+            try {
+                const decoded = await decodeRefreshToken(refreshToken);
+                const accessToken = await generateAccessToken(decoded.userId, decoded.role);
+                return accessToken;
+            } catch (error) {
+                throw new CustomError(
+                    error.message,
+                    500,
+                )
+            }
+        },
+
+        
 
     }
 
