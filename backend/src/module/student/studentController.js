@@ -1,7 +1,7 @@
 import {studentService} from './studentService.js';
 
 export const studentController = {
-    getAllStudent: async (req, res, next) => {
+    getAllStudents: async (req, res, next) => {
         try {
             const result = await studentService.getAllStudent();
             if(!result){

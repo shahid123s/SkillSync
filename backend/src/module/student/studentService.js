@@ -3,7 +3,7 @@ import CustomError from "../../utils/customError.js";
 
 export const studentService = {
     getAllStudent: async () => {
-        try {s
+        try {
             const result = await studentRepository.getAllStudents();
             if (!result) {
                 throw new CustomError('Student not found', 404, 'Not Found');
