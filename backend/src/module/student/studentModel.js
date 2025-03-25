@@ -1,6 +1,7 @@
+
 import mongoose from "mongoose"
 
-const userSchema = new mongoose.Schema({
+const studentSchema = new mongoose.Schema({
     email: {
         type: String,
         unique: true,
@@ -12,13 +13,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    username: {
-        type: String,
-        unique: true,
-        trim: true,
-        required: true,
-    },
-    fullName : {
+    fullName: {
         type: String,
         required: true,
     },
@@ -32,19 +27,27 @@ const userSchema = new mongoose.Schema({
         default: '',
     },
     gender: {
-        type:String,
+        type: String,
         enum: ['Male', 'Female', 'None'],
         default: 'None',
     },
-    isBlock : {
-        type : Boolean,
-        default :false
+    isBlock: {
+        type: Boolean,
+        default: false
     },
     dob: {
         type: Date,
         required: true,
     },
-
+    phone: {
+        type: String,
+        required: true,
+        default: ''
+    },
+    skills: [{
+        type: String,
+        trim: true
+    }]
 })
-const User = mongoose.model('User', userSchema);
-export default User;
+const Student = mongoose.model('Student', studentSchema);
+export default Student;
