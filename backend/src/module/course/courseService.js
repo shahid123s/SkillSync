@@ -32,7 +32,11 @@ export const courseService = {
 
     addCourse: async(courseData) => {
         try {
+            console.log('is it here ')
             const result = await courseRepository.createCourse(courseData);
+            console.log(result, 
+            'result'
+            )
             if(result.length === 0) throw new CustomError('Internet Problem', 500);
             return result;
         } catch (error) {
