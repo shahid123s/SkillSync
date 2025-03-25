@@ -9,8 +9,8 @@ export default function CourseCard({ title, image }) {
           alt={`${title} course`}
           className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-black bg-opacity-30 flex items-end p-4">
-          <span className="text-white font-medium">{title}</span>
+        <div className="absolute inset-0 bg-transparent bg-opacity-30 flex items-end p-4">
+          <span className="text-black text-lg font-medium">{title}</span>
         </div>
       </div>
     </a>
