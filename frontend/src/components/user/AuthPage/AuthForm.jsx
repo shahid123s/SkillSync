@@ -1,14 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { login } from "../../../store/userSlice"; // Redux async thunk for login
-import { axiosInstance } from "../../../utils/axios";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 export default function AuthForm({ isRegister, setIsRegister }) {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
@@ -19,12 +14,10 @@ export default function AuthForm({ isRegister, setIsRegister }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -36,108 +29,149 @@ export default function AuthForm({ isRegister, setIsRegister }) {
       return;
     }
 
-    if (isRegister) {
-      // Registration process: using direct API call for now.
-      try {
-        const res = await axiosInstance.post("/auth/register", { 
-          fullname: formData.fullname, 
-          email: formData.email, 
-          password: formData.password 
-        });
-        if (res.data.success) {
-          setIsRegister(false); // Switch to login mode after registration
-        } else {
-          setError(res.data.message || "Something went wrong");
-        }
-      } catch (err) {
-        setError(err.response?.data?.message || "Something went wrong");
-      } finally {
-        setLoading(false);
+    try {
+      if (isRegister) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setIsRegister(false);
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        navigate("/");
       }
-    } else {
-      // Login process: using Redux async thunk.
-      try {
-        await dispatch(login({ email: formData.email, password: formData.password })).unwrap();
-        navigate("/"); // Redirect to homepage on successful login
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
+    } catch (err) {
+      setError("Authentication failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto">
-      {/* Toggle Login/Register */}
-      <div className="flex justify-center mb-4">
-        <button 
-          className={`px-4 py-2 ${!isRegister ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+      <div className="flex border-b border-gray-200">
+        <button
+          className={`flex-1 py-4 text-sm font-medium ${
+            !isRegister
+              ? "text-blue-600 border-b-2 border-blue-600"
+              : "text-gray-500 hover:bg-gray-50"
+          }`}
           onClick={() => setIsRegister(false)}
+          type="button"
         >
           Login
         </button>
-        <button 
-          className={`px-4 py-2 ${isRegister ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+        <button
+          className={`flex-1 py-4 text-sm font-medium ${
+            isRegister
+              ? "text-blue-600 border-b-2 border-blue-600"
+              : "text-gray-500 hover:bg-gray-50"
+          }`}
           onClick={() => setIsRegister(true)}
+          type="button"
         >
           Register
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="p-6 space-y-6">
         {isRegister && (
-          <input 
-            type="text" 
-            name="fullname" 
-            placeholder="Full Name" 
-            className="input" 
-            onChange={handleChange} 
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Full Name
+            </label>
+            <input
+              type="text"
+              name="fullname"
+              placeholder="John Doe"
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
         )}
-        <input 
-          type="email" 
-          name="email" 
-          placeholder="Email" 
-          className="input" 
-          onChange={handleChange} 
-        />
-        
-        <div className="relative">
-          <input 
-            type={showPassword ? "text" : "password"} 
-            name="password" 
-            placeholder="Password" 
-            className="input" 
-            onChange={handleChange} 
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Email
+          </label>
+          <input
+            type="email"
+            name="email"
+            placeholder="name@example.com"
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
-          <button 
-            type="button" 
-            className="eye-icon" 
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-          </button>
+        </div>
+
+        <div>
+          <div className="flex justify-between items-center mb-1">
+            <label className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            {!isRegister && (
+              <button
+                type="button"
+                className="text-sm text-blue-600 hover:text-blue-800"
+              >
+                Forgot password?
+              </button>
+            )}
+          </div>
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="••••••••"
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
         </div>
 
         {isRegister && (
-          <input 
-            type="password" 
-            name="confirmPassword" 
-            placeholder="Confirm Password" 
-            className="input" 
-            onChange={handleChange} 
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="••••••••"
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
         )}
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {error && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-sm text-red-600">{error}</p>
+          </div>
+        )}
 
-        <button 
-          type="submit" 
-          className="w-full bg-blue-500 text-white py-2 rounded" 
+        <button
+          type="submit"
+          className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
           disabled={loading}
         >
-          {loading ? "Processing..." : isRegister ? "Register" : "Login"}
+          {loading ? (
+            <span className="flex items-center justify-center">
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              {isRegister ? "Creating account..." : "Signing in..."}
+            </span>
+          ) : isRegister ? (
+            "Create Account"
+          ) : (
+            "Sign In"
+          )}
         </button>
       </form>
     </div>
