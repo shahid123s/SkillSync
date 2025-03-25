@@ -1,6 +1,7 @@
-import LandingPageHeader from "../components/LandingPageHeader";
+import LandingPageHeader from "../../components/user/LandingPageHeader";
 
 export default function LandingPage() {
+  
   return (
     <div className="min-h-screen bg-white">
       {/* Header Section */}
@@ -45,7 +46,7 @@ export default function LandingPage() {
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold text-gray-900">{feature}</h3>
                   <p className="text-gray-600">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    Lorem ipsum dolor sit amet, consectetur advising edit.
                   </p>
                 </div>
                 <div className="aspect-video rounded-lg bg-gray-200" />
