@@ -1,5 +1,5 @@
 import CustomError from "../../utils/customError.js"
-import { courseRepository } from "./courseRepository";
+import { courseRepository } from "./courseRepository.js";
 
 
 
@@ -8,6 +8,8 @@ export const courseService = {
     getAllCourse: async () => {
         try {
             const result = await courseRepository.getAllCourses();
+            console.log(result)
+            return result
         } catch (error) {
             throw new CustomError(error.message, 500, 'Internal Server Error')
         }
