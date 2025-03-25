@@ -13,7 +13,7 @@ export default function ReviewerAuthForm({ isRegister, setIsRegister }) {
     confirmPassword: "",
     phone: "",
     certificates: "",
-    experiences: ""
+    experience: ""
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -42,6 +42,15 @@ export default function ReviewerAuthForm({ isRegister, setIsRegister }) {
         toast.success(response.data.message);
         if (!isRegister) navigate("/reviewer/dashboard");
         else setIsRegister(false);
+        setFormData({
+          fullname: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          phone: "",
+          certificates: "",
+          experience: ""
+        });
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "An error occurred");
@@ -150,7 +159,7 @@ export default function ReviewerAuthForm({ isRegister, setIsRegister }) {
               </label>
               <input
                 type="number"
-                name="experiences"
+                name="experience"
                 placeholder="5"
                 min="0"
                 onChange={handleChange}

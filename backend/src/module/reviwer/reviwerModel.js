@@ -2,7 +2,7 @@
 import mongoose from 'mongoose';
 
 const reviewerSchema = new mongoose.Schema({
-  name: {
+  fullname: {
     type: String,
     required: true
   },
@@ -20,12 +20,18 @@ const reviewerSchema = new mongoose.Schema({
     required: true
   },
   certificates: [{
-    type: String
+    type: String,
+     default: ''
   }],
   experience: {
     type: Number,
     required: true
-  }
+  },
+  role: {
+    type: String,
+    default: 'reviewer',
+    required: true,
+  },
 }, {
   timestamps: true
 });
