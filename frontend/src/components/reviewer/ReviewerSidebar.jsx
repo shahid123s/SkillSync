@@ -24,6 +24,12 @@ export default function ReviewerSidebar({ isOpen, setIsOpen }) {
             Home
           </Link>
           <Link
+            to="/reviewer/students"
+            className="block p-2 hover:bg-gray-700 rounded transition-colors"
+          >
+            Students
+          </Link>
+          <Link
             to="/reviewer/profile"
             className="block p-2 hover:bg-gray-700 rounded transition-colors"
           >
