@@ -2,7 +2,6 @@ import CustomError from "../../utils/customError.js";
 import { decodeRefreshToken, generateAccessToken, generateRefreshToken } from "../../utils/jwtUtil.js";
 import { reviewerRepository } from "../reviwer/reviwerRepository.js";
 import { studentRepository } from "../student/studentRepository.js";
-import { adminLogin, adminRefreshToken, reviewrRefreshToken } from "./authController.js";
 import { comparePassword, hashPassword } from "./utils/bcryptUtils.js";
 
 

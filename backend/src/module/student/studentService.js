@@ -26,5 +26,17 @@ export const studentService = {
         } catch (error) {
             throw new CustomError(error.message, 500, 'Internal Server Error')
         }
-    }
+    },
+    updateStudent: async (formData) => {
+        try {
+            const { userId, ...updateData } = formData;
+            const result = await studentRepository.updateStudent(userId, updateData);
+            if (!result) {
+                throw new CustomError('Student not found', 404, 'Not Found');
+            }
+            return result;
+        } catch (error) {
+            throw new CustomError(error.message, 500, 'Internal Server Error');
+        }
+    }   
 }

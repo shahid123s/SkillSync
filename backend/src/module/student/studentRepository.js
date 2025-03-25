@@ -80,6 +80,15 @@ export const studentRepository = {
         }
     },
 
-
+    updateStudent: async (userId, updateData) => {
+        try {
+            return await Student.findByIdAndUpdate(userId, updateData, { new: true });
+        } catch (error) {
+            throw new CustomError(
+                error.message,
+                500,
+            )
+        }
+    }
 
 }

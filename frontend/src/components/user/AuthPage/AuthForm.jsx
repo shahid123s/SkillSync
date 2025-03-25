@@ -30,18 +30,7 @@ export default function AuthForm({ isRegister, setIsRegister }) {
       setLoading(false);
       return;
     }
-    if(isRegister){
-      try {
-       
-      } catch (error) {
-        console.error("Error registering user:", error);
-       
-        return;
-      }
-    
-    }
-
-
+  
     try {
       if (isRegister) {
         const response = await axiosInstance.post("/auth/student/register", formData);

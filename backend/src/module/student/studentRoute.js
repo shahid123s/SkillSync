@@ -4,3 +4,4 @@ const router = express.Router();
 
 router.get('/get-all-students', studentController.getAllStudents);
 router.get('/get-student', studentController.getStudent);
+router.patch('/update-student', studentController.updateStudent);
