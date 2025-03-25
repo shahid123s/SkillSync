@@ -44,6 +44,10 @@ const studentSchema = new mongoose.Schema({
         required: true,
         default: ''
     },
+    completedCourses: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Course',
+    }],
     skills: [{
         type: String,
         trim: true

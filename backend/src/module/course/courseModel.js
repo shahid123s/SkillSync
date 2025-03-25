@@ -21,7 +21,11 @@ const courseSchema = new mongoose.Schema({
         type: String,
         default: '',
         
-    }
+    },
+    weeklyTasks: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Task',
+    }]
 });
 
 
