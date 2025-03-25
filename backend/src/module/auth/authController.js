@@ -1,6 +1,5 @@
 import { authServices } from "./authService.js";
-import * as res from 'express/lib/response';
-import * as next from 'next';
+
 
 const { studentAuthService, adminAuthService, reviewerAuthService } = authServices
 

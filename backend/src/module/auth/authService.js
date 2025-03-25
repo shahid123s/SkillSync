@@ -103,7 +103,7 @@ export const authServices = {
 
         },
         
-        createReviwer: async = async  (reviwerData) => {
+        createReviwer: async  (reviwerData) => {
             try {
                 let [isEmailExist, isPhoneExists] = await Promise.all([
                     reviewerRepository.findReviwerEmailForChecking(reviwerData.email),

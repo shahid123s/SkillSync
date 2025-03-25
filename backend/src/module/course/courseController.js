@@ -1,11 +1,23 @@
-import { courseRepository } from "./courseRepository";
-import { courseService } from "./courseService";
+import { courseService } from "./courseService.js";
 
 
 
 export const getAllCourses = async (req, res, next ) => {
     try {
         const result = await courseService.getAllCourse();
+        if(!result){
+            return res
+                .status(404)
+                .json({
+                    success: false,
+                    message: 'Course not found',
+                })
+        }   
+        return res.status(200).json({
+            success: true,
+            message: 'Course found',
+            data: result
+        })
     } catch (error) {
         next(error)
     }

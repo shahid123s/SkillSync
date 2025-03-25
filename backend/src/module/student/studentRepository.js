@@ -55,5 +55,31 @@ export const studentRepository = {
     },
 
 
+    getAllStudents: async () => {
+        try {
+            return await Student.find({},
+                '-password -__v -createdAt -updatedAt'
+            ).lean();
+
+        } catch (error) {
+            throw new CustomError(
+                error.message,
+                500,
+            )
+        }
+    },
+
+    getStudentById:async (id) =>{
+        try {
+            return await Student.findById(id, '-password');
+        } catch (error) {
+            throw new CustomError(
+                error.message,
+                500,
+            )
+        }
+    },
+
+
 
 }
