@@ -47,8 +47,11 @@ export const studentLogin = async (req, res, next) => {
 
 export const studentRegister = async (req, res, next) => {
     try {
-        const { email, password, fullName, phone, dob } = req.body;
-        if (!email || !password || !phone || !fullName || !dob) {
+        console.log(req.body, 'Body')
+        const { email, password, fullname, phone, dob } = req.body;
+        console.log(email, password, fullname, phone, dob)
+        if (!email || !password || !phone || !fullname || !dob) {
+            console.log('lok ')
             return res
                 .status(406)
                 .json({
@@ -56,7 +59,7 @@ export const studentRegister = async (req, res, next) => {
                     message: 'Invalid Crendtials',
                 })
         }
-        let result = await studentAuthService.register({ email, password, fullName, phone, dob });
+        let result = await studentAuthService.register({ email, password, fullname, phone, dob });
         if (!result) {
             return res
                 .status(400)

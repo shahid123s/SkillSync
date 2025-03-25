@@ -5,9 +5,11 @@ import { Provider } from "react-redux";
 import "./index.css";
 import App from "./App.jsx";
 import store from "./store/store";
+import { Toaster } from "sonner";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
+    <Toaster position="top-center" />
     <BrowserRouter>
       <Provider store={store}>
         <App />

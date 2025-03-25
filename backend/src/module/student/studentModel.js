@@ -13,7 +13,7 @@ const studentSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    fullName: {
+    fullname: {
         type: String,
         required: true,
     },

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {toast} from 'sonner'
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { axiosInstance } from "../../../utils/axios";
 
 export default function AuthForm({ isRegister, setIsRegister }) {
   const navigate = useNavigate();
@@ -24,21 +26,36 @@ export default function AuthForm({ isRegister, setIsRegister }) {
     setError("");
 
     if (isRegister && formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+      toast("Passwords do not match");
       setLoading(false);
       return;
     }
+    if(isRegister){
+      try {
+       
+      } catch (error) {
+        console.error("Error registering user:", error);
+       
+        return;
+      }
+    
+    }
+
 
     try {
       if (isRegister) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        setIsRegister(false);
+        const response = await axiosInstance.post("/auth/student/register", formData);
+        if(response.data.success) {
+          toast.success('User Registered Successfully')
+        }
+        toast.error(response.data.message)
+        setIsRegister(false)
       } else {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const response  = await axiosInstance.post('/auth/student/login', formData)
         navigate("/");
       }
     } catch (err) {
-      setError("Authentication failed. Please try again.");
+      toast.error(err.response.data.message)
     } finally {
       setLoading(false);
     }
@@ -46,31 +63,35 @@ export default function AuthForm({ isRegister, setIsRegister }) {
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+      {error && (
+          <div className="p-3 m-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-sm text-red-600">{error}</p>
+          </div>
+        )}
+
       <div className="flex border-b border-gray-200">
         <button
-          className={`flex-1 py-4 text-sm font-medium ${
-            !isRegister
+          className={`flex-1 py-4 text-sm font-medium ${!isRegister
               ? "text-blue-600 border-b-2 border-blue-600"
               : "text-gray-500 hover:bg-gray-50"
-          }`}
+            }`}
           onClick={() => setIsRegister(false)}
           type="button"
         >
           Login
         </button>
         <button
-          className={`flex-1 py-4 text-sm font-medium ${
-            isRegister
+          className={`flex-1 py-4 text-sm font-medium ${isRegister
               ? "text-blue-600 border-b-2 border-blue-600"
               : "text-gray-500 hover:bg-gray-50"
-          }`}
+            }`}
           onClick={() => setIsRegister(true)}
           type="button"
         >
           Register
         </button>
       </div>
-
+            
       <form onSubmit={handleSubmit} className="p-6 space-y-6">
         {isRegister && (
           <div>
@@ -101,6 +122,31 @@ export default function AuthForm({ isRegister, setIsRegister }) {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
+        {isRegister && <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Phone Number
+          </label>
+          <input
+            type="phone"
+            name="phone"
+            placeholder="Phone"
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>}
+        {isRegister && <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Date Of Birth
+          </label>
+          <input
+            type="date"
+            name="dob"
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>}
 
         <div>
           <div className="flex justify-between items-center mb-1">
@@ -151,12 +197,7 @@ export default function AuthForm({ isRegister, setIsRegister }) {
           </div>
         )}
 
-        {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-sm text-red-600">{error}</p>
-          </div>
-        )}
-
+        
         <button
           type="submit"
           className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50"

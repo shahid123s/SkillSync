@@ -10,9 +10,9 @@ export const authServices = {
     studentAuthService: {
         login: async (email, password) => {
             try {
-                const student = await studentRepository.findStudentByEmailForAuthenticate(email);
+                const student = await studentRepository.findUserByEmailForAuthenticate(email);
 
-                if (!student || student.role != 'student') {
+                if (!student || student.role != 'user') {
                     throw new CustomError('Invalide Crendentials', 406);
                 }
 
