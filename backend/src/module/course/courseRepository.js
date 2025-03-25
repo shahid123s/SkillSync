@@ -1,11 +1,11 @@
-import Courese from './courseModel.js'
+import Course from './courseModel.js'
 import CustomError from '../../utils/customError.js';
 
 export const courseRepository = {
     // Added error handling with CustomError
     getAllCourses: async () => {
         try {
-            return await Courese
+            return await Course
                 .find()
                 .lean();
         } catch (error) {
@@ -16,7 +16,7 @@ export const courseRepository = {
     // Added error handling and null check
     getCourseById: async (id) => {
         try {
-            const course = await Courese
+            const course = await Course
                 .findById(id)
                 .lean();
             return course;
@@ -28,7 +28,8 @@ export const courseRepository = {
     // Added validation and error handling
     createCourse: async (courseData) => {
         try {
-            return await Courese.create(courseData);
+            const data = new Course(courseData);
+            return await data.save()
         } catch (error) {
             throw new CustomError(error.message, 500, 'Internal Server Error');
         }
@@ -40,7 +41,7 @@ export const courseRepository = {
             if (!course) {
                 throw new CustomError('Course data is required', 400, 'Bad Request');
             }
-            const updatedCourse = await Courese.findByIdAndUpdate(id, course, { new: true });
+            const updatedCourse = await Course.findByIdAndUpdate(id, course, { new: true });
             if (!updatedCourse) {
                 throw new CustomError('Course not found', 404, 'Not Found');
             }
@@ -53,7 +54,7 @@ export const courseRepository = {
     // Added error handling and null check
     deleteCourse: async (id) => {
         try {
-            const deletedCourse = await Courese.findByIdAndDelete(id);
+            const deletedCourse = await Course.findByIdAndDelete(id);
             if (!deletedCourse) {
                 throw new CustomError('Course not found', 404, 'Not Found');
             }

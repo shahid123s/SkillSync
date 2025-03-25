@@ -8,7 +8,7 @@ import errorHandler from './src/middleware/errorHandlerMiddleware.js';
 
 // Routers
 import authRouter from './src/module/auth/authRoute.js';
-import courseRouter from './src/module/course/courseRoute.js';
+import courseRouter from './src/module/course/courseRoute.js'
 
 const {port} = appConfig.app
 
@@ -21,7 +21,11 @@ app.use(corsConfig);
 
 app.use('/api/auth', authRouter )
 app.use('/api/course', courseRouter)
+// app.get('/api/course', (req, res) => {
+//   res.send('Hello World!');
+// });
 
+app.use(errorHandler)
 console.log('here')
 
 
@@ -34,5 +38,3 @@ app.listen(port, async () => {
     process.exit(1);
   }
 });
-
-app.use(errorHandler)
