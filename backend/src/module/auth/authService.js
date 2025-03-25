@@ -8,6 +8,7 @@ import { comparePassword, hashPassword } from "./utils/bcryptUtils.js";
 export const authServices = {
     studentAuthService: {
         login: async (email, password) => {
+            console.log(email)
             try {
                 const student = await studentRepository.findUserByEmailForAuthenticate(email);
 

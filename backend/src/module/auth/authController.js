@@ -167,7 +167,7 @@ export const reviewerLogin = async (req, res, next) => {
             .status(200)
             .json({
                 success: true,
-                message: "User Login Successfully",
+                message: "Reviewer Login Successfully",
                 username,
             })
 
@@ -178,9 +178,11 @@ export const reviewerLogin = async (req, res, next) => {
 
 }
 
-export const reviewerRegistration = async (reviwerData) => {
+export const reviewerRegistration = async (req, res, next) => {
     try {
-        let result = await reviewerAuthService.createReviewer(reviwerData);
+        const reviwerData = req.body;
+        console.log(req.body)
+        let result = await reviewerAuthService.createReviwer(reviwerData);
         if (!result) {
             return res
                 .status(400)
@@ -193,7 +195,7 @@ export const reviewerRegistration = async (reviwerData) => {
             .status(200)
             .json({
                 success: true,
-                message: "User Register Successfully",
+                message: "Reviwer Register Successfully",
             });
 
     } catch (error) {
