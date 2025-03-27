@@ -62,7 +62,7 @@ export default function AuthForm({ isRegister, setIsRegister }) {
       <div className="flex border-b border-gray-200">
         <button
           className={`flex-1 py-4 text-sm font-medium ${!isRegister
-              ? "text-blue-600 border-b-2 border-blue-600"
+              ? "text-teal-600 border-b-2 border-teal-600"
               : "text-gray-500 hover:bg-gray-50"
             }`}
           onClick={() => setIsRegister(false)}
@@ -72,7 +72,7 @@ export default function AuthForm({ isRegister, setIsRegister }) {
         </button>
         <button
           className={`flex-1 py-4 text-sm font-medium ${isRegister
-              ? "text-blue-600 border-b-2 border-blue-600"
+              ? "text-teal-600 border-b-2 border-teal-600"
               : "text-gray-500 hover:bg-gray-50"
             }`}
           onClick={() => setIsRegister(true)}
@@ -190,7 +190,7 @@ export default function AuthForm({ isRegister, setIsRegister }) {
         
         <button
           type="submit"
-          className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
+          className="w-full py-2.5  bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
           disabled={loading}
         >
           {loading ? (

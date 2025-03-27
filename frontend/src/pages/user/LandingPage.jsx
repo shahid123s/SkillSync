@@ -1,6 +1,8 @@
+import { useNavigate } from "react-router-dom";
 import LandingPageHeader from "../../components/user/LandingPageHeader";
 
 export default function LandingPage() {
+  const navigate = useNavigate();
   
   return (
     <div className="min-h-screen bg-white">
@@ -15,12 +17,12 @@ export default function LandingPage() {
             Manage your work, collaborate with your team, and stay productive.
           </p>
           <div className="mt-6 space-x-4">
-            <button className="px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700">
+            <button onClick={()=>navigate('/auth')} className="px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700">
               Get Started
             </button>
-            <button className="px-6 py-3 border border-teal-600 text-teal-600 rounded-lg hover:bg-teal-100">
+            {/* <button className="px-6 py-3 border border-teal-600 text-teal-600 rounded-lg hover:bg-teal-100">
               Learn More
-            </button>
+            </button> */}
           </div>
         </div>
       </section>

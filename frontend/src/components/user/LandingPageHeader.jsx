@@ -11,11 +11,11 @@ export default function LandingPageHeader() {
           className="text-2xl font-bold text-teal-600 cursor-pointer"
           onClick={() => navigate("/")}
         >
-          YourLogo
+          SKILL SYNC
         </div>
 
         {/* Navigation */}
-        <nav className="hidden md:flex space-x-6 text-gray-700">
+        {/* <nav className="hidden md:flex space-x-6 text-gray-700">
           <button
             onClick={() => navigate("/features")}
             className="hover:text-teal-600"
@@ -40,7 +40,7 @@ export default function LandingPageHeader() {
           >
             Contact
           </button>
-        </nav>
+        </nav> */}
 
         {/* CTA Buttons */}
         <div className="flex space-x-4">
