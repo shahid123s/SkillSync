@@ -1,40 +1,50 @@
 // pages/admin/ManageCourses.jsx
 import { useState } from 'react';
+import { toast } from 'sonner';
 import CourseTable from '../../components/admin/CoursesTable';
 import CourseForm from '../../components/admin/CourseForm';
+import { axiosInstance } from '../../utils/axios';
 
 export default function ManageCourses() {
-  const [courses, setCourses] = useState([
-    { 
-      id: 1, 
-      name: 'Web Development', 
-      description: 'Full stack web development course',
-      imageUrl: '/course-web.jpg',
-      status: 'active'
-    },
-    { 
-      id: 2, 
-      name: 'Mobile Development', 
-      description: 'React Native mobile app development',
-      imageUrl: '/course-mobile.jpg',
-      status: 'draft'
-    }
-  ]);
-
+  const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleDeleteCourse = (id) => {
-    setCourses(courses.filter(course => course.id !== id));
+  const handleDeleteCourse = async (id) => {
+    try {
+      const response = await axiosInstance.delete(`/courses/${id}`);
+      if (response.data.success) {
+        setCourses(courses.filter(course => course.id !== id));
+        toast.success('Course deleted successfully');
+      } else {
+        toast.error('Failed to delete course');
+      }
+    } catch (error) {
+      toast.error('Error deleting course');
+    }
   };
 
-  const handleSaveCourse = (courseData) => {
-    if (courseData.id) {
-      setCourses(courses.map(c => c.id === courseData.id ? courseData : c));
-    } else {
-      setCourses([...courses, { ...courseData, id: Date.now() }]);
+  const handleSaveCourse = async (courseData) => {
+    try {
+      let response;
+      if (courseData.id) {
+        response = await axiosInstance.put(`/courses/${courseData.id}`, courseData);
+      } else {
+        response = await axiosInstance.post('/courses', courseData);
+      }
+
+      if (response.data.success) {
+        setCourses(prev => 
+          courseData.id 
+            ? prev.map(c => c.id === courseData.id ? response.data.data : c)
+            : [...prev, response.data.data]
+        );
+        toast.success(`Course ${courseData.id ? 'updated' : 'created'} successfully`);
+        setIsModalOpen(false);
+      }
+    } catch (error) {
+      toast.error(`Error ${courseData.id ? 'updating' : 'creating'} course`);
     }
-    setIsModalOpen(false);
   };
 
   return (
@@ -54,7 +64,10 @@ export default function ManageCourses() {
 
       <CourseTable 
         courses={courses} 
-        onEdit={setSelectedCourse}
+        onEdit={(course) => {
+          setSelectedCourse(course);
+          setIsModalOpen(true);
+        }}
         onDelete={handleDeleteCourse}
       />
 
