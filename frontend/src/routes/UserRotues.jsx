@@ -14,7 +14,7 @@ export function UserRoutes (){
             <Route path="home" element={<Home/>} />
             <Route path="auth" element={<AuthPage />} />
             <Route path="dummy" element={<CreateCourseForm />} />
-            <Route path="detials" element={<CoursePage />} />
+            <Route path="details/:id" element={<CoursePage />} />
     </Routes>
     </>
     )
