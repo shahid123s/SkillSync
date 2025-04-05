@@ -1,3 +1,4 @@
+// components/admin/CourseForm.jsx
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -7,7 +8,7 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
     handleSubmit, 
     reset, 
     watch,
-    formState: { errors } 
+    formState: { errors, isSubmitting } 
   } = useForm();
 
   const hasOffer = watch('hasOffer');
@@ -16,23 +17,40 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
   const imageUrl = watch('imageUrl');
 
   useEffect(() => {
-    if (course) {
-      reset({
-        ...course,
-        hasOffer: course.offerPrice !== null && course.offerPrice > 0
-      });
-    } else {
-      reset({
-        name: '',
-        description: '',
-        imageUrl: '',
-        price: 0,
-        offerPrice: 0,
-        hasOffer: false,
-        status: 'draft'
-      });
+    const initializeForm = () => {
+      if (course) {
+        // Edit mode - populate existing data
+        reset({
+          ...course,
+          hasOffer: course.offerPrice > 0 && course.offerPrice !== null
+        });
+      } else {
+        // Create mode - reset to defaults
+        reset({
+          name: '',
+          description: '',
+          imageUrl: '',
+          price: 0,
+          offerPrice: 0,
+          hasOffer: false,
+          status: 'draft'
+        });
+      }
+    };
+    
+    if (isOpen) initializeForm();
+  }, [isOpen, course, reset]);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        reset({ ...watch(), imageUrl: reader.result });
+      };
+      reader.readAsDataURL(file);
     }
-  }, [course, reset]);
+  };
 
   const onSubmit = (data) => {
     const finalData = {
@@ -45,14 +63,14 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
 
   return (
     <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center ${isOpen ? '' : 'hidden'} z-50`}>
-      <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto"> {/* Scrollable modal */}
+      <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <h2 className="text-xl font-bold mb-4">
-            {course ? 'Edit Course' : 'Create Course'}
+            {course ? 'Edit Course' : 'Create New Course'}
           </h2>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Course Name Field */}
+            {/* Course Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700">Course Name*</label>
               <input
@@ -62,39 +80,31 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
               {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
             </div>
 
-            {/* Description Field */}
+            {/* Description */}
             <div>
               <label className="block text-sm font-medium text-gray-700">Description</label>
               <textarea
                 {...register('description')}
-                rows={3}
+                rows={4}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
               />
             </div>
 
-            {/* Image URL Field */}
+            {/* Image Upload */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Course Image
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Course Image</label>
               <div className="mt-1 flex flex-col gap-2">
-                <input
-                  {...register('imageUrl')}
-                  type="text"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
-                  placeholder="Image URL or upload file"
-                />
                 <input
                   type="file"
                   accept="image/*"
+                  onChange={handleImageUpload}
                   className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      const url = URL.createObjectURL(file);
-                      reset({ ...watch(), imageUrl: url });
-                    }
-                  }}
+                />
+                <input
+                  {...register('imageUrl')}
+                  type="text"
+                  placeholder="Or enter image URL"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
                 />
               </div>
               {imageUrl && (
@@ -102,7 +112,7 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
                   <img 
                     src={imageUrl} 
                     alt="Course preview" 
-                    className="h-32 w-32 object-cover rounded-md"
+                    className="h-32 w-full object-cover rounded-md border"
                   />
                 </div>
               )}
@@ -110,14 +120,14 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
 
             {/* Pricing Section */}
             <div className="space-y-4 border-t pt-4">
-              <h3 className="text-sm font-medium text-gray-900">Pricing (₹)</h3> {/* Changed to Indian Rupees */}
+              <h3 className="text-sm font-medium text-gray-900">Pricing (₹)</h3>
 
               {/* Regular Price */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">Regular Price*</label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-500 sm:text-sm">₹</span> {/* Changed to ₹ */}
+                    <span className="text-gray-500">₹</span>
                   </div>
                   <input
                     {...register('price', { 
@@ -126,16 +136,16 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
                       valueAsNumber: true
                     })}
                     type="number"
-                    step="0.01"
+                    step="1"
                     min="0"
                     className="block w-full pl-7 pr-12 rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
-                    placeholder="0.00"
+                    placeholder="0"
                   />
                 </div>
                 {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price.message}</p>}
               </div>
 
-              {/* Offer Section */}
+              {/* Offer Price */}
               <div className="space-y-2">
                 <div className="flex items-center">
                   <input
@@ -154,7 +164,7 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
                     <label className="block text-sm font-medium text-gray-700">Offer Price*</label>
                     <div className="mt-1 relative rounded-md shadow-sm">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span className="text-gray-500 sm:text-sm">₹</span> {/* Changed to ₹ */}
+                        <span className="text-gray-500">₹</span>
                       </div>
                       <input
                         {...register('offerPrice', { 
@@ -162,15 +172,15 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
                           min: { value: 0, message: 'Offer must be positive' },
                           max: { 
                             value: price || 0, 
-                            message: 'Offer price must be less than regular price' 
+                            message: 'Must be less than regular price' 
                           },
                           valueAsNumber: true
                         })}
                         type="number"
-                        step="0.01"
+                        step="1"
                         min="0"
                         className="block w-full pl-7 pr-12 rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
-                        placeholder="0.00"
+                        placeholder="0"
                       />
                     </div>
                     {errors.offerPrice && (
@@ -186,7 +196,7 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
               </div>
             </div>
 
-            {/* Status Field */}
+            {/* Status */}
             <div>
               <label className="block text-sm font-medium text-gray-700">Status</label>
               <select
@@ -200,7 +210,7 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
             </div>
 
             {/* Form Actions */}
-            <div className="mt-6 flex justify-end space-x-3">
+            <div className="mt-6 flex justify-end gap-2">
               <button
                 type="button"
                 onClick={onClose}
@@ -210,9 +220,10 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700"
+                disabled={isSubmitting}
+                className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 disabled:opacity-50"
               >
-                Save
+                {isSubmitting ? 'Saving...' : 'Save Course'}
               </button>
             </div>
           </form>

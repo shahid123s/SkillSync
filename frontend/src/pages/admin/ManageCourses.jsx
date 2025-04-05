@@ -1,5 +1,5 @@
 // pages/admin/ManageCourses.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import CourseTable from '../../components/admin/CoursesTable';
 import CourseForm from '../../components/admin/CourseForm';
@@ -9,41 +9,60 @@ export default function ManageCourses() {
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const handleDeleteCourse = async (id) => {
+  // Fetch courses on mount
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await axiosInstance.get('/courses');
+        if (response.data.success) {
+          setCourses(response.data.data);
+        }
+      } catch (error) {
+        toast.error('Failed to load courses');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCourses();
+  }, []);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this course?')) return;
+    
     try {
       const response = await axiosInstance.delete(`/courses/${id}`);
       if (response.data.success) {
-        setCourses(courses.filter(course => course.id !== id));
+        setCourses(prev => prev.filter(course => course.id !== id));
         toast.success('Course deleted successfully');
-      } else {
-        toast.error('Failed to delete course');
       }
     } catch (error) {
-      toast.error('Error deleting course');
+      toast.error('Failed to delete course');
     }
   };
 
-  const handleSaveCourse = async (courseData) => {
+  const handleSave = async (courseData) => {
     try {
       let response;
-      if (courseData.id) {
+      const isEdit = !!courseData.id;
+
+      if (isEdit) {
         response = await axiosInstance.put(`/courses/${courseData.id}`, courseData);
       } else {
         response = await axiosInstance.post('/courses', courseData);
       }
 
       if (response.data.success) {
-        setCourses(prev => 
-          courseData.id 
-            ? prev.map(c => c.id === courseData.id ? response.data.data : c)
-            : [...prev, response.data.data]
+        setCourses(prev => isEdit
+          ? prev.map(c => c.id === courseData.id ? response.data.data : c)
+          : [response.data.data, ...prev]
         );
-        toast.success(`Course ${courseData.id ? 'updated' : 'created'} successfully`);
+        toast.success(`Course ${isEdit ? 'updated' : 'created'} successfully`);
         setIsModalOpen(false);
       }
     } catch (error) {
-      toast.error(`Error ${courseData.id ? 'updating' : 'creating'} course`);
+      toast.error(`Failed to ${isEdit ? 'update' : 'create'} course`);
     }
   };
 
@@ -56,26 +75,30 @@ export default function ManageCourses() {
             setSelectedCourse(null);
             setIsModalOpen(true);
           }}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700"
         >
-          Add Course
+          + New Course
         </button>
       </div>
 
-      <CourseTable 
-        courses={courses} 
-        onEdit={(course) => {
-          setSelectedCourse(course);
-          setIsModalOpen(true);
-        }}
-        onDelete={handleDeleteCourse}
-      />
+      {loading ? (
+        <div className="text-center py-8">Loading courses...</div>
+      ) : (
+        <CourseTable 
+          courses={courses}
+          onEdit={(course) => {
+            setSelectedCourse(course);
+            setIsModalOpen(true);
+          }}
+          onDelete={handleDelete}
+        />
+      )}
 
       <CourseForm
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         course={selectedCourse}
-        onSave={handleSaveCourse}
+        onSave={handleSave}
       />
     </div>
   );

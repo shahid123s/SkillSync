@@ -7,6 +7,7 @@ import ManageCourses from "../pages/admin/ManageCourses";
 import PendingReviewers from "../pages/admin/PendingReviewersPage";
 import AdminLogin from "../pages/admin/AdminLogin";
 import AllReviewers from "../pages/admin/AllReviwers";
+import NotFound from "../pages/user/NotFound";
 
 export function AdminRoutes() {
   return (
@@ -19,6 +20,8 @@ export function AdminRoutes() {
         <Route path="reviewers" element={<PendingReviewers />} />
         <Route path="all-reviewers" element={<AllReviewers />} />
       </Route>
+      {/* Admin-specific 404 */}
+      <Route path="*" element={<NotFound role="admin" />} />
     </Routes>
   );
 }
