@@ -1,46 +1,55 @@
-import { useState } from "react";
-import PendingReviewers from "../../components/admin/PendingReviewers";
-import UserTable from "../../components/admin/UserTable";
-
 // pages/admin/AdminDashboard.jsx
+import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
+import { axiosInstance } from '../../utils/axios';
+
 export default function AdminDashboard() {
-    // Sample data - replace with real data
-    const [pendingReviewers] = useState([
-      { id: 1, name: 'Reviewer 1', email: 'reviewer1@example.com', status: 'pending' },
-      { id: 2, name: 'Reviewer 2', email: 'reviewer2@example.com', status: 'pending' }
-    ]);
-  
-    const [users] = useState([
-      { id: 1, name: 'User 1', email: 'user1@example.com', role: 'student' },
-      { id: 2, name: 'User 2', email: 'user2@example.com', role: 'student' }
-    ]);
-  
-    const handleReviewerAction = (id, action) => {
-      console.log(`Reviewer ${id} ${action}`);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await axiosInstance.get('/admin/stats');
+        if (response.data.success) {
+          setStats(response.data.data);
+          toast.success('Dashboard data loaded');
+        } else {
+          toast.error(response.data.message || 'Failed to fetch dashboard data');
+        }
+      } catch (error) {
+        toast.error('Network error');
+      } finally {
+        setLoading(false);
+      }
     };
-  
-    const handleDeleteUser = (id) => {
-      console.log(`Delete user ${id}`);
-    };
-  
-    return (
-      <>
-        <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
-        
-        <div className="grid gap-6">
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <h2 className="text-xl font-semibold mb-4">Pending Reviewers</h2>
-            <PendingReviewers
-              reviewers={pendingReviewers} 
-              onAction={handleReviewerAction} 
-            />
-          </div>
-  
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <h2 className="text-xl font-semibold mb-4">User Management</h2>
-            <UserTable users={users} onDelete={handleDeleteUser} />
-          </div>
+    
+    fetchStats();
+  }, []);
+
+  if (loading) return (
+    <div className="flex justify-center items-center h-64">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500"></div>
+    </div>
+  );
+
+  return (
+    <>
+      <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <h3 className="text-lg font-semibold">Total Users</h3>
+          <p className="text-3xl mt-2">{stats?.users || 0}</p>
         </div>
-      </>
-    );
-  }
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <h3 className="text-lg font-semibold">Total Courses</h3>
+          <p className="text-3xl mt-2">{stats?.courses || 0}</p>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <h3 className="text-lg font-semibold">Active Reviewers</h3>
+          <p className="text-3xl mt-2">{stats?.reviewers || 0}</p>
+        </div>
+      </div>
+    </>
+  );
+}

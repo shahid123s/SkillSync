@@ -6,6 +6,7 @@ import ManageUsers from "../pages/admin/ManageUsers";
 import ManageCourses from "../pages/admin/ManageCourses";
 import PendingReviewers from "../pages/admin/PendingReviewersPage";
 import AdminLogin from "../pages/admin/AdminLogin";
+import AllReviewers from "../pages/admin/AllReviwers";
 
 export function AdminRoutes() {
   return (
@@ -16,6 +17,7 @@ export function AdminRoutes() {
         <Route path="users" element={<ManageUsers />} />
         <Route path="courses" element={<ManageCourses />} />
         <Route path="reviewers" element={<PendingReviewers />} />
+        <Route path="all-reviewers" element={<AllReviewers />} />
       </Route>
     </Routes>
   );
