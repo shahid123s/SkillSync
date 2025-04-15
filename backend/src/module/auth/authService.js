@@ -1,5 +1,6 @@
 import CustomError from "../../utils/customError.js";
 import { decodeRefreshToken, generateAccessToken, generateRefreshToken } from "../../utils/jwtUtil.js";
+import {adminRepository} from '../admin/adminRespository.js'
 import { reviewerRepository } from "../reviwer/reviwerRepository.js";
 import { studentRepository } from "../student/studentRepository.js";
 import { comparePassword, hashPassword } from "./utils/bcryptUtils.js";
@@ -144,11 +145,12 @@ export const authServices = {
 
         adminLogin: async (email, password) => {
             try {
-                const reviewer = await adminRepository.getReviwerByEmailForAuthentication(email);
+                const reviewer = await adminRepository.findAdminForAuthentication(email);
+                console.log(reviewer.role)
                 if (!reviewer || reviewer.role != 'admin') {
                     throw new CustomError('Invalide Crendentials', 406);
                 }
-
+                console.log('my')
                 const isMatch = await comparePassword(password, reviewer.password);
                 if (!isMatch) {
                     throw new CustomError('Invalid Crendentials', 406);

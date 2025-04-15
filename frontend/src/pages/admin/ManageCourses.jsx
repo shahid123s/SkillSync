@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import CourseTable from '../../components/admin/CoursesTable';
 import CourseForm from '../../components/admin/CourseForm';
-import { axiosInstance } from '../../utils/axios';
+import { adminInstance, axiosInstance } from '../../utils/axios';
 
 export default function ManageCourses() {
   const [courses, setCourses] = useState([]);
@@ -15,7 +15,7 @@ export default function ManageCourses() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axiosInstance.get('/courses');
+        const response = await adminInstance.get('/courses');
         if (response.data.success) {
           setCourses(response.data.data);
         }
@@ -43,14 +43,15 @@ export default function ManageCourses() {
   };
 
   const handleSave = async (courseData) => {
+    const isEdit = !!courseData.id;
     try {
       let response;
-      const isEdit = !!courseData.id;
+      console.log(isEdit)
 
       if (isEdit) {
         response = await axiosInstance.put(`/courses/${courseData.id}`, courseData);
       } else {
-        response = await axiosInstance.post('/courses', courseData);
+        response = await axiosInstance.post('/course/add-course', courseData);
       }
 
       if (response.data.success) {

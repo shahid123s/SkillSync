@@ -10,6 +10,7 @@ import errorHandler from './src/middleware/errorHandlerMiddleware.js';
 import authRouter from './src/module/auth/authRoute.js';
 import courseRouter from './src/module/course/courseRoute.js'
 import studentRouter from './src/module/student/studentRoute.js'  
+import adminRouter from './src/module/admin/adminRoute.js'
 const {port} = appConfig.app
 
 const app = express();
@@ -22,6 +23,7 @@ app.use(corsConfig);
 app.use('/api/auth', authRouter )
 app.use('/api/course', courseRouter)
 app.use('/api/student', studentRouter)
+app.use('/api/admin', adminRouter)
 
 app.use(errorHandler)
 console.log('here')

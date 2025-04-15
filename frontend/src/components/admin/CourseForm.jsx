@@ -1,31 +1,33 @@
 // components/admin/CourseForm.jsx
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import axios from 'axios';
 
 export default function CourseForm({ isOpen, onClose, course, onSave }) {
-  const { 
-    register, 
-    handleSubmit, 
-    reset, 
+  const {
+    register,
+    handleSubmit,
+    reset,
     watch,
-    formState: { errors, isSubmitting } 
+    formState: { errors, isSubmitting },
   } = useForm();
+
+  const [isUploading, setIsUploading] = useState(false);
 
   const hasOffer = watch('hasOffer');
   const price = watch('price');
   const offerPrice = watch('offerPrice');
   const imageUrl = watch('imageUrl');
 
+  // Initialize form
   useEffect(() => {
-    const initializeForm = () => {
+    if (isOpen) {
       if (course) {
-        // Edit mode - populate existing data
         reset({
           ...course,
-          hasOffer: course.offerPrice > 0 && course.offerPrice !== null
+          hasOffer: course.offerPrice > 0 && course.offerPrice !== null,
         });
       } else {
-        // Create mode - reset to defaults
         reset({
           name: '',
           description: '',
@@ -33,30 +35,43 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
           price: 0,
           offerPrice: 0,
           hasOffer: false,
-          status: 'draft'
+          status: 'draft',
         });
       }
-    };
-    
-    if (isOpen) initializeForm();
+    }
   }, [isOpen, course, reset]);
 
-  const handleImageUpload = (e) => {
+  // Cloudinary upload handler
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        reset({ ...watch(), imageUrl: reader.result });
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    setIsUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'SkillSyncCourse'); // replace with your actual preset
+
+      const response = await axios.post(
+        'https://api.cloudinary.com/v1_1/dhz6o6ehr/image/upload', // replace with your actual cloud name
+        formData
+      );
+
+      reset({ ...watch(), imageUrl: response.data.secure_url });
+    } catch (err) {
+      console.error('Image upload failed:', err);
+    } finally {
+      setIsUploading(false);
     }
   };
 
+  // Form submission
   const onSubmit = (data) => {
     const finalData = {
       ...data,
       price: Number(data.price),
-      offerPrice: data.hasOffer ? Number(data.offerPrice) : null
+      offerPrice: data.hasOffer ? Number(data.offerPrice) : null,
     };
     onSave(finalData);
   };
@@ -65,17 +80,15 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
     <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center ${isOpen ? '' : 'hidden'} z-50`}>
       <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="p-6">
-          <h2 className="text-xl font-bold mb-4">
-            {course ? 'Edit Course' : 'Create New Course'}
-          </h2>
+          <h2 className="text-xl font-bold mb-4">{course ? 'Edit Course' : 'Create New Course'}</h2>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Course Name */}
+            {/* Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700">Course Name*</label>
               <input
                 {...register('name', { required: 'Course name is required' })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-teal-500"
               />
               {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
             </div>
@@ -86,7 +99,7 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
               <textarea
                 {...register('description')}
                 rows={4}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-teal-500"
               />
             </div>
 
@@ -98,55 +111,52 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
                   type="file"
                   accept="image/*"
                   onChange={handleImageUpload}
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
+                  className="block w-full text-sm file:py-2 file:px-4 file:rounded-md file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
                 />
                 <input
                   {...register('imageUrl')}
                   type="text"
                   placeholder="Or enter image URL"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:ring-teal-500"
                 />
               </div>
               {imageUrl && (
                 <div className="mt-2">
-                  <img 
-                    src={imageUrl} 
-                    alt="Course preview" 
+                  <img
+                    src={imageUrl}
+                    alt="Course preview"
                     className="h-32 w-full object-cover rounded-md border"
                   />
                 </div>
               )}
+              {isUploading && <p className="text-sm text-blue-600">Uploading...</p>}
             </div>
 
-            {/* Pricing Section */}
+            {/* Pricing */}
             <div className="space-y-4 border-t pt-4">
               <h3 className="text-sm font-medium text-gray-900">Pricing (₹)</h3>
 
               {/* Regular Price */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">Regular Price*</label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-500">₹</span>
-                  </div>
+                <div className="relative mt-1">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">₹</div>
                   <input
-                    {...register('price', { 
+                    {...register('price', {
                       required: 'Price is required',
                       min: { value: 0, message: 'Price must be positive' },
-                      valueAsNumber: true
+                      valueAsNumber: true,
                     })}
                     type="number"
-                    step="1"
-                    min="0"
-                    className="block w-full pl-7 pr-12 rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                    className="pl-7 pr-12 w-full rounded-md border-gray-300 shadow-sm focus:ring-teal-500"
                     placeholder="0"
                   />
                 </div>
                 {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price.message}</p>}
               </div>
 
-              {/* Offer Price */}
-              <div className="space-y-2">
+              {/* Offer */}
+              <div>
                 <div className="flex items-center">
                   <input
                     {...register('hasOffer')}
@@ -154,7 +164,7 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
                     id="hasOffer"
                     className="rounded border-gray-300 text-teal-600 focus:ring-teal-500"
                   />
-                  <label htmlFor="hasOffer" className="ml-2 block text-sm text-gray-700">
+                  <label htmlFor="hasOffer" className="ml-2 text-sm text-gray-700">
                     Enable Special Offer
                   </label>
                 </div>
@@ -162,34 +172,28 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
                 {hasOffer && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Offer Price*</label>
-                    <div className="mt-1 relative rounded-md shadow-sm">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span className="text-gray-500">₹</span>
-                      </div>
+                    <div className="relative mt-1">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">₹</div>
                       <input
-                        {...register('offerPrice', { 
-                          required: hasOffer ? 'Offer price is required' : false,
+                        {...register('offerPrice', {
+                          required: 'Offer price is required',
                           min: { value: 0, message: 'Offer must be positive' },
-                          max: { 
-                            value: price || 0, 
-                            message: 'Must be less than regular price' 
+                          max: {
+                            value: price || 0,
+                            message: 'Offer must be less than regular price',
                           },
-                          valueAsNumber: true
+                          valueAsNumber: true,
                         })}
                         type="number"
-                        step="1"
-                        min="0"
-                        className="block w-full pl-7 pr-12 rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                        className="pl-7 pr-12 w-full rounded-md border-gray-300 shadow-sm focus:ring-teal-500"
                         placeholder="0"
                       />
                     </div>
                     {errors.offerPrice && (
                       <p className="text-red-500 text-xs mt-1">{errors.offerPrice.message}</p>
                     )}
-                    {offerPrice >= price && hasOffer && (
-                      <p className="text-yellow-600 text-xs mt-1">
-                        Offer price should be lower than regular price
-                      </p>
+                    {offerPrice >= price && (
+                      <p className="text-yellow-600 text-xs mt-1">Offer price should be less than price</p>
                     )}
                   </div>
                 )}
@@ -201,7 +205,7 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
               <label className="block text-sm font-medium text-gray-700">Status</label>
               <select
                 {...register('status')}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-teal-500"
               >
                 <option value="draft">Draft</option>
                 <option value="active">Active</option>
@@ -209,7 +213,7 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
               </select>
             </div>
 
-            {/* Form Actions */}
+            {/* Actions */}
             <div className="mt-6 flex justify-end gap-2">
               <button
                 type="button"

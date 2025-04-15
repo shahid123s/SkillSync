@@ -25,7 +25,12 @@ const courseSchema = new mongoose.Schema({
     weeklyTasks: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Task',
-    }]
+    }],
+    status: {
+        type: String,
+        enum: ['active', 'inactive', 'draft'],
+        default: 'active',
+    },
 });
 
 

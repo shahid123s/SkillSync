@@ -6,12 +6,15 @@ import CourseTraining from "../../components/user/course/CourseTraining"
 import SocialShare from "../../components/user/course/SocialShare"
 import MarketingArticles from "../../components/user/marketing/MarketingArticles"
 import ClassroomBanner from "../../components/user/marketing/ClassroomBanner"
+import Header from "../../components/user/Header"
 
 export default function CoursePage() {
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Space for header */}
-      <div className="h-16"></div>
+      <div className="h-16">
+      <Header/>
+        
+      </div>
 
       <main className="flex-1">
         <CourseHero />

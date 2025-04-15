@@ -10,7 +10,7 @@ export default function CourseCard({ title, image }) {
           className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-transparent bg-opacity-30 flex items-end p-4">
-          <span className="text-black text-lg font-medium">{title}</span>
+          <span className="text-white text-lg font-medium">{title}</span>
         </div>
       </div>
     </a>

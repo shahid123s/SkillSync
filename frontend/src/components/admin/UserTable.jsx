@@ -15,9 +15,9 @@ export default function UserTable({ users, onBlock }) {
         <tbody className="bg-white divide-y divide-gray-200">
           {users.map(user => (
             <tr key={user.id} className="hover:bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
+              <td className="px-6 py-4 whitespace-nowrap">{user.fullname}</td>
               <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
-              <td className="px-6 py-4 whitespace-nowrap capitalize">{user.role}</td>
+              <td className="px-6 py-4 whitespace-nowrap capitalize">{user.role === 'user' ? 'student': user.role}</td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <span className={`px-2 py-1 text-xs rounded-full ${
                   user.isBlocked ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'

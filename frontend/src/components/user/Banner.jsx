@@ -1,5 +1,5 @@
 import React from "react";
-
+import BannerImage from '../../assets/Banner.png'
 export default function Banner() {
     return (
         <section className="bg-slate-50 py-12 px-6">
@@ -10,7 +10,7 @@ export default function Banner() {
                     </div> 
 
                     <h1 className="text-3xl md:text-4xl font-bold text-indigo-900">
-                        Why Swift UI Should Be on the Radar of Every Mobile Developer
+                    Sync Your Skills, Shape Your Future
                     </h1>
 
                     <p className="text-gray-600">
@@ -24,7 +24,7 @@ export default function Banner() {
 
                 <div className="relative h-[300px] md:h-[350px]">
                     <img
-                        src="/placeholder.svg?height=350&width=500"
+                        src={BannerImage}
                         alt="Developer working on laptop"
                         className="object-cover rounded-lg w-full h-full"
                     />

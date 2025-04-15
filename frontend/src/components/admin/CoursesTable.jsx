@@ -13,7 +13,7 @@ export default function CourseTable({ courses, onEdit, onDelete }) {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {courses.map(course => (
-              <tr key={course.id} className="hover:bg-gray-50">
+              <tr key={course._id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap font-medium">{course.name}</td>
                 <td className="px-6 py-4 text-gray-600 max-w-xs truncate">{course.description}</td>
                 <td className="px-6 py-4">

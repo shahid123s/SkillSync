@@ -13,8 +13,7 @@ export function UserRoutes() {
       <Route path="/" element={<LandingPage />} />
       <Route path="home" element={<Home />} />
       <Route path="auth" element={<AuthPage />} />
-      <Route path="dummy" element={<CreateCourseForm />} />
-      <Route path="details/:id" element={<CoursePage />} />
+      <Route path="courses/:id" element={<CoursePage />} />
       {/* User-specific 404 */}
       <Route path="*" element={<NotFound role="user" />} />
     </Routes>

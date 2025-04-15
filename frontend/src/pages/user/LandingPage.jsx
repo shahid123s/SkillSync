@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import LandingPageHeader from "../../components/user/LandingPageHeader";
-
+import FirstImage from '../../assets/firstImage.png';
+import WeeklyTaskImage from '../../assets/weeklyTask.png'
+import ReviewImage from '../../assets/reviewImage.png'
 export default function LandingPage() {
   const navigate = useNavigate();
   
@@ -42,16 +44,18 @@ export default function LandingPage() {
       {/* Features Section */}
       <section className="py-16">
         <div className="container mx-auto max-w-7xl grid gap-16">
-          {["A user interface designed for the classroom", "Assessments, Quizzes, Tests", "Class Management Tools for Education", "One-on-One Discussions"].map(
+          {[{title: "Provides More Technical Courses", description: "Here we provide all the kind of Industrial skills ", image: FirstImage},{title: "Course is divided by Weekly Tasks", description:'We provide unified structed task to complete in a week', image:WeeklyTaskImage}, {title: "Valuation by Industrial Experts", description: 'In each week Industrial experts valuate your weekly task and give feedback to you', image: ReviewImage}].map(
             (feature, index) => (
               <div key={index} className="rounded-lg shadow-lg p-6 bg-white grid md:grid-cols-2 items-center">
                 <div className="space-y-4">
-                  <h3 className="text-2xl font-bold text-gray-900">{feature}</h3>
+                  <h3 className="text-2xl font-bold text-gray-900">{feature.title}</h3>
                   <p className="text-gray-600">
-                    Lorem ipsum dolor sit amet, consectetur advising edit.
+                   {feature.description}
                   </p>
                 </div>
-                <div className="aspect-video rounded-lg bg-gray-200" />
+                <div className="aspect-video rounded-lg bg-gray-200 overflow-hidden" >
+                <img src={feature?.image} alt="" />
+                  </div>
               </div>
             )
           )}

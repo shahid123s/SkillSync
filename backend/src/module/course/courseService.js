@@ -1,4 +1,5 @@
 import CustomError from "../../utils/customError.js"
+import { updateCourse } from "./courseController.js";
 import { courseRepository } from "./courseRepository.js";
 
 
@@ -32,12 +33,24 @@ export const courseService = {
 
     addCourse: async(courseData) => {
         try {
-            console.log('is it here ')
+            console.log(courseData, 'course data')
             const result = await courseRepository.createCourse(courseData);
-            console.log(result, 
-            'result'
-            )
+           
             if(result.length === 0) throw new CustomError('Internet Problem', 500);
+            return result;
+        } catch (error) {
+            throw new CustomError(error.message, 500, 'Internal Server Error')
+        }
+    },
+    updateCourse: async (id, courseData) => {
+        if(!id){
+            throw new CustomError('Course id is required', 400, 'Bad Request');
+        }   
+        if(!courseData){
+            throw new CustomError('Course data is required', 400, 'Bad Request');
+        }
+        try {
+            const result = await courseRepository.updateCourse(id, courseData);
             return result;
         } catch (error) {
             throw new CustomError(error.message, 500, 'Internal Server Error')

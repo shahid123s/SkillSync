@@ -1,6 +1,4 @@
 import { authServices } from "./authService.js";
-
-
 const { studentAuthService, adminAuthService, reviewerAuthService } = authServices
 
 
@@ -264,12 +262,13 @@ export const reviewerLogout = async (req, res, next) => {
 export const adminLogin = async (req, res, next) => {
     try {
         const { email, password } = req.body;
+        console.log(req.body)
         if (!email || !password) {
             return res
                 .status(406)
                 .json({
                     success: false,
-                    message: 'Invalid Crendtials',
+                    message: 'Invalid Crendtials my',
                 })
         }
         const { accessToken, refreshToken, username } = await adminAuthService.adminLogin(email, password);
@@ -382,8 +381,3 @@ export const adminRefreshToken = async (req, res, next) => {
     }
 }
 
-export const studentAuthController = {
-    studentLogin,
-    studentRegister,
-
-}

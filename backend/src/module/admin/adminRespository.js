@@ -1,5 +1,4 @@
 import CustomError from "../../utils/customError.js";
-import { adminLogin } from "../auth/authController";
 import Admin from './adminModel.js';
 
 export const adminRepository ={
