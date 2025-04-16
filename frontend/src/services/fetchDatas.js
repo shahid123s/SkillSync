@@ -12,3 +12,5 @@ export const fetchCourseDetails = async (courseId) => {
         return error.response.data.message;
     }
 }
+
+
