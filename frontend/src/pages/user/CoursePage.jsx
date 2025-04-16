@@ -13,34 +13,64 @@ import { fetchCourseDetails } from "../../services/fetchDatas"
 
 export default function CoursePage() {
   const params = useParams();
-  const [courseDetails, setCourseDetails] = useState([])
+  const [courseDetails, setCourseDetails] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-  setCourseDetails(fetchCourseDetails(params.id));
-  },[])
+    const getCourseDetails = async () => {
+      try {
+        setLoading(true)
+        const data = await fetchCourseDetails(params.id)
+        setCourseDetails(data)
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    getCourseDetails()
+  }, [params.id])
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+  if (error) return <div className="min-h-screen flex items-center justify-center">Error: {error}</div>
+  if (!courseDetails) return <div className="min-h-screen flex items-center justify-center">Course not found</div>
 
   return (
     <div className="min-h-screen flex flex-col">
       <div className="h-16">
-      <Header/>
-        
+        <Header/>
       </div>
 
       <main className="flex-1">
-        <CourseHero />
+        <CourseHero 
+          title={courseDetails.title}
+          description={courseDetails.description}
+          image={courseDetails.image}
+          originalPrice={courseDetails.originalPrice}
+          discountedPrice={courseDetails.discountedPrice}
+          features={courseDetails.features}
+        />
 
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              <CourseRating />
-              <CourseReviews />
-              <MarketingArticles />
+              <CourseRating 
+                rating={courseDetails.rating}
+                reviewsCount={courseDetails.reviewsCount}
+                curriculum={courseDetails.curriculum}
+                instructor={courseDetails.instructor}
+                reviews={courseDetails.reviews}
+              />
+              <CourseReviews reviews={courseDetails.reviews} />
+              <MarketingArticles relatedCourses={courseDetails.relatedCourses} />
             </div>
 
             <div className="space-y-6">
-              <CourseFeatures />
-              <CourseTraining />
-              <SocialShare />
+              <CourseFeatures features={courseDetails.features} />
+              <CourseTraining groupFeatures={courseDetails.groupFeatures} />
+              <SocialShare courseId={courseDetails.id} courseTitle={courseDetails.title} />
             </div>
           </div>
         </div>
@@ -53,4 +83,3 @@ export default function CoursePage() {
     </div>
   )
 }
-
