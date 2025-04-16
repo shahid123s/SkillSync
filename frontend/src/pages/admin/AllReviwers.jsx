@@ -1,7 +1,7 @@
 // pages/admin/AllReviewers.jsx
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { axiosInstance } from '../../utils/axios';
+import { adminAxiosInstance } from '../../utils/adminAxiosInstance';
 
 export default function AllReviewers() {
   const [reviewers, setReviewers] = useState([]);
@@ -10,7 +10,7 @@ export default function AllReviewers() {
   useEffect(() => {
     const fetchReviewers = async () => {
       try {
-        const response = await axiosInstance.get('/admin/reviewers');
+        const response = await adminAxiosInstance.get('/admin/reviewers');
         if (response.data.success) {
           setReviewers(response.data.data);
           toast.success('Reviewers loaded successfully');
@@ -28,7 +28,7 @@ export default function AllReviewers() {
 
   const handleBlock = async (reviewerId, isBlocked) => {
     try {
-      const response = await axiosInstance.put(`/admin/reviewers/${reviewerId}/block`, {
+      const response = await adminAxiosInstance.put(`/admin/reviewers/${reviewerId}/block`, {
         block: !isBlocked
       });
       if (response.data.success) {

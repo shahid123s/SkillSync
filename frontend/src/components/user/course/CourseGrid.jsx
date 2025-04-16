@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CourseCard from "./CourseCard";
-import { axiosInstance } from "../../../utils/axios";
+import { userAxiosInstance } from "../../../utils/userAxiosInstance";
 
 export default function CourseGrid() {
 
@@ -10,7 +10,7 @@ export default function CourseGrid() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axiosInstance.get("/course/get-all-courses");
+        const response = await userAxiosInstance.get("/course/get-all-courses");
         console.log(response.data.data);
         setCourses(response.data.data);
       } catch (error) {

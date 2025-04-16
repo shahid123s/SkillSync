@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import CourseTable from '../../components/admin/CoursesTable';
 import CourseForm from '../../components/admin/CourseForm';
-import { adminInstance, axiosInstance } from '../../utils/axios';
+import { adminAxiosInstance } from '../../utils/adminAxiosInstance';
 
 export default function ManageCourses() {
   const [courses, setCourses] = useState([]);
@@ -15,7 +15,7 @@ export default function ManageCourses() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await adminInstance.get('/courses');
+        const response = await adminAxiosInstance.get('/courses');
         if (response.data.success) {
           setCourses(response.data.data);
         }
@@ -32,7 +32,7 @@ export default function ManageCourses() {
     if (!window.confirm('Are you sure you want to delete this course?')) return;
     
     try {
-      const response = await axiosInstance.delete(`/courses/${id}`);
+      const response = await adminAxiosInstance.delete(`/courses/${id}`);
       if (response.data.success) {
         setCourses(prev => prev.filter(course => course.id !== id));
         toast.success('Course deleted successfully');
@@ -49,9 +49,9 @@ export default function ManageCourses() {
       console.log(isEdit)
 
       if (isEdit) {
-        response = await axiosInstance.put(`/courses/${courseData.id}`, courseData);
+        response = await adminAxiosInstance.put(`/courses/${courseData.id}`, courseData);
       } else {
-        response = await axiosInstance.post('/course/add-course', courseData);
+        response = await adminAxiosInstance.post('/course/add-course', courseData);
       }
 
       if (response.data.success) {

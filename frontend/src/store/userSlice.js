@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { axiosInstance } from "../utils/axios";
+import { userAxiosInstance } from "../utils/userAxiosInstance";
 
 const initialState = {
   user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user"))  : null,
@@ -11,7 +11,7 @@ export const login = createAsyncThunk(
   "user/login",
   async (formData, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.post("/login", formData);
+      const res = await userAxiosInstance.post("/login", formData);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Login failed");
@@ -23,7 +23,7 @@ export const logout = createAsyncThunk(
   "user/logout",
   async (userId, { rejectWithValue }) => {
     try {
-      return await axiosInstance.post("/logout", userId);
+      return await userAxiosInstance.post("/logout", userId);
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Logout failed");
     }

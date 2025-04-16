@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {axiosInstance} from "../../../utils/axios";
+import { userAxiosInstance } from "../../../utils/userAxiosInstance";
 
 export default function CreateCourseForm() {
   const [courseData, setCourseData] = useState({
@@ -26,7 +26,7 @@ export default function CreateCourseForm() {
     }
 
     try {
-      const response = await axiosInstance.post("/course/add-course", { courseData });
+      const response = await userAxiosInstance.post("/course/add-course", { courseData });
       setSuccess(response.data.message);
       setCourseData({ name: "", description: "", price: "" });
     } catch (err) {

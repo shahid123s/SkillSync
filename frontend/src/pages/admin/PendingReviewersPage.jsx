@@ -1,8 +1,8 @@
 // pages/admin/PendingReviewersPage.jsx
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { adminInstance } from '../../utils/axios';
 import PendingReviewersTable from '../../components/admin/PendingReviewers';
+import { adminAxiosInstance } from '../../utils/adminAxiosInstance';
 
 export default function PendingReviewersPage() {
   const [reviewers, setReviewers] = useState([]);
@@ -11,7 +11,7 @@ export default function PendingReviewersPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await adminInstance.get('/admin/reviewers/pending');
+        const response = await adminAxiosInstance.get('/admin/reviewers/pending');
         if (response.data.success) {
           setReviewers(response.data.data);
           toast.success('Pending reviewers loaded');
