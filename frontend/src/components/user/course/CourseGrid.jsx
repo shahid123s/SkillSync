@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CourseCard from "./CourseCard";
-import { axiosInstance } from "../../../utils/axios";
+import { userAxiosInstance } from "../../../utils/userAxiosInstance";
 
 export default function CourseGrid() {
 
@@ -10,7 +10,7 @@ export default function CourseGrid() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axiosInstance.get("/course/get-all-courses");
+        const response = await userAxiosInstance.get("/course/get-all-courses");
         console.log(response.data.data);
         setCourses(response.data.data);
       } catch (error) {
@@ -29,10 +29,10 @@ export default function CourseGrid() {
         <h2 className="text-2xl font-bold mb-8">Courses list</h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {courses.length !==0 ? courses.map((course) => (
-            <CourseCard key={course._id} title={course.name} image={course.imageUrl} />
-          )): 
-          <p>No Course Found</p>
+          {courses.length !== 0 ? courses.map((course) => (
+            <CourseCard key={course._id} title={course.name} image={course.imageUrl} courseId={course._id} />
+          )) :
+            <p>No Course Found</p>
           }
         </div>
       </div>

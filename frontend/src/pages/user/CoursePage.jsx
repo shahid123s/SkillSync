@@ -7,8 +7,18 @@ import SocialShare from "../../components/user/course/SocialShare"
 import MarketingArticles from "../../components/user/marketing/MarketingArticles"
 import ClassroomBanner from "../../components/user/marketing/ClassroomBanner"
 import Header from "../../components/user/Header"
+import { useEffect, useState } from "react"
+import { useParams } from "react-router-dom"
+import { fetchCourseDetails } from "../../services/fetchDatas"
 
 export default function CoursePage() {
+  const params = useParams();
+  const [courseDetails, setCourseDetails] = useState([])
+
+  useEffect(() => {
+  setCourseDetails(fetchCourseDetails(params.id));
+  },[])
+
   return (
     <div className="min-h-screen flex flex-col">
       <div className="h-16">

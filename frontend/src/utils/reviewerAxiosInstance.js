@@ -36,7 +36,7 @@ reviewerAxiosInstance.interceptors.response.use(
     }
 
     if (
-      (error.response.status === 403 &&
+      (error.response?.status === 403 &&
         error.response.data.message ===
           "Access denied. You do not have permission to access this resource.") ||
       (error.response.status === 403 &&

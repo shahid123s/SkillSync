@@ -1,7 +1,7 @@
 // pages/admin/ManageUsers.jsx
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { axiosInstance } from '../../utils/axios';
+import { adminAxiosInstance } from '../../utils/adminAxiosInstance';
 import UserTable from '../../components/admin/UserTable';
 
 export default function ManageUsers() {
@@ -11,7 +11,7 @@ export default function ManageUsers() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axiosInstance.get('/admin/users');
+        const response = await adminAxiosInstance.get('/admin/users');
         if (response.data.success) {
           setUsers(response.data.data);
           toast.success('Users loaded successfully');
@@ -29,7 +29,7 @@ export default function ManageUsers() {
 
   const handleBlockUser = async (userId, currentStatus) => {
     try {
-      const response = await axiosInstance.put(`/admin/users/${userId}/block`, {
+      const response = await adminAxiosInstance.put(`/admin/users/${userId}/block`, {
         block: !currentStatus
       });
       if (response.data.success) {

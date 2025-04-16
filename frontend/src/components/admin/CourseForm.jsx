@@ -85,10 +85,10 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">Course Name*</label>
+              <label className="block text-sm font-medium text-gray-700 p">Course Name*</label>
               <input
                 {...register('name', { required: 'Course name is required' })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-teal-500"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-teal-500 p-2"
               />
               {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
             </div>
@@ -117,7 +117,7 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
                   {...register('imageUrl')}
                   type="text"
                   placeholder="Or enter image URL"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:ring-teal-500"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:ring-teal-500 p-2"
                 />
               </div>
               {imageUrl && (
@@ -148,7 +148,7 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
                       valueAsNumber: true,
                     })}
                     type="number"
-                    className="pl-7 pr-12 w-full rounded-md border-gray-300 shadow-sm focus:ring-teal-500"
+                    className="pl-7 pr-12 w-full rounded-md border-gray-300 shadow-sm focus:ring-teal-500 p-2"
                     placeholder="0"
                   />
                 </div>
@@ -162,7 +162,7 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
                     {...register('hasOffer')}
                     type="checkbox"
                     id="hasOffer"
-                    className="rounded border-gray-300 text-teal-600 focus:ring-teal-500"
+                    className="rounded border-gray-300 text-teal-600 focus:ring-teal-500 p-2"
                   />
                   <label htmlFor="hasOffer" className="ml-2 text-sm text-gray-700">
                     Enable Special Offer
@@ -185,7 +185,7 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
                           valueAsNumber: true,
                         })}
                         type="number"
-                        className="pl-7 pr-12 w-full rounded-md border-gray-300 shadow-sm focus:ring-teal-500"
+                        className="pl-7 pr-12 w-full rounded-md border-gray-300 shadow-sm focus:ring-teal-500 p-2"
                         placeholder="0"
                       />
                     </div>
@@ -205,7 +205,7 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
               <label className="block text-sm font-medium text-gray-700">Status</label>
               <select
                 {...register('status')}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-teal-500"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-teal-500 p-2"
               >
                 <option value="draft">Draft</option>
                 <option value="active">Active</option>

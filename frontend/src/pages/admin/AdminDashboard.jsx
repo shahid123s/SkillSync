@@ -1,7 +1,7 @@
 // pages/admin/AdminDashboard.jsx
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { axiosInstance } from '../../utils/axios';
+import { adminAxiosInstance } from '../../utils/adminAxiosInstance';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
@@ -10,7 +10,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await axiosInstance.get('/admin/stats');
+        const response = await adminAxiosInstance.get('/admin/stats');
         if (response.data.success) {
           setStats(response.data.data);
           toast.success('Dashboard data loaded');

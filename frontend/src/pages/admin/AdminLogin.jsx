@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'sonner';
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { adminInstance, axiosInstance } from "../../utils/axios";
+import { adminAxiosInstance } from "../../utils/adminAxiosInstance";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      const response = await axiosInstance.post('/auth/admin/login', formData);
+      const response = await adminAxiosInstance.post('/auth/admin/login', formData);
       toast.success(response.data.message);
       navigate("/admin/dashboard");
     } catch (err) {

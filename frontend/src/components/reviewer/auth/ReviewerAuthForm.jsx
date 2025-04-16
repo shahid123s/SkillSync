@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'sonner'
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { axiosInstance } from "../../../utils/axios";
+import { reviewerAxiosInstance } from "../../../utils/reviewerAxiosInstance";
 
 export default function ReviewerAuthForm({ isRegister, setIsRegister }) {
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ export default function ReviewerAuthForm({ isRegister, setIsRegister }) {
 
     try {
       const endpoint = isRegister ? "/auth/reviewer/register" : "/auth/reviewer/login";
-      const response = await axiosInstance.post(endpoint, formData);
+      const response = await reviewerAxiosInstance.post(endpoint, formData);
       
       if (response.data.success) {
         toast.success(response.data.message);

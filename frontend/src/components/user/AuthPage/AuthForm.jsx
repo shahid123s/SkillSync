@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {toast} from 'sonner'
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { axiosInstance } from "../../../utils/axios";
+import { userAxiosInstance } from '../../../utils/userAxiosInstance';
 
 export default function AuthForm({ isRegister, setIsRegister }) {
   const navigate = useNavigate();
@@ -33,14 +33,14 @@ export default function AuthForm({ isRegister, setIsRegister }) {
   
     try {
       if (isRegister) {
-        const response = await axiosInstance.post("/auth/student/register", formData);
+        const response = await userAxiosInstance.post("/auth/student/register", formData);
         if(response.data.success) {
           toast.success('User Registered Successfully')
         }
         toast.error(response.data.message)
         setIsRegister(false)
       } else {
-        const response  = await axiosInstance.post('/auth/student/login', formData)
+        const response  = await userAxiosInstance.post('/auth/student/login', formData)
         toast.success(response.data.message);
         navigate("/home");
       }

@@ -1,8 +1,11 @@
-import React from "react";
+import React from "react"; 
+import { generateSlug } from "../../../services/convertionData";
+import { Link } from "react-router-dom";
 
-export default function CourseCard({ title, image }) {
+export default function CourseCard({ title, image, courseId }) {
+  console.log(courseId)
   return (
-    <a href={`/courses/${title.toLowerCase()}`} className="block">
+    <Link to={`/courses/${courseId}`} className="block">
       <div className="relative overflow-hidden rounded-lg group h-[180px]">
         <img
           src={image || "/placeholder.svg"}
@@ -13,6 +16,6 @@ export default function CourseCard({ title, image }) {
           <span className="text-white text-lg font-medium">{title}</span>
         </div>
       </div>
-    </a>
+    </Link>
   );
 }
