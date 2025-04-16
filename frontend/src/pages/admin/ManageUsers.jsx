@@ -1,10 +1,6 @@
 // pages/admin/ManageUsers.jsx
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-<<<<<<< HEAD
-import { adminAxiosInstance } from '../../utils/adminAxiosInstance';
-=======
->>>>>>> d683b24071c1e03de0424c7b2a1c46684f511ac8
 import UserTable from '../../components/admin/UserTable';
 import { adminAxiosInstance } from '../../utils/adminAxiosInstance';
 
