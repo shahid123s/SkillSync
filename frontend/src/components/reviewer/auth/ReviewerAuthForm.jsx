@@ -35,7 +35,7 @@ export default function ReviewerAuthForm({ isRegister, setIsRegister }) {
     }
 
     try {
-      const endpoint = isRegister ? "/auth/reviewer/register" : "/auth/reviewer/login";
+      const endpoint = isRegister ? "/auth/register" : "/auth/login";
       const response = await reviewerAxiosInstance.post(endpoint, formData);
       
       if (response.data.success) {
@@ -102,6 +102,7 @@ export default function ReviewerAuthForm({ isRegister, setIsRegister }) {
               type="text"
               name="fullname"
               placeholder="John Doe"
+              value={formData.fullname}
               onChange={handleChange}
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -116,6 +117,7 @@ export default function ReviewerAuthForm({ isRegister, setIsRegister }) {
           <input
             type="email"
             name="email"
+            value={formData.email}
             placeholder="reviewer@example.com"
             onChange={handleChange}
             required
@@ -191,6 +193,7 @@ export default function ReviewerAuthForm({ isRegister, setIsRegister }) {
               placeholder="••••••••"
               onChange={handleChange}
               required
+              value={formData.password}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
             <button

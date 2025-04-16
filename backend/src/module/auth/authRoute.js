@@ -1,5 +1,8 @@
 import express from 'express';
-const router = express.Router();
+const adminAuthRouter = express.Router();
+const userAuthRouter = express.Router();
+const reviewerAuthRouter = express.Router();
+
 import {
     adminLogin,
     adminLogout,
@@ -17,23 +20,23 @@ import {
 
 
 // Student Authentication 
-router.post('/student/login', studentLogin);
-router.post('/student/register', studentRegister);
-router.post('/student/refresh-token', studentRefreshToken)
-router.post('/student/logout', studentLogout)
+userAuthRouter.post('/login', studentLogin);
+userAuthRouter.post('/register', studentRegister);
+userAuthRouter.post('/refresh-token', studentRefreshToken)
+userAuthRouter.post('/logout', studentLogout)
 
 // Reviwer Authentication 
-router.post('/reviewer/login', reviewerLogin)
-router.post('/reviewer/register', reviewerRegistration)
-router.post('/reviewer/refresh-token', reviewrRefreshToken)
-router.post('/reviewer/logout', reviewerLogout);
+reviewerAuthRouter.post('/login', reviewerLogin)
+reviewerAuthRouter.post('/register', reviewerRegistration)
+reviewerAuthRouter.post('/refresh-token', reviewrRefreshToken)
+reviewerAuthRouter.post('/logout', reviewerLogout);
 
 
 // Admin Authentication 
-router.post('/admin/login', adminLogin);
-router.post('/admin/register', adminRegister);
-router.post('/admin/refresh-token', adminRefreshToken);
-router.post('/admin/logout', adminLogout);
+adminAuthRouter.post('/login', adminLogin);
+adminAuthRouter.post('/register', adminRegister);
+adminAuthRouter.post('/refresh-token', adminRefreshToken);
+adminAuthRouter.post('/logout', adminLogout);
 
 
-export default router;
+export  {adminAuthRouter, userAuthRouter, reviewerAuthRouter};

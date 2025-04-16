@@ -139,6 +139,7 @@ export const studentLogout = async (req, res, next) => {
 export const reviewerLogin = async (req, res, next) => {
     try {
         const { email, password } = req.body;
+        console.log(req.body, '\ivdd')
         if (!email || !password) {
             return res
                 .status(406)

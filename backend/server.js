@@ -7,7 +7,7 @@ import errorHandler from './src/middleware/errorHandlerMiddleware.js';
 
 
 // Routers
-import authRouter from './src/module/auth/authRoute.js';
+import {adminAuthRouter, reviewerAuthRouter, userAuthRouter} from './src/module/auth/authRoute.js'
 import courseRouter from './src/module/course/courseRoute.js'
 import studentRouter from './src/module/student/studentRoute.js'  
 import adminRouter from './src/module/admin/adminRoute.js'
@@ -20,7 +20,9 @@ app.use(express.json());
 app.use(corsConfig);
 
 
-app.use('/api/auth', authRouter )
+app.use('/api/auth/student', userAuthRouter )
+app.use('/api/reviewer/auth', reviewerAuthRouter)
+app.use('/api/admin/auth', adminAuthRouter)
 app.use('/api/course', courseRouter)
 app.use('/api/student', studentRouter)
 app.use('/api/admin', adminRouter)

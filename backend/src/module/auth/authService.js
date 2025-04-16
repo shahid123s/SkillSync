@@ -9,7 +9,6 @@ import { comparePassword, hashPassword } from "./utils/bcryptUtils.js";
 export const authServices = {
     studentAuthService: {
         login: async (email, password) => {
-            console.log(email)
             try {
                 const student = await studentRepository.findUserByEmailForAuthenticate(email);
 
@@ -114,6 +113,7 @@ export const authServices = {
                     throw new CustomError('Email or Phone number is already exists', 406)
                 }
                 reviwerData.password = await hashPassword(reviwerData.password)
+                reviwerData.certificates = await reviwerData.certificates.split(',');
                 let reviewer = await reviewerRepository.createReviwer(reviwerData);
                 return reviewer;
 
