@@ -2,7 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {toast} from 'sonner'
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+<<<<<<< HEAD
 import { userAxiosInstance } from '../../../utils/userAxiosInstance';
+=======
+import { userAxiosInstance } from "../../../utils/userAxiosInstance";
+>>>>>>> d683b24071c1e03de0424c7b2a1c46684f511ac8
 
 export default function AuthForm({ isRegister, setIsRegister }) {
   const navigate = useNavigate();

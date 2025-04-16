@@ -50,7 +50,11 @@ export default function ManageCourses() {
       console.log(isEdit)
 
       if (isEdit) {
+<<<<<<< HEAD
         response = await adminAxiosInstance.put(`/course/update-course/${courseData._id}`, courseData);
+=======
+        response = await adminAxiosInstance.put(`/courses/${courseData.id}`, courseData);
+>>>>>>> d683b24071c1e03de0424c7b2a1c46684f511ac8
       } else {
         response = await adminAxiosInstance.post('/course/add-course', courseData);
       }

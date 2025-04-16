@@ -1,8 +1,12 @@
 // pages/admin/PendingReviewersPage.jsx
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+<<<<<<< HEAD
 import { adminAxiosInstance } from '../../utils/adminAxiosInstance';
+=======
+>>>>>>> d683b24071c1e03de0424c7b2a1c46684f511ac8
 import PendingReviewersTable from '../../components/admin/PendingReviewers';
+import { adminAxiosInstance } from '../../utils/adminAxiosInstance';
 
 export default function PendingReviewersPage() {
   const [reviewers, setReviewers] = useState([]);
