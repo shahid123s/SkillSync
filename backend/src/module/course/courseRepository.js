@@ -6,7 +6,7 @@ export const courseRepository = {
     getAllCourses: async () => {
         try {
             return await Course
-                .find()
+                .find({status: 'active'})
                 .lean();
         } catch (error) {
             throw new CustomError(error.message, 500, 'Internal Server Error');

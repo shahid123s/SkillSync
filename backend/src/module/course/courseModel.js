@@ -13,6 +13,9 @@ const courseSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    offerPrice: {
+        type: Number,
+    }, 
     timeSpan: {
         type: Number,
         default: 6,

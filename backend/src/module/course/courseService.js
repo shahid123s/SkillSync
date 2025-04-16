@@ -26,6 +26,7 @@ export const courseService = {
             if(result.length === 0){
                 throw new CustomError('Course not found', 404, 'Not Found');
             }
+            return result;
         } catch (error) {
             throw new CustomError(error.message, 500, 'Internal Server Error')
         }

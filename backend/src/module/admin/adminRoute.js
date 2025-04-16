@@ -4,7 +4,8 @@ const router  = express.Router();
 
 router.get('/users', adminController.getAllUsers);
 router.get('/courses', adminController.getAllCourses);
-
+router.post('/course/add-course', adminController.addCourse)
+router.put('/course/update-course/:courseId', adminController.updateCourse);
 
 
 export default router;

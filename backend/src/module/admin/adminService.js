@@ -1,6 +1,7 @@
 import CustomError from "../../utils/customError.js";
 import Student from "../student/studentModel.js";
 import Course from "../course/courseModel.js";
+import { courseService } from "../course/courseService.js";
 
 
 
@@ -26,5 +27,14 @@ export const adminService = {
         } catch (error) {
             throw new CustomError("Error retrieving courses", 500);
         }
+    },
+    addCourse: async (courseData) => {
+        const response = await courseService.addCourse(courseData)
+        return response;
+    },
+
+    updateCourse: async (courseId, courseData = {}) => {
+        const response = await courseService.updateCourse(courseId, courseData);
+        return response;
     }
 }
