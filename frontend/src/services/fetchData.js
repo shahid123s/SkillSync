@@ -32,3 +32,12 @@ export const fetchReviewerData = async (reviewerId) => {
         // return error.response.data.message
     }
 }
+
+export const fetchPurchasedCourses = async (userId) => {
+    try {
+        const response = await userAxiosInstance.get(`/api/users/${userId}/courses`);
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Failed to load courses");
+    }
+}
