@@ -1,10 +1,11 @@
 // pages/reviewer/ReviewerProfile.jsx
 import { useEffect, useState } from 'react';
 import ReviewerSidebar from '../../components/reviewer/ReviewerSidebar';
+import { fetchReviewerData } from '../../services/fetchData';
 
 export default function ReviewerProfile() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [profile] = useState({
+  const [profile, setProfile] = useState({
     name: 'John Reviewer',
     email: 'john@reviewer.com',
     phone: '+1 234 567 890',
@@ -13,7 +14,7 @@ export default function ReviewerProfile() {
   });
 
     useEffect(() => {
-      
+      fetchReviewerData();
     })
 
   return (

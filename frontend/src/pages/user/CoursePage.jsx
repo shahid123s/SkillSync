@@ -53,33 +53,33 @@ export default function CoursePage() {
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-            <CourseRating 
-  averageRating={4.2}
-  ratingDistribution={{
-    5: 45,
-    4: 30,
-    3: 15,
-    2: 7,
-    1: 3
-  }}
-/>
-<CourseReviews 
-  reviews={[
-    {
-      id: 1,
-      name: "John Doe",
-      avatar: "/user1.jpg",
-      date: "2 weeks ago",
-      content: "Great course with excellent content!"
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      date: "1 month ago", // Missing avatar will use fallback
-      content: "Very informative and well structured."
-    }
-  ]}
-/>
+              <CourseRating
+                averageRating={4.2}
+                ratingDistribution={{
+                  5: 45,
+                  4: 30,
+                  3: 15,
+                  2: 7,
+                  1: 3
+                }}
+              />
+              <CourseReviews
+                reviews={[
+                  {
+                    id: 1,
+                    name: "John Doe",
+                    avatar: "/user1.jpg",
+                    date: "2 weeks ago",
+                    content: "Great course with excellent content!"
+                  },
+                  {
+                    id: 2,
+                    name: "Jane Smith",
+                    date: "1 month ago", // Missing avatar will use fallback
+                    content: "Very informative and well structured."
+                  }
+                ]}
+              />
             </div>
 
             <div className="space-y-6">

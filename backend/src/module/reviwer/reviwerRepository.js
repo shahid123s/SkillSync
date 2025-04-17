@@ -49,6 +49,16 @@ export const reviewerRepository = {
             );
         }
     },
+    fetchReviewerProfile: async (userId) => {
+        try {
+            const reviewer = await Reviwer.findById(userId, '-password');
+        } catch (error) {
+            throw new CustomError(
+                error.message,
+                500,
+            )
+        }
+    }
 
     
 

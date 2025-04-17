@@ -11,6 +11,9 @@ import {adminAuthRouter, reviewerAuthRouter, userAuthRouter} from './src/module/
 import courseRouter from './src/module/course/courseRoute.js'
 import studentRouter from './src/module/student/studentRoute.js'  
 import adminRouter from './src/module/admin/adminRoute.js'
+import reviewerRouter from './src/module/reviwer/reviwerRoute.js'
+import morgan from 'morgan';
+import { AuthenticateReviewer } from './src/middleware/authenticateMiddleware.js';
 const {port} = appConfig.app
 
 const app = express();
@@ -18,13 +21,14 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.use(corsConfig);
-
+app.use(morgan('dev'))
 
 app.use('/api/auth/student', userAuthRouter )
 app.use('/api/reviewer/auth', reviewerAuthRouter)
 app.use('/api/admin/auth', adminAuthRouter)
 app.use('/api/course', courseRouter)
 app.use('/api/student', studentRouter)
+app.use('/api/reviewer', AuthenticateReviewer, reviewerRouter)
 app.use('/api/admin', adminRouter)
 
 app.use(errorHandler)

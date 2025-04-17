@@ -1,9 +1,11 @@
- import { reviewerService } from "./reviwerService";
+ import { reviewerService } from "./reviwerService.js";
  export const reviewerController = {
-    getReviewer: (req, res, next) => {
+    getReviewer: async (req, res, next) => {
         try {
-            const {id} = req.query;
-            const result = reviewerService.getReviewerProfile(id);
+            const {reviewerId} = req.query || req.params;
+
+            const result = await  reviewerService.getReviewerProfile(reviewerId);
+
             if(!result){
                 return res
                     .status(404)

@@ -17,9 +17,12 @@ export const fetchCourseDetails = async (courseId) => {
 
 export const fetchReviewerData = async (reviewerId) => {
     try {
+        
         const response  = await reviewerAxiosInstance.get('/profile', {
             params : {reviewerId}
         })
+        return response.data; 
+
     } catch (error) {
         toast.error(error.response.data.message|| 'Network Error');
         return error.response.data.message

@@ -20,7 +20,7 @@ reviewerAxiosInstance.interceptors.response.use(
       if (!isRefreshing) {
         isRefreshing = true;
         try {
-          await reviewerAxiosInstance.post('/refresh-token');
+          await reviewerAxiosInstance.post('/auth/refresh-token');
           isRefreshing = false;
 
           return reviewerAxiosInstance(originalRequest);
@@ -29,7 +29,7 @@ reviewerAxiosInstance.interceptors.response.use(
 
           toast.info("Please login again");
           localStorage.removeItem("reviewerSession");
-          window.location.href = "/reviewer/login";
+          // window.location.href = "/reviewer/login";
           return Promise.reject(refreshError);
         }
       }
@@ -38,10 +38,10 @@ reviewerAxiosInstance.interceptors.response.use(
     if (
       (error.response?.status === 403 &&
         error.response.data.message ===
-          "Access denied. You do not have permission to access this resource.") ||
+        "Access denied. You do not have permission to access this resource.") ||
       (error.response.status === 403 &&
         error.response.data.message ===
-          "Access denied: Your account has been blocked" &&
+        "Access denied: Your account has been blocked" &&
         !originalRequest._retry)
     ) {
       localStorage.removeItem("adminSession");

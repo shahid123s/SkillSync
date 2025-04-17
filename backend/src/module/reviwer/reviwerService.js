@@ -3,7 +3,7 @@ import { reviewerRepository } from "./reviwerRepository.js";
 export const reviewerService = {
    getReviewerProfile: async (id) => {
     try {
-        const result = await reviewerRepository.get(id);
+        const result = await reviewerRepository.fetchReviewerProfile(id);
         return result;
     } catch (error) {
         throw new CustomError(

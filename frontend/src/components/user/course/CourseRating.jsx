@@ -47,16 +47,7 @@ export default function CourseRating({
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
       {/* Debug Info Panel - Visible in development */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="mb-4 p-3 bg-gray-100 rounded text-xs">
-          <h3 className="font-bold mb-1">Debug Info:</h3>
-          <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
-          <div className="mt-2">
-            <p>Normalized Distribution: {JSON.stringify(normalizedDistribution)}</p>
-            <p>Calculated Average: {calculatedAverage}</p>
-          </div>
-        </div>
-      )}
+
 
       {/* Tab Navigation */}
       <div className="grid grid-cols-4 mb-6">

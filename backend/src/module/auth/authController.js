@@ -214,7 +214,7 @@ export const reviewrRefreshToken = async (req, res, next) => {
                     message: 'Unauthorised',
                 })
         }
-        const result = await reviewerAuthService.refreshTokeh(refreshToken);
+        const result = await reviewerAuthService.reviewrRefreshToken(refreshToken);
         if (!result) {
             return res
                 .status(401)
@@ -223,6 +223,12 @@ export const reviewrRefreshToken = async (req, res, next) => {
                     message: 'Unauthorised',
                 })
         }
+        res.cookie('reviewerAccessToken', result, {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'Lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
         return res
             .status(200)
             .json({
@@ -243,6 +249,7 @@ export const reviewerLogout = async (req, res, next) => {
             secure: process.env.NODE_ENV === 'production', // Only true in production environments
             sameSite: 'Lax', // Adjust the sameSite attribute if needed
         });
+
         return res
             .status(200)
             .json({
