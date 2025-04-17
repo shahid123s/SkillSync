@@ -105,5 +105,14 @@ export const adminService = {
             console.log(error,'error in adminService createWeeklyTask')
             throw new CustomError("Error creating weekly task", 500);
         }
+    },
+    getAllWeeklyTasks: async () => {
+        try {
+            const result = await WeeklyTaskRepository.getAllTasks();
+            return result
+        } catch (error) {
+            throw new CustomError("Error fetching weekly tasks", 500);
+        }
+    
     }
 }

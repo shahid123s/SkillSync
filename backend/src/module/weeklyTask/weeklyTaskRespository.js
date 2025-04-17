@@ -74,5 +74,13 @@ export const WeeklyTaskRepository = {
     } catch (error) {
       throw new CustomError('Error fetching tasks: ' + error.message, 500);
     }
+  },
+  async getAllTasks() {
+    try {
+      const tasks = await WeeklyTask.find();
+      return tasks;
+    } catch (error) {
+      throw new CustomError('Error fetching tasks: ' + error.message, 500);
+    }
   }
 };

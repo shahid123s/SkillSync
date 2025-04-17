@@ -13,6 +13,6 @@ router.put('/reviewer/toggle-status', adminController.toggleReviewerStatus);
 router.put('/reviewer/toggle-block', adminController.toggleReviewerBlock);
 
 router.post('/weekly-task', adminController.addWeeklyTask);
-router.get('/weekly-task', adminController.getAllWeeklyTasks);
+router.get('/weekly-tasks', adminController.getAllWeeklyTasks);
 
 export default router;
