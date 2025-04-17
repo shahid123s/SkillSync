@@ -1,4 +1,4 @@
-import { updateCourse } from "../course/courseController.js";
+
 import { adminService } from "./adminService.js";
 
 export const adminController = {
