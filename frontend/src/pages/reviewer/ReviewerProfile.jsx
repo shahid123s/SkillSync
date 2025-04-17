@@ -2,13 +2,14 @@
 import { useEffect, useState } from 'react';
 import ReviewerSidebar from '../../components/reviewer/ReviewerSidebar';
 import { fetchReviewerData } from '../../services/fetchData';
+import { toast } from 'sonner';
 
 export default function ReviewerProfile() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [profile, setProfile] = useState({
     name: '',
     email: '',
-    phone: ',',
+    phone: '',
     certificates: [],
     experience: '',
   });
@@ -17,6 +18,7 @@ export default function ReviewerProfile() {
       
       (async function(){
         const result  = await fetchReviewerData()
+      
         setProfile(result)
       })()
       

@@ -1,9 +1,10 @@
 import Reviwer from './reviwerModel.js';
 import CustomError from '../../utils/customError.js';
+import mongoose from 'mongoose';
 
 
 export const reviewerRepository = {
-        getReviwerByEmailForAuthentication: async (email) => {
+    getReviwerByEmailForAuthentication: async (email) => {
         try {
             return await Reviwer.findOne({ email });
         } catch (error) {
@@ -52,7 +53,11 @@ export const reviewerRepository = {
     fetchReviewerProfile: async (userId) => {
         console.log(userId, 'repo')
         try {
-            const reviewer = await Reviwer.findById (userId, '-password');
+
+            if (!mongoose.Types.ObjectId.isValid(userId)) {
+                return null;
+            }
+            const reviewer = await Reviwer.findById(userId, '-password');
             console.log(reviewer, 'Repositoroy')
             return reviewer;
         } catch (error) {
@@ -63,7 +68,7 @@ export const reviewerRepository = {
         }
     }
 
-    
+
 
 }
 

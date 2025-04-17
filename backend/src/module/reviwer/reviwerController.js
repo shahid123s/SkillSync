@@ -2,8 +2,7 @@
  export const reviewerController = {
     getReviewer: async (req, res, next) => {
         try {
-            let {reviewerId} = req.params || req.reviewer;
-            reviewerId = reviewerId || req.reviewer
+            const reviewerId = req.params.reviewerId || req.reviewer || req.user; // Try all valid paths
             console.log(reviewerId, 'Controller Id ');
             const result = await  reviewerService.getReviewerProfile(reviewerId);
 

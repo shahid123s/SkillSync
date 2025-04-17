@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useMemo } from 'react';
-
+import {IndianRupee} from 'lucide-react'
 function CourseHero({
   name = "Course Title",
   description = "Course description goes here",
@@ -39,8 +39,8 @@ function CourseHero({
         <div className="relative -mt-20 md:-mt-32 flex flex-col lg:flex-row gap-8">
           {/* Left Column - Course Info */}
           <div className="lg:w-2/3">
-            <h1 className="text-3xl font-bold mb-4">{name}</h1>
-            <p className="text-gray-600 mb-6">{description}</p>
+            <h1 className="text-3xl font-bold text-white mb-4">{name}</h1>
+            <p className="text-gray-400 mb-6">{description}</p>
           </div>
           
           {/* Right Column - Pricing Card */}
@@ -48,13 +48,13 @@ function CourseHero({
             <div className="bg-white p-6 rounded-lg shadow-md sticky top-4">
               {/* Price Display */}
               <div className="flex items-baseline justify-between mb-4">
-                <div className="text-2xl font-bold">
-                  ${offerPrice.toFixed(2)}
+                <div className="text-2xl font-bold flex">
+                Rs.{offerPrice.toFixed(2)} 
                 </div>
                 {price > offerPrice && (
                   <>
-                    <div className="text-gray-500 line-through text-sm">
-                      ${price.toFixed(2)}
+                    <div className="text-gray-500 line-through text-sm flex gap-">
+                      <IndianRupee size={19}/>{price.toFixed(2)}
                     </div>
                     <div className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">
                       {calculatedDiscount}% Off

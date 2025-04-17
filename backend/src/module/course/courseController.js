@@ -29,6 +29,9 @@ export const getCourse = async (req, res, next) => {
         const {courseId}  = req.query ;
     
         const result = await courseService.getCourse(courseId);
+        if(!result.offerPrice ) {
+            result.offerPrice = result.price
+        };
         console.log(result)
         if(!result){
             return res

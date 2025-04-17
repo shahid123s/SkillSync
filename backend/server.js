@@ -12,6 +12,7 @@ import courseRouter from './src/module/course/courseRoute.js'
 import studentRouter from './src/module/student/studentRoute.js'  
 import adminRouter from './src/module/admin/adminRoute.js'
 import reviewerRouter from './src/module/reviwer/reviwerRoute.js'
+import couresReviewRouter from './src/module/courseReview/courseReviewRoute.js'
 import morgan from 'morgan';
 import { AuthenticateReviewer } from './src/middleware/authenticateMiddleware.js';
 const {port} = appConfig.app
@@ -28,6 +29,7 @@ app.use('/api/reviewer/auth', reviewerAuthRouter)
 app.use('/api/admin/auth', adminAuthRouter)
 app.use('/api/course', courseRouter)
 app.use('/api/student', studentRouter)
+app.use('/api/course-review/', couresReviewRouter )
 app.use('/api/reviewer', AuthenticateReviewer, reviewerRouter)
 app.use('/api/admin', adminRouter)
 

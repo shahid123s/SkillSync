@@ -1,6 +1,8 @@
 import React from "react";
 import BannerImage from '../../assets/Banner.png'
+import { useNavigate } from "react-router-dom";
 export default function Banner() {
+    const navigate=  useNavigate()
     return (
         <section className="bg-slate-50 py-12 px-6">
             <div className="container mx-auto grid md:grid-cols-2 gap-8 items-center">
@@ -17,7 +19,9 @@ export default function Banner() {
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                     </p>
 
-                    <button className="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md transition duration-200">
+                    <button
+                    onClick={() => navigate('/courses')} 
+                    className="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md transition duration-200">
                         Start learning now
                     </button>
                 </div>
