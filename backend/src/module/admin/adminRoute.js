@@ -17,4 +17,6 @@ router.get('/weekly-tasks', adminController.getAllWeeklyTasks);
 router.put('/weekly-task/edit', adminController.updateWeeklyTask);
 router.delete('/weekly-task/delete', adminController.removeWeeklyTask);
 
+router.post('/weekly-task/add-week', adminController.addTaskToCourse)
+
 export default router;

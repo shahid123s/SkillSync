@@ -179,7 +179,7 @@ export const adminController = {
                     message: 'Description must be an array'
                 });
             }
-            
+
             const newTask = await adminService.createWeeklyTask(taskData);
             res.status(201).json({
                 success: true,
@@ -189,22 +189,28 @@ export const adminController = {
             next(error)
         }
     },
-    
+
 
     getAllWeeklyTasks: async (req, res, next) => {
         try {
             const tasks = await adminService.getAllWeeklyTasks();
-            if (!tasks) {
-                return res.status(404).json({ message: 'No tasks found' });
+            
+            if (!tasks || tasks.length === 0) {
+              return res.status(404).json({ 
+                success: false,
+                message: 'No tasks found' 
+              });
             }
+            
             res.status(200).json({
-                success: true,
-                message: 'All weekly tasks retrieved successfully',
-                data: tasks
+              success: true,
+              message: 'All weekly tasks retrieved successfully',
+              data: tasks
             });
-        } catch (error) {
+            
+          } catch (error) {
             next(error);
-        }
+          }
     },
     updateWeeklyTask: async (req, res, next) => {
         try {
@@ -216,7 +222,7 @@ export const adminController = {
                     message: 'Description must be an array'
                 });
             }
-            
+
             const updatedTask = await adminService.updateWeeklyTask(taskData._id, taskData);
             res.status(200).json({
                 success: true,
@@ -236,6 +242,28 @@ export const adminController = {
             res.status(200).json({ message: 'Task deleted successfully' });
         } catch (error) {
             next(error);
+        }
+    },
+    addTaskToCourse: async (req, res, next) => {
+        try {
+            const data = req.body;
+            const result = await adminService.addTaskToCourse(data)
+            console.log(result, 'result in admin')
+            if (!result) {
+                return res
+                    .status(400)
+                    .json({
+                        success: false,
+                        message: 'Task not Added',
+                    })
+            }
+            return res.status(200).json({
+                success: true,
+                message: "Task Added Successfully",
+                data: result,
+            })
+        } catch (error) {
+            next(error)
         }
     }
 }

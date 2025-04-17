@@ -108,11 +108,10 @@ export const adminService = {
     },
     getAllWeeklyTasks: async () => {
         try {
-            const result = await WeeklyTaskRepository.getAllTasks();
-            return result
-        } catch (error) {
-            throw new CustomError("Error fetching weekly tasks", 500);
-        }
+            return await WeeklyTaskRepository.getAllTasks();
+          } catch (error) {
+            throw new CustomError("Error fetching weekly tasks: " + error.message, 500);
+          }
     
     },
     updateWeeklyTask: async (taskId, taskData) => {
@@ -130,6 +129,17 @@ export const adminService = {
             return result
         } catch (error) {
             throw new CustomError("Error removing weekly task", 500);
+        }
+    },
+    addTaskToCourse: async(data) => {
+        try {
+            const result = await WeeklyTaskRepository.addTaskCourseRelation(data.weeklyTaskId, data.courseId, data.weekNumber)
+            if(!result){
+                throw new CustomError("Error happens in adding to course", 400);
+            }
+           return result;
+        } catch (error) {
+            throw new CustomError("Error adding weekly task", 500);
         }
     }
 

@@ -5,7 +5,7 @@ import { adminAxiosInstance } from '../../utils/adminAxiosInstance';
 import TaskFormModal from '../../components/admin/TaskFormModal';
 import AddWeekModal from '../../components/admin/AddWeekModal';
 
-// Dummy data for courses
+// Updated dummy data to match new structure
 const dummyCourses = [
   {
     _id: 'course1',
@@ -18,43 +18,36 @@ const dummyCourses = [
     name: 'Advanced JavaScript',
     description: 'Deep dive into modern JavaScript',
     status: 'active'
-  },
-  {
-    _id: 'course3',
-    name: 'Node.js Backend',
-    description: 'Build server-side applications with Node',
-    status: 'active'
   }
 ];
 
-// Dummy data for tasks
 const dummyTasks = [
   {
     _id: 'task1',
     title: 'Introduction to Components',
-    description: 'Learn about React components and props',
-    weeks: [
+    description: ['Learn about React components and props'],
+    assignedWeeks: [
       {
         _id: 'week1',
-        courseId: 'course1',
-        weekNumber: 1
+        weekNumber: 1,
+        course: dummyCourses[0]
       }
     ]
   },
   {
     _id: 'task2',
     title: 'State Management',
-    description: 'Understand useState and useEffect hooks',
-    weeks: [
+    description: ['Understand useState and useEffect hooks'],
+    assignedWeeks: [
       {
         _id: 'week2',
-        courseId: 'course1',
-        weekNumber: 2
+        weekNumber: 2,
+        course: dummyCourses[0]
       },
       {
         _id: 'week3',
-        courseId: 'course2',
-        weekNumber: 1
+        weekNumber: 1,
+        course: dummyCourses[1]
       }
     ]
   }
@@ -83,13 +76,12 @@ export default function WeeklyTasksPage() {
           setCourses(coursesRes.data.data);
           setUseDummyData(false);
         } else {
-          // Fallback to dummy data if API fails
           setTasks(dummyTasks);
           setCourses(dummyCourses);
           setUseDummyData(true);
         }
       } catch (error) {
-        console.error('Failed to load data, using dummy data instead:', error);
+        console.error('Using dummy data due to error:', error);
         setTasks(dummyTasks);
         setCourses(dummyCourses);
         setUseDummyData(true);
@@ -102,18 +94,15 @@ export default function WeeklyTasksPage() {
 
   const handleSaveTask = async (taskData) => {
     if (useDummyData) {
-      // Handle dummy data case
-      if (selectedTask?._id) {  // Check selectedTask instead of taskData
-        // Update existing task
+      if (selectedTask?._id) {
         setTasks(prev => prev.map(t => 
           t._id === selectedTask._id ? { ...t, ...taskData } : t
         ));
       } else {
-        // Add new task
         const newTask = {
           ...taskData,
-          _id: `task${Date.now()}`, // Generate unique ID
-          weeks: []
+          _id: `task${Date.now()}`,
+          assignedWeeks: []
         };
         setTasks(prev => [...prev, newTask]);
       }
@@ -121,18 +110,18 @@ export default function WeeklyTasksPage() {
       setIsTaskModalOpen(false);
       return;
     }
-  
+
     try {
       let response;
-      if (selectedTask?._id) {  // Check selectedTask instead of taskData
+      if (selectedTask?._id) {
         response = await adminAxiosInstance.put(`/weekly-task/edit`, {
           ...taskData,
-          _id: selectedTask._id  // Include the ID from selectedTask
+          _id: selectedTask._id
         });
       } else {
         response = await adminAxiosInstance.post('/weekly-task', taskData);
       }
-  
+
       if (response.data.success) {
         setTasks(prev => selectedTask?._id
           ? prev.map(t => t._id === selectedTask._id ? response.data.data : t)
@@ -148,18 +137,16 @@ export default function WeeklyTasksPage() {
 
   const handleAddWeek = async (weekData) => {
     if (useDummyData) {
-      // Handle dummy data case
-      
       setTasks(prev => prev.map(task => {
         if (task._id === weekData.taskId) {
           const newWeek = {
             _id: `week${Date.now()}`,
-            courseId: weekData.courseId,
-            weekNumber: weekData.weekNumber
+            weekNumber: weekData.weekNumber,
+            course: dummyCourses.find(c => c._id === weekData.courseId)
           };
           return {
             ...task,
-            weeks: [...(task.weeks || []), newWeek]
+            assignedWeeks: [...task.assignedWeeks, newWeek]
           };
         }
         return task;
@@ -171,8 +158,12 @@ export default function WeeklyTasksPage() {
 
     try {
       const response = await adminAxiosInstance.post(
-        `/weekly-tasks/${weekData.taskId}/weeks`,
-        { courseId: weekData.courseId, weekNumber: weekData.weekNumber }
+        `/weekly-task/add-week`,
+        { 
+          courseId: weekData.courseId, 
+          weekNumber: weekData.weekNumber, 
+          weeklyTaskId: weekData.taskId 
+        }
       );
 
       if (response.data.success) {
@@ -215,7 +206,7 @@ export default function WeeklyTasksPage() {
         if (task._id === taskId) {
           return {
             ...task,
-            weeks: task.weeks.filter(week => week._id !== weekId)
+            assignedWeeks: task.assignedWeeks.filter(week => week._id !== weekId)
           };
         }
         return task;
@@ -270,17 +261,23 @@ export default function WeeklyTasksPage() {
               <div key={task._id} className="bg-white rounded-lg shadow-sm overflow-hidden border">
                 <div className="p-4">
                   <h3 className="font-bold text-lg mb-2">{task.title || 'Untitled Task'}</h3>
-                  {task.description && task.description.map((des, ind) => <p className="text-sm text-gray-600 mb-4">{ind + 1} {des}</p>)}
+                  <div className="mb-4">
+                    {task.description.map((des, index) => (
+                      <p key={index} className="text-sm text-gray-600 mb-2">
+                        {index + 1}. {des}
+                      </p>
+                    ))}
+                  </div>
                   
                   <div className="mb-4">
                     <h4 className="font-medium text-sm mb-2">Assigned Weeks:</h4>
-                    {task.weeks?.length > 0 ? (
+                    {task.assignedWeeks?.length > 0 ? (
                       <ul className="space-y-2">
-                        {task.weeks.map(week => (
+                        {task.assignedWeeks.map(week => (
                           <li key={week._id} className="flex justify-between items-center border-b pb-2">
                             <div>
                               <span className="font-medium">
-                                {courses.find(c => c._id === week.courseId)?.name || 'Unknown Course'} - Week {week.weekNumber}
+                                {week.course?.name || 'Unknown Course'} - Week {week.weekNumber}
                               </span>
                             </div>
                             <button
@@ -347,7 +344,7 @@ export default function WeeklyTasksPage() {
         task={selectedTask}
         courses={courses}
         onSave={handleAddWeek}
-        existingWeeks={selectedTask?.weeks || []}
+        existingWeeks={selectedTask?.assignedWeeks || []}
       />
     </div>
   );

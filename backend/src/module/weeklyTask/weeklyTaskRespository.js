@@ -37,15 +37,17 @@ export const WeeklyTaskRepository = {
   },
 
   // Add task-course relation
-  async addTaskCourseRelation(taskId, courseId, weekNum) {
+  async addTaskCourseRelation(weeklyTaskId, courseId, weekNum) {
+    console.log(weekNum)
     try {
       const relation = await WeeklyTaskCourse.create({
-        taskId,
+        weeklyTaskId,
         courseId,
         weekNum
       });
       return relation;
     } catch (error) {
+        console.log(error, 'error in Repo weeklyTask')
       throw new CustomError('Error adding task-course relation: ' + error.message, 500);
     }
   },
@@ -77,8 +79,28 @@ export const WeeklyTaskRepository = {
   },
   async getAllTasks() {
     try {
-      const tasks = await WeeklyTask.find();
-      return tasks;
+        const allTasks = await WeeklyTask.find();
+    
+        const tasksWithCourses = await Promise.all(
+          allTasks.map(async (task) => {
+            const taskCourses = await WeeklyTaskCourse.find({ weeklyTaskId: task._id })
+              .populate('courseId', 'name description') // Only get needed fields
+            
+            return {
+              ...task.toObject(),
+              assignedWeeks: taskCourses.map(tc => ({
+                weekNumber: tc.weekNum,
+                course: tc.courseId ? {
+                  _id: tc.courseId._id,
+                  name: tc.courseId.name,
+                  description: tc.courseId.description
+                } : null
+              }))
+            };
+          })
+        );
+        
+        return tasksWithCourses;
     } catch (error) {
       throw new CustomError('Error fetching tasks: ' + error.message, 500);
     }
