@@ -12,6 +12,7 @@ import courseRouter from './src/module/course/courseRoute.js'
 import studentRouter from './src/module/student/studentRoute.js'  
 import adminRouter from './src/module/admin/adminRoute.js'
 import reviewerRouter from './src/module/reviwer/reviwerRoute.js'
+import weeklyTaskRouter from './src/module/weeklyTask/weeklyTaskRouter.js';
 import couresReviewRouter from './src/module/courseReview/courseReviewRoute.js'
 import enrolledCourseRouter from './src/module/enrollerCourse/enrollerCourseRouter.js'
 import morgan from 'morgan';
@@ -28,6 +29,7 @@ app.use(morgan('dev'))
 app.use('/api/auth/student', userAuthRouter )
 app.use('/api/reviewer/auth', reviewerAuthRouter)
 app.use('/api/admin/auth', adminAuthRouter)
+
 app.use('/api/course',AuthenticateUser, courseRouter)
 app.use('/api/student',AuthenticateUser, studentRouter)
 app.use('/api/course-enrollment', AuthenticateUser, enrolledCourseRouter)

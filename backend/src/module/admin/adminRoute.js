@@ -12,4 +12,7 @@ router.get('/get-all-pending-reviewers', adminController.getAllPendingReviewer);
 router.put('/reviewer/toggle-status', adminController.toggleReviewerStatus);
 router.put('/reviewer/toggle-block', adminController.toggleReviewerBlock);
 
+router.post('/weekly-task', adminController.addWeeklyTask);
+router.get('/weekly-task', adminController.getAllWeeklyTasks);
+
 export default router;

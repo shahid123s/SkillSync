@@ -159,5 +159,32 @@ export const adminController = {
         } catch (error) {
             next(error)
         }
+    },
+    addWeeklyTask: async (req, res, next) => {
+        try {
+            const taskData = req.body;
+            const newTask = await adminService.createWeeklyTask(taskData);
+            if (!newTask) {
+                return res.status(400).json({ message: 'Task creation failed' });
+            }
+            res.status(201).json(newTask);
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    getAllWeeklyTasks: async (req, res, next) => {
+        try {
+            const tasks = await adminService.getAllWeeklyTasks();
+            if (!tasks) {
+                return res.status(404).json({ message: 'No tasks found' });
+            }
+            res.status(200).json({
+                message: 'All weekly tasks retrieved successfully',
+                data: tasks
+            });
+        } catch (error) {
+            next(error);
+        }
     }
 }
