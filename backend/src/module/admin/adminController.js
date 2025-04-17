@@ -172,18 +172,24 @@ export const adminController = {
     addWeeklyTask: async (req, res, next) => {
         try {
             const taskData = req.body;
-            const newTask = await adminService.createWeeklyTask(taskData);
-            if (!newTask) {
+            // Ensure description is an array
+            if (!Array.isArray(taskData.description)) {
                 return res.status(400).json({
-                    success: true,
-                    message: 'Task creation failed'
+                    success: false,
+                    message: 'Description must be an array'
                 });
             }
-            res.status(201).json(newTask);
+            
+            const newTask = await adminService.createWeeklyTask(taskData);
+            res.status(201).json({
+                success: true,
+                data: newTask,
+            });
         } catch (error) {
             next(error)
         }
     },
+    
 
     getAllWeeklyTasks: async (req, res, next) => {
         try {
@@ -202,16 +208,20 @@ export const adminController = {
     },
     updateWeeklyTask: async (req, res, next) => {
         try {
-            const { updates, taskId } = req.body;
-            const updatedTask = await adminService.updateWeeklyTask(taskId, updates);
-            if (!updatedTask) {
-                return res.status(404).json({
-                    success: true,
-                    message: 'Task not found',
-                    data: updatedTask,
+            const taskData = req.body;
+            // Validate description format
+            if (!Array.isArray(taskData.description)) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Description must be an array'
                 });
             }
-            res.json(updatedTask);
+            
+            const updatedTask = await adminService.updateWeeklyTask(taskData._id, taskData);
+            res.status(200).json({
+                success: true,
+                data: updatedTask
+            });
         } catch (error) {
             next(error);
         }

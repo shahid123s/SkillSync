@@ -6,7 +6,7 @@ const weeklyTaskSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  tasks: {
+  description: {
     type: [String], // Array of strings
     required: true,
   },

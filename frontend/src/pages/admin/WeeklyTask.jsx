@@ -125,7 +125,8 @@ export default function WeeklyTasksPage() {
     try {
       let response;
       if (taskData._id) {
-        response = await adminAxiosInstance.put(`/weekly-task/${taskData._id}`, taskData);
+        response = await adminAxiosInstance.put(`/weekly-task/edit`, taskData, {
+        });
       } else {
         response = await adminAxiosInstance.post('/weekly-task', taskData);
       }
@@ -267,7 +268,7 @@ export default function WeeklyTasksPage() {
               <div key={task._id} className="bg-white rounded-lg shadow-sm overflow-hidden border">
                 <div className="p-4">
                   <h3 className="font-bold text-lg mb-2">{task.title || 'Untitled Task'}</h3>
-                  <p className="text-sm text-gray-600 mb-4">{task.description}</p>
+                  {task.description && task.description.map((des, ind) => <p className="text-sm text-gray-600 mb-4">{ind + 1} {des}</p>)}
                   
                   <div className="mb-4">
                     <h4 className="font-medium text-sm mb-2">Assigned Weeks:</h4>
