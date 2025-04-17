@@ -7,6 +7,7 @@ import CoursesPage from "../pages/user/CoursesPage";
 import CoursePage from "../pages/user/CoursePage";
 import NotFound from "../pages/user/NotFound";
 import WeeklyTaskPage from "../pages/user/WeeklyTask";
+import MyCoursesPage from "../pages/user/MyCourses";
 
 export function UserRoutes() {
   return (
@@ -17,6 +18,7 @@ export function UserRoutes() {
       <Route path="courses" element={<CoursesPage />} />
       <Route path="courses/:id" element={<CoursePage />} />
 
+      <Route path="my-courses" element={<MyCoursesPage />} />
       <Route path="weekly-task" element={<WeeklyTaskPage/>}/>
       {/* User-specific 404 */}
       <Route path="*" element={<NotFound role="user" />} />
