@@ -14,7 +14,7 @@ const RazorPay = ({ amount, handlePlaceOrder }) => {
     if (!userInfo) {
       const getUserInfo = async () => {
         try {
-          const response = await userAxiosInstance.get("/get-user-info");
+          const response = await userAxiosInstance.get("/student/get-user-info");
           setUserInfo({
             name: response.data.userData.firstName + " " + response.data.userData.lastName,
             email: response.data.userData.email,

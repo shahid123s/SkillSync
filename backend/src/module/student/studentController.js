@@ -70,5 +70,30 @@ export const studentController = {
         } catch (error) {
             next(error)
         }
+    },
+
+    getUserInfo: async (req, res, next) => {
+        try {
+            const userId = req.user;
+
+            const result = await studentService.getStudent(userId);
+            if(!result){
+                return res
+                    .status(404)
+                    .json({
+                        success: false,
+                        message: 'Student not found',
+                    })
+            }
+            return res
+                .status(200)
+                .json({
+                    success: true,
+                    message: 'Student found',
+                    data: result
+                })
+        } catch (error) {
+            next(error)
+        }
     }
 }
