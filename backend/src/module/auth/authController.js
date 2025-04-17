@@ -80,7 +80,7 @@ export const studentRegister = async (req, res, next) => {
 
 
 
-export const studentRefreshToken = (req, res, next) => {
+export const studentRefreshToken = async (req, res, next) => {
     try {
         const { refreshToken } = req.cookies;
         if (!refreshToken) {
@@ -91,7 +91,7 @@ export const studentRefreshToken = (req, res, next) => {
                     message: 'Unauthorised',
                 })
         }
-        const result = studentAuthService.refreshTokeh(refreshToken);
+        const result = await studentAuthService.refreshTokeh(refreshToken);
         if (!result) {
             return res
                 .status(401)
@@ -100,6 +100,14 @@ export const studentRefreshToken = (req, res, next) => {
                     message: 'Unauthorised',
                 })
         }
+        console.log(result, 'newToken')
+        res.cookie('accessToken', result, {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'Lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+
         return res
             .status(200)
             .json({
@@ -223,6 +231,7 @@ export const reviewrRefreshToken = async (req, res, next) => {
                     message: 'Unauthorised',
                 })
         }
+        console.log(result, 'newToken'  )
         res.cookie('reviewerAccessToken', result, {
             httpOnly: true,
             secure: false,

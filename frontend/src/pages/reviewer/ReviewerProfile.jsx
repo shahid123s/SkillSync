@@ -16,12 +16,12 @@ export default function ReviewerProfile() {
 
     useEffect(  () => {
       
-      (async function(){
+      async function fetchData (){
         const result  = await fetchReviewerData()
       
         setProfile(result)
-      })()
-      
+      }
+      fetchData()
     },[])
 
   return (

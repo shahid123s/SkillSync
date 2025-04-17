@@ -112,3 +112,28 @@ export const updateCourse = async (req, res, next) => {
 
 
 
+export const getStudentCourse = async (req, res, next) => {
+    try {
+        const studentId = req.user;
+        
+        const result = await courseService.getStudentCourse(studentId);
+        if(!result){
+            return res
+                .status(200)
+                .json({
+                    success: false,
+                    message: 'Course not found',
+                })
+        }
+        return res
+            .status(200)
+            .json({
+                success: true,
+                message: 'Course found',
+                data: result
+            })
+    } catch (error) {
+        next()
+    }
+
+}

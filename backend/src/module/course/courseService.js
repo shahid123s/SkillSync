@@ -1,7 +1,6 @@
 import CustomError from "../../utils/customError.js"
-import { updateCourse } from "./courseController.js";
+import enrolledCourseRepository from "../enrollerCourse/enrolerCourseRepository.js";
 import { courseRepository } from "./courseRepository.js";
-
 
 
 export const courseService = {
@@ -55,6 +54,14 @@ export const courseService = {
             return result;
         } catch (error) {
             throw new CustomError(error.message, 500, 'Internal Server Error')
+        }
+    },
+    getStudentCourse: async (id) => {
+        try {
+            const result = await enrolledCourseRepository.getCourseByStudentId(id);
+            return result;
+        } catch (error) {
+            return error;
         }
     }
 }   

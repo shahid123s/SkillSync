@@ -35,8 +35,8 @@ export const fetchReviewerData = async (reviewerId) => {
 
 export const fetchPurchasedCourses = async (userId) => {
     try {
-        const response = await userAxiosInstance.get(`/api/users/${userId}/courses`);
-        return response.data;
+        const response = await userAxiosInstance.get(`/course/student`);
+        return response.data.data;
     } catch (error) {
         throw new Error(error.response?.data?.message || "Failed to load courses");
     }

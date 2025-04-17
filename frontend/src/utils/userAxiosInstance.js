@@ -20,7 +20,7 @@ userAxiosInstance.interceptors.response.use(
       if (!isRefreshing) {
         isRefreshing = true;
         try {
-          await userAxiosInstance.post('/refresh-token');
+          await userAxiosInstance.post('/auth/student/refresh-token');
           isRefreshing = false;
 
           return userAxiosInstance(originalRequest);
@@ -29,7 +29,7 @@ userAxiosInstance.interceptors.response.use(
 
           toast.info("Please login again");
           localStorage.removeItem("userSession");
-          window.location.href = "/user/login";
+          // window.location.href = "/user/login";
           return Promise.reject(refreshError);
         }
       }

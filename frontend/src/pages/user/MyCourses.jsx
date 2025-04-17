@@ -15,6 +15,7 @@ const MyCoursesPage = () => {
         try {
           setLoading(true);
           const data = await fetchPurchasedCourses();
+          console.log(data, 'courseData in my course page ')
           setCourses(data);
         } catch (err) {
           console.error("Failed to fetch courses:", err);
