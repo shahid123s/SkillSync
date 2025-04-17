@@ -10,27 +10,41 @@ const MyCoursesPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-    useEffect(() => {
-      const fetchCourses = async () => {
-        try {
-          setLoading(true);
-          const data = await fetchPurchasedCourses();
-          console.log(data, 'courseData in my course page ')
-          setCourses(data);
-        } catch (err) {
-          console.error("Failed to fetch courses:", err);
-          setError(err.message);
-        } finally {
-          setLoading(false);
-        }
-      };
-  
-      fetchCourses();
-    }, []);
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchPurchasedCourses();
+        console.log(data, 'courseData in my course page')
+        setCourses(data);
+      } catch (err) {
+        console.error("Failed to fetch courses:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
 
   const calculateProgress = (course) => {
-    // Calculate percentage based on completed weeks
-    return Math.round(((course.currentWeek|| 1) / (course.totalWeeks || 6)) * 100);
+    // Handle cases where course hasn't started (currentWeek = 0)
+    const currentWeek = course.currentWeek || 0;
+    const totalWeeks = course.totalWeeks || 1;
+    
+    // Ensure we don't divide by zero and cap progress at 100%
+    const progress = Math.min(
+      100,
+      Math.round((currentWeek / totalWeeks) * 100)
+    );
+    
+    return {
+      percentage: progress,
+      currentWeek,
+      totalWeeks,
+      isCompleted: currentWeek >= totalWeeks
+    };
   };
 
   if (loading) {
@@ -89,37 +103,48 @@ const MyCoursesPage = () => {
                     alt={course.courseId.name}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute bottom-2 right-2 bg-teal-600 text-white px-2 py-1 rounded-md text-xs">
-                    Week {(course.currentWeek || 1)} / {course.totalWeeks || 6}
+                  <div className={`absolute bottom-2 right-2 px-2 py-1 rounded-md text-xs ${
+                    progress.isCompleted 
+                      ? 'bg-green-600 text-white' 
+                      : 'bg-teal-600 text-white'
+                  }`}>
+                    {progress.isCompleted 
+                      ? 'Completed' 
+                      : `Week ${progress.currentWeek} / ${progress.totalWeeks}`}
                   </div>
                 </div>
                 
                 <div className="p-4">
                   <h3 className="font-bold text-lg mb-1">{course.courseId.name}</h3>
 
-                  
                   <div className="mb-3">
                     <div className="flex justify-between text-xs text-gray-500 mb-1">
                       <span>Progress</span>
-                      <span>{progress}%</span>
+                      <span>{progress.percentage}%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div 
-                        className="bg-teal-600 h-2 rounded-full" 
-                        style={{ width: `${progress}%` }}
+                        className={`h-2 rounded-full ${
+                          progress.isCompleted ? 'bg-green-600' : 'bg-teal-600'
+                        }`} 
+                        style={{ width: `${progress.percentage}%` }}
                       ></div>
                     </div>
                   </div>
                   
                   <div className="flex justify-between items-center">
                     <span className="text-xs text-gray-500">
-                      Last accessed: {course.lastAccessed || 'Never'}
+                      {progress.isCompleted
+                        ? 'Course completed!'
+                        : course.lastAccessed 
+                          ? `Last accessed: ${course.lastAccessed}`
+                          : 'Not started yet'}
                     </span>
                     <Link 
                       to={`/courses/${course.courseId._id}`}
                       className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md text-sm transition-colors"
                     >
-                      Continue
+                      {progress.isCompleted ? 'View' : 'Continue'}
                     </Link>
                   </div>
                 </div>

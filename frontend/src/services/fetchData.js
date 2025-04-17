@@ -14,10 +14,8 @@ export const fetchCourseDetails = async (courseId) => {
     }
 }
 
-
 export const fetchReviewerData = async (reviewerId) => {
     try {
-        
         const response  = await reviewerAxiosInstance.get('/profile', {
             params : {reviewerId}
         })
@@ -26,10 +24,8 @@ export const fetchReviewerData = async (reviewerId) => {
             return ;
         }
         return response.data.data; 
-
     } catch (error) {
         toast.error(error.response.data.message|| 'Network Error');
-        // return error.response.data.message
     }
 }
 
@@ -52,6 +48,29 @@ export const fetchReviewerStatus = async () => {
         return response.data.data;
     } catch (error) {
         toast.error(error.response.data.message || 'Network Error');
-        // return error.response.data.message
+    }
+}
+
+export const fetchWeeklyTasks = async () => {
+    try {
+        const response = await userAxiosInstance.get('/reviews/upcoming');
+        if (!response.data.success) {
+            throw new Error(response.data.message);
+        }
+        return response.data.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Failed to load weekly tasks");
+    }
+}
+
+export const fetchCompletedReviews = async () => {
+    try {
+        const response = await userAxiosInstance.get('/reviews/completed');
+        if (!response.data.success) {
+            throw new Error(response.data.message);
+        }
+        return response.data.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Failed to load completed reviews");
     }
 }

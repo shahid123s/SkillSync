@@ -1,27 +1,58 @@
 // pages/user/WeeklyTaskPage.jsx
-import React, { useState } from "react";
-import { X, RefreshCw, Clock, FileText } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { X, RefreshCw, Clock, FileText, ExternalLink } from "lucide-react";
 import Header from "../../components/user/Header";
 import Footer from "../../components/user/Footer";
+import { fetchWeeklyTasks, fetchCompletedReviews } from "../../services/fetchData";
 
 const WeeklyTaskPage = () => {
   const [selectedTab, setSelectedTab] = useState('upcoming');
   const [selectedTaskId, setSelectedTaskId] = useState(null);
+  const [upcomingTask, setUpcomingTask] = useState(null);
+  const [completedTasks, setCompletedTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
-  // Mock data
-  const upcomingTask = {
-    weekNumber: 1,
-    reviewDate: "On Next Friday",
-    reviewer: "Not Scheduled",
-    task: "Complete advanced React patterns implementation"
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        if (selectedTab === 'upcoming') {
+          const taskData = await fetchWeeklyTasks();
+          setUpcomingTask(taskData);
+        } else {
+          const reviewsData = await fetchCompletedReviews();
+          setCompletedTasks(reviewsData);
+        }
+        
+      } catch (err) {
+        console.error("Failed to fetch data:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const completedTasks = [
-    { id: 1, date: "2024-03-15", weekNumber: 4, reviewer: "John Doe", type: "Code Review", status: "Passed" }
-  ];
+    fetchData();
+  }, [selectedTab]);
 
-  const taskDetails = {
-    1: { mark: 8, feedback: "Excellent implementation! Consider edge cases for more robustness." }
+  const refreshData = async () => {
+    try {
+      setLoading(true);
+      if (selectedTab === 'upcoming') {
+        const taskData = await fetchWeeklyTasks();
+        setUpcomingTask(taskData);
+      } else {
+        const reviewsData = await fetchCompletedReviews();
+        setCompletedTasks(reviewsData);
+      }
+    } catch (err) {
+      console.error("Failed to refresh data:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const TaskDetailsModal = ({ isOpen, onClose, details }) => (
@@ -98,80 +129,157 @@ const WeeklyTaskPage = () => {
       return styles[status] || 'bg-gray-100 text-gray-800';
     };
 
+    if (loading) {
+      return (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-teal-600"></div>
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className="text-center text-red-600 py-8">
+          <p>Error loading completed tasks: {error}</p>
+          <button 
+            onClick={refreshData}
+            className="mt-4 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md"
+          >
+            Retry
+          </button>
+        </div>
+      );
+    }
+
     return (
       <div className="rounded-md border overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="w-12 text-center p-3 text-sm font-medium">Sl No</th>
-              <th className="text-left p-3 text-sm font-medium">Date</th>
-              <th className="text-left p-3 text-sm font-medium">Week</th>
-              <th className="text-left p-3 text-sm font-medium">Reviewer</th>
-              <th className="text-left p-3 text-sm font-medium">Type</th>
-              <th className="text-left p-3 text-sm font-medium">Status</th>
-              <th className="text-center p-3 text-sm font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {completedTasks.map((task, index) => (
-              <tr key={task.id} className="border-t">
-                <td className="text-center p-3">{index + 1}</td>
-                <td className="p-3">{task.date}</td>
-                <td className="p-3">{task.weekNumber}</td>
-                <td className="p-3">{task.reviewer}</td>
-                <td className="p-3">{task.type}</td>
-                <td className="p-3">
-                  <span className={`${getStatusStyle(task.status)} px-2 py-1 rounded-full text-xs`}>
-                    {task.status}
-                  </span>
-                </td>
-                <td className="text-center p-3">
-                  <button 
-                    className="bg-teal-600 hover:bg-teal-700 text-white px-3 py-1 rounded-md text-xs"
-                    onClick={() => setSelectedTaskId(task.id)}
-                  >
-                    Details
-                  </button>
-                </td>
+        {completedTasks.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            No completed reviews yet
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="w-12 text-center p-3 text-sm font-medium">Sl No</th>
+                <th className="text-left p-3 text-sm font-medium">Date</th>
+                <th className="text-left p-3 text-sm font-medium">Week</th>
+                <th className="text-left p-3 text-sm font-medium">Reviewer</th>
+                <th className="text-left p-3 text-sm font-medium">Type</th>
+                <th className="text-left p-3 text-sm font-medium">Status</th>
+                <th className="text-center p-3 text-sm font-medium">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {completedTasks.map((task, index) => (
+                <tr key={task.id} className="border-t">
+                  <td className="text-center p-3">{index + 1}</td>
+                  <td className="p-3">{task.date}</td>
+                  <td className="p-3">{task.weekNumber}</td>
+                  <td className="p-3">{task.reviewer}</td>
+                  <td className="p-3">{task.type}</td>
+                  <td className="p-3">
+                    <span className={`${getStatusStyle(task.status)} px-2 py-1 rounded-full text-xs`}>
+                      {task.status}
+                    </span>
+                  </td>
+                  <td className="text-center p-3">
+                    <button 
+                      className="bg-teal-600 hover:bg-teal-700 text-white px-3 py-1 rounded-md text-xs"
+                      onClick={() => setSelectedTaskId(task.id)}
+                    >
+                      Details
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     );
   };
 
-  const UpcomingTask = () => (
-    <div className="bg-gray-100 border-0 rounded-lg p-6">
-      <div className="flex justify-between items-center mb-4">
-        <span className={`bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm 
+  const UpcomingTask = () => {
+    if (loading) {
+      return (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-teal-600"></div>
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className="text-center text-red-600 py-8">
+          <p>Error loading upcoming task: {error}</p>
+          <button 
+            onClick={refreshData}
+            className="mt-4 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md"
+          >
+            Retry
+          </button>
+        </div>
+      );
+    }
+
+    if (!upcomingTask) {
+      return (
+        <div className="bg-gray-100 border-0 rounded-lg p-6 text-center">
+          <p className="text-gray-700">No upcoming reviews scheduled</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="bg-gray-100 border-0 rounded-lg p-6">
+        <div className="flex justify-between items-center mb-4">
+          <span className={`bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm 
                           flex items-center gap-1`}>
-          <Clock className="h-4 w-4" />
-          Not Scheduled
-        </span>
-        <h2 className="text-xl font-semibold">Week {upcomingTask.weekNumber}</h2>
-      </div>
+            <Clock className="h-4 w-4" />
+            {upcomingTask.status || 'Not Scheduled'}
+          </span>
+          <h2 className="text-xl font-semibold">Week {upcomingTask.weekNumber}</h2>
+        </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div className="bg-white rounded-md p-4 shadow-sm">
-          <p className="text-sm text-gray-500 mb-1">Review Date</p>
-          <p className="font-medium">{upcomingTask.reviewDate}</p>
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="bg-white rounded-md p-4 shadow-sm">
+            <p className="text-sm text-gray-500 mb-1">Review Date</p>
+            <p className="font-medium">{upcomingTask.reviewDate || 'Not scheduled'}</p>
+          </div>
+          <div className="bg-white rounded-md p-4 shadow-sm">
+            <p className="text-sm text-gray-500 mb-1">Reviewer</p>
+            <p className="font-medium">{upcomingTask.reviewer || 'Not assigned'}</p>
+          </div>
         </div>
-        <div className="bg-white rounded-md p-4 shadow-sm">
-          <p className="text-sm text-gray-500 mb-1">Reviewer</p>
-          <p className="font-medium">{upcomingTask.reviewer}</p>
-        </div>
-      </div>
 
-      <div className="bg-white rounded-md p-4 shadow-sm">
-        <div className="flex items-center gap-2 mb-2">
-          <FileText className="h-4 w-4 text-gray-500" />
-          <p className="text-sm text-gray-500">Task Details</p>
+        {upcomingTask.googleMeetLink && (
+          <div className="bg-white rounded-md p-4 shadow-sm mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <ExternalLink className="h-4 w-4 text-gray-500" />
+              <p className="text-sm text-gray-500">Meeting Link</p>
+            </div>
+            <a 
+              href={upcomingTask.googleMeetLink} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-teal-600 hover:text-teal-800 font-medium break-all"
+            >
+              Join Google Meet
+            </a>
+          </div>
+        )}
+
+        <div className="bg-white rounded-md p-4 shadow-sm">
+          <div className="flex items-center gap-2 mb-2">
+            <FileText className="h-4 w-4 text-gray-500" />
+            <p className="text-sm text-gray-500">Task Details</p>
+          </div>
+          <p className="font-medium">{upcomingTask.task || 'No task details available'}</p>
         </div>
-        <p className="font-medium">{upcomingTask.task}</p>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -180,8 +288,12 @@ const WeeklyTaskPage = () => {
       <main className="flex-grow container mx-auto py-6 px-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Reviews</h1>
-          <button className="p-2 rounded-full bg-teal-600 text-white hover:bg-teal-700">
-            <RefreshCw className="h-5 w-5" />
+          <button 
+            className="p-2 rounded-full bg-teal-600 text-white hover:bg-teal-700"
+            onClick={refreshData}
+            disabled={loading}
+          >
+            <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
           </button>
         </div>
 
@@ -209,7 +321,7 @@ const WeeklyTaskPage = () => {
         <TaskDetailsModal 
           isOpen={!!selectedTaskId} 
           onClose={() => setSelectedTaskId(null)}
-          details={taskDetails[selectedTaskId]} 
+          details={completedTasks.find(t => t.id === selectedTaskId)?.details} 
         />
       </main>
 
