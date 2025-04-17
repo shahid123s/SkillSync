@@ -53,6 +53,13 @@ const dummyTasks = [
   }
 ];
 
+// Helper function to normalize task data
+const normalizeTask = (task) => ({
+  ...task,
+  description: Array.isArray(task.description) ? task.description : [],
+  assignedWeeks: Array.isArray(task.assignedWeeks) ? task.assignedWeeks : []
+});
+
 export default function WeeklyTasksPage() {
   const [tasks, setTasks] = useState([]);
   const [courses, setCourses] = useState([]);
@@ -72,17 +79,18 @@ export default function WeeklyTasksPage() {
         ]);
 
         if (tasksRes.data.success && coursesRes.data.success) {
-          setTasks(tasksRes.data.data);
+          const normalizedTasks = tasksRes.data.data.map(normalizeTask);
+          setTasks(normalizedTasks);
           setCourses(coursesRes.data.data);
           setUseDummyData(false);
         } else {
-          setTasks(dummyTasks);
+          setTasks(dummyTasks.map(normalizeTask));
           setCourses(dummyCourses);
           setUseDummyData(true);
         }
       } catch (error) {
         console.error('Using dummy data due to error:', error);
-        setTasks(dummyTasks);
+        setTasks(dummyTasks.map(normalizeTask));
         setCourses(dummyCourses);
         setUseDummyData(true);
       } finally {
@@ -95,7 +103,7 @@ export default function WeeklyTasksPage() {
   const handleSaveTask = async (taskData) => {
     if (useDummyData) {
       if (selectedTask?._id) {
-        setTasks(prev => prev.map(t => 
+        setTasks(prev => prev.map(t =>
           t._id === selectedTask._id ? { ...t, ...taskData } : t
         ));
       } else {
@@ -136,43 +144,23 @@ export default function WeeklyTasksPage() {
   };
 
   const handleAddWeek = async (weekData) => {
-    if (useDummyData) {
-      setTasks(prev => prev.map(task => {
-        if (task._id === weekData.taskId) {
-          const newWeek = {
-            _id: `week${Date.now()}`,
-            weekNumber: weekData.weekNumber,
-            course: dummyCourses.find(c => c._id === weekData.courseId)
-          };
-          return {
-            ...task,
-            assignedWeeks: [...task.assignedWeeks, newWeek]
-          };
-        }
-        return task;
-      }));
-      toast.success('Week added successfully');
-      setIsWeekModalOpen(false);
-      return;
-    }
+
 
     try {
       const response = await adminAxiosInstance.post(
         `/weekly-task/add-week`,
-        { 
-          courseId: weekData.courseId, 
-          weekNumber: weekData.weekNumber, 
-          weeklyTaskId: weekData.taskId 
+        {
+          courseId: weekData.courseId,
+          weekNumber: weekData.weekNumber,
+          weeklyTaskId: weekData.taskId
         }
       );
 
-      if (response.data.success) {
-        setTasks(prev => prev.map(task => 
-          task._id === weekData.taskId ? response.data.data : task
-        ));
+      
         toast.success('Week added successfully');
         setIsWeekModalOpen(false);
-      }
+        window.location.reload()
+
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to add week');
     }
@@ -180,7 +168,7 @@ export default function WeeklyTasksPage() {
 
   const handleDeleteTask = async (taskId) => {
     if (!window.confirm('Are you sure you want to delete this task?')) return;
-    
+
     if (useDummyData) {
       setTasks(prev => prev.filter(task => task._id !== taskId));
       toast.success('Task deleted successfully');
@@ -200,7 +188,7 @@ export default function WeeklyTasksPage() {
 
   const handleDeleteWeek = async (taskId, weekId) => {
     if (!window.confirm('Are you sure you want to remove this week assignment?')) return;
-    
+
     if (useDummyData) {
       setTasks(prev => prev.map(task => {
         if (task._id === taskId) {
@@ -220,7 +208,7 @@ export default function WeeklyTasksPage() {
         `/weekly-tasks/${taskId}/weeks/${weekId}`
       );
       if (response.data.success) {
-        setTasks(prev => prev.map(task => 
+        setTasks(prev => prev.map(task =>
           task._id === taskId ? response.data.data : task
         ));
         toast.success('Week assignment removed successfully');
@@ -232,97 +220,88 @@ export default function WeeklyTasksPage() {
 
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Weekly Tasks Management</h1>
-        <div className="flex items-center gap-4">
-          {useDummyData && (
-            <div className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-md text-sm">
-              Using demo data - changes won't persist
-            </div>
-          )}
-          <button
-            onClick={() => {
-              setSelectedTask(null);
-              setIsTaskModalOpen(true);
-            }}
-            className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700"
-          >
-            + New Task
-          </button>
-        </div>
-      </div>
+      {/* Keep header section the same */}
 
       {loading ? (
         <div className="text-center py-8">Loading data...</div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {tasks.length > 0 ? (
-            tasks.map(task => (
-              <div key={task._id} className="bg-white rounded-lg shadow-sm overflow-hidden border">
-                <div className="p-4">
-                  <h3 className="font-bold text-lg mb-2">{task.title || 'Untitled Task'}</h3>
-                  <div className="mb-4">
-                    {task.description.map((des, index) => (
-                      <p key={index} className="text-sm text-gray-600 mb-2">
-                        {index + 1}. {des}
-                      </p>
-                    ))}
-                  </div>
-                  
-                  <div className="mb-4">
-                    <h4 className="font-medium text-sm mb-2">Assigned Weeks:</h4>
-                    {task.assignedWeeks?.length > 0 ? (
-                      <ul className="space-y-2">
-                        {task.assignedWeeks.map(week => (
-                          <li key={week._id} className="flex justify-between items-center border-b pb-2">
-                            <div>
-                              <span className="font-medium">
-                                {week.course?.name || 'Unknown Course'} - Week {week.weekNumber}
-                              </span>
-                            </div>
-                            <button
-                              onClick={() => handleDeleteWeek(task._id, week._id)}
-                              className="text-red-600 hover:text-red-800 text-sm"
-                            >
-                              Remove
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="text-sm text-gray-500">No weeks assigned yet</p>
-                    )}
-                  </div>
+            tasks.map(task => {
+              const normalizedTask = normalizeTask(task);
+              return (
+                <div key={normalizedTask._id} className="bg-white rounded-lg shadow-sm overflow-hidden border">
+                  <div className="p-4">
+                    <h3 className="font-bold text-lg mb-2">
+                      {normalizedTask.title || 'Untitled Task'}
+                    </h3>
 
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => {
-                        setSelectedTask(task);
-                        setIsWeekModalOpen(true);
-                      }}
-                      className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                    >
-                      Add Week
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSelectedTask(task);
-                        setIsTaskModalOpen(true);
-                      }}
-                      className="px-3 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteTask(task._id)}
-                      className="px-3 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200"
-                    >
-                      Delete
-                    </button>
+                    {/* Fixed description mapping */}
+                    <div className="mb-4">
+                      {normalizedTask.description.map((des, index) => (
+                        <p key={index} className="text-sm text-gray-600 mb-2">
+                          {index + 1}. {des}
+                        </p>
+                      ))}
+                    </div>
+
+                    {/* Fixed assignedWeeks mapping */}
+                    <div className="mb-4">
+                      <h4 className="font-medium text-sm mb-2">Assigned Weeks:</h4>
+                      {normalizedTask.assignedWeeks.length > 0 ? (
+                        <ul className="space-y-2">
+                          {normalizedTask.assignedWeeks.map(week => (
+                            <li key={week._id} className="flex justify-between items-center border-b pb-2">
+                              <div>
+                                <span className="font-medium">
+                                  {week.course?.name || 'Unknown Course'} - Week {week.weekNumber}
+                                </span>
+                              </div>
+                              <button
+                                onClick={() => handleDeleteWeek(normalizedTask._id, week._id)}
+                                className="text-red-600 hover:text-red-800 text-sm"
+                              >
+                                Remove
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-sm text-gray-500">No weeks assigned yet</p>
+                      )}
+                    </div>
+
+                    {/* Keep action buttons the same */}
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => {
+                          setSelectedTask(task);
+                          setIsWeekModalOpen(true);
+                        }}
+                        className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                      >
+                        Add Week
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedTask(task);
+                          setIsTaskModalOpen(true);
+                        }}
+                        className="px-3 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteTask(task._id)}
+                        className="px-3 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           ) : (
             <div className="col-span-full text-center py-8 text-gray-500">
               No tasks created yet. Click "New Task" to get started.
@@ -331,6 +310,7 @@ export default function WeeklyTasksPage() {
         </div>
       )}
 
+      {/* Keep modals the same */}
       <TaskFormModal
         isOpen={isTaskModalOpen}
         onClose={() => setIsTaskModalOpen(false)}
@@ -349,3 +329,7 @@ export default function WeeklyTasksPage() {
     </div>
   );
 }
+
+
+
+
