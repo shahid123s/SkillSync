@@ -8,6 +8,7 @@ import { adminAxiosInstance } from '../../utils/adminAxiosInstance';
 export default function PendingReviewersPage() {
   const [reviewers, setReviewers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [processingId, setProcessingId] = useState(null); // Track processing state
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,15 +31,18 @@ export default function PendingReviewersPage() {
 
   const handleReviewerAction = async (id, action) => {
     try {
-      const response = await adminAxiosInstance.put(`/admin/reviewers/${id}/status`, { action });
+      setProcessingId(id); // Set processing state
+      const response = await adminAxiosInstance.put(`/reviewer/toggle-status`, { action, reviewerId: id });
       if (response.data.success) {
         toast.success(`Reviewer ${action}d successfully`);
-        setReviewers(prev => prev.filter(r => r.id !== id));
+        setReviewers(prev => prev.filter(r => r._id !== id));
       } else {
         toast.error(response.data.message || `Failed to ${action} reviewer`);
       }
     } catch (error) {
       toast.error('Network error');
+    } finally {
+      setProcessingId(null); // Reset processing state
     }
   };
 
@@ -56,6 +60,7 @@ export default function PendingReviewersPage() {
       <PendingReviewersTable 
         reviewers={reviewers}
         onAction={handleReviewerAction}
+        processingId={processingId}
       />
     </div>
   );

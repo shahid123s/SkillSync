@@ -119,15 +119,15 @@ export default function WeeklyTasksPage() {
       }
       toast.success(`Task ${taskData._id ? 'updated' : 'created'} successfully`);
       setIsTaskModalOpen(false);
-      return;
+      // return;
     }
 
     try {
       let response;
       if (taskData._id) {
-        response = await adminAxiosInstance.put(`/weekly-tasks/${taskData._id}`, taskData);
+        response = await adminAxiosInstance.put(`/weekly-task/${taskData._id}`, taskData);
       } else {
-        response = await adminAxiosInstance.post('/weekly-tasks', taskData);
+        response = await adminAxiosInstance.post('/weekly-task', taskData);
       }
 
       if (response.data.success) {
@@ -146,6 +146,7 @@ export default function WeeklyTasksPage() {
   const handleAddWeek = async (weekData) => {
     if (useDummyData) {
       // Handle dummy data case
+      
       setTasks(prev => prev.map(task => {
         if (task._id === weekData.taskId) {
           const newWeek = {

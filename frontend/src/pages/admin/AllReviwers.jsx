@@ -6,6 +6,7 @@ import { adminAxiosInstance } from '../../utils/adminAxiosInstance';
 export default function AllReviewers() {
   const [reviewers, setReviewers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [processingId, setProcessingId] = useState(null); // Track processing state per reviewer
 
   useEffect(() => {
     const fetchReviewers = async () => {
@@ -28,12 +29,14 @@ export default function AllReviewers() {
 
   const handleBlock = async (reviewerId, isBlocked) => {
     try {
-      const response = await adminAxiosInstance.put(`/admin/reviewers/${reviewerId}/block`, {
-        block: !isBlocked
+      setProcessingId(reviewerId); // Set processing state for this reviewer
+      const response = await adminAxiosInstance.put(`/reviewer/toggle-block`, {
+        block: !isBlocked,
+        reviewerId
       });
       if (response.data.success) {
-        setReviewers(prev => prev.map(r => 
-          r.id === reviewerId ? { ...r, isBlocked: !isBlocked } : r
+        setReviewers(prev => prev.map(r =>
+          r._id === reviewerId ? { ...r, isBlocked: !isBlocked } : r
         ));
         toast.success(`Reviewer ${!isBlocked ? 'blocked' : 'unblocked'} successfully`);
       } else {
@@ -41,6 +44,8 @@ export default function AllReviewers() {
       }
     } catch (error) {
       toast.error('Network error');
+    } finally {
+      setProcessingId(null); // Reset processing state
     }
   };
 
@@ -65,30 +70,53 @@ export default function AllReviewers() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {reviewers.map(reviewer => (
-              <tr key={reviewer.id} className="hover:bg-gray-50">
+            {reviewers.length !== 0 ? reviewers.map(reviewer => (
+              <tr key={reviewer._id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">{reviewer.fullname}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{reviewer.email}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{reviewer.phone}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 py-1 text-xs rounded-full ${
-                    reviewer.isBlocked ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
-                  }`}>
+                  <span className={`px-2 py-1 text-xs rounded-full ${reviewer.isBlocked ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
+                    }`}>
                     {reviewer.isBlocked ? 'Blocked' : 'Active'}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <button
-                    onClick={() => handleBlock(reviewer.id, reviewer.isBlocked)}
-                    className={`px-3 py-1 rounded-md text-sm ${
-                      reviewer.isBlocked ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}
+                    onClick={() => handleBlock(reviewer._id, reviewer.isBlocked)}
+                    disabled={processingId === reviewer._id}
+                    className={`px-3 py-1 rounded-md text-sm disabled:opacity-50 disabled:cursor-wait ${reviewer.isBlocked ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      }`}
                   >
-                    {reviewer.isBlocked ? 'Unblock' : 'Block'}
+                    {processingId === reviewer._id ? (
+                      <span className="flex items-center gap-1">
+                        <svg
+                          className="animate-spin h-4 w-4"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                        Processing...
+                      </span>
+                    ) : reviewer.isBlocked ? 'Unblock' : 'Block'}
                   </button>
                 </td>
               </tr>
-            ))}
+            )) : <tr><td colSpan={5} className="text-center p-5">No pending reviewers</td></tr>}
           </tbody>
         </table>
       </div>
