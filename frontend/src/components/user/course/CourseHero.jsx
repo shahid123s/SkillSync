@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
-import { useMemo } from 'react';
-import {IndianRupee} from 'lucide-react'
+import { useMemo, useState } from 'react';
+import { IndianRupee } from 'lucide-react';
+import RazorPay from '../../RazorPay'; // Adjust the import path as needed
+
 function CourseHero({
   name = "Course Title",
   description = "Course description goes here",
@@ -9,16 +11,22 @@ function CourseHero({
   offerPrice = 0,
   discountPercentage = 0,
   hoursLeft = 0,
-  features = []
+  features = [],
+  courseId // Add courseId prop
 }) {
-
-
+  const [paymentStatus, setPaymentStatus] = useState(null);
   const defaultImage = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-0sWdtPw8W9NK61Kmn7EsqhBdbA7wXK.png";
 
   const calculatedDiscount = useMemo(() => {
     return discountPercentage || 
       Math.round(((price - offerPrice) / price) * 100);
   }, [discountPercentage, price, offerPrice]);
+
+  const handlePlaceOrder = (status) => {
+    setPaymentStatus(status);
+    // You can add additional logic here like sending the payment status to your backend
+    console.log(`Payment status: ${status}`);
+  };
 
   return (
     <div className="relative w-full" data-testid="course-hero">
@@ -49,7 +57,7 @@ function CourseHero({
               {/* Price Display */}
               <div className="flex items-baseline justify-between mb-4">
                 <div className="text-2xl font-bold flex">
-                Rs.{offerPrice.toFixed(2)} 
+                  Rs.{offerPrice.toFixed(2)} 
                 </div>
                 {price > offerPrice && (
                   <>
@@ -70,13 +78,17 @@ function CourseHero({
                 </div>
               )}
 
-              {/* CTA Button */}
-              <button 
-                className="w-full bg-teal-500 hover:bg-teal-600 text-white py-2 px-4 rounded mb-6 transition-colors duration-200"
-                aria-label="Buy this course"
-              >
-                Buy Now
-              </button>
+              {/* Payment Section */}
+              {paymentStatus === 'Success' ? (
+                <div className="text-center py-4 text-green-600 font-medium">
+                  Payment successful! Thank you for your purchase.
+                </div>
+              ) : (
+                <RazorPay 
+                  amount={offerPrice} 
+                  handlePlaceOrder={handlePlaceOrder}
+                />
+              )}
 
               {/* Features List */}
               <div className="space-y-4">
@@ -119,6 +131,7 @@ CourseHero.propTypes = {
   discountPercentage: PropTypes.number,
   hoursLeft: PropTypes.number,
   features: PropTypes.arrayOf(PropTypes.string),
+  courseId: PropTypes.string, // Add courseId prop type
 };
 
 CourseHero.defaultProps = {

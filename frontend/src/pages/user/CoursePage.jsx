@@ -17,9 +17,7 @@ export default function CoursePage() {
   useEffect(() => {
     const getCourseDetails = async () => {
       try {
-        console.log(id, 'useEffect')
         const data = await fetchCourseDetails(id);
-        console.log(data)
         setCourseDetails(data.data);
       } catch (err) {
         setError(err.message);
@@ -29,7 +27,6 @@ export default function CoursePage() {
     };
 
     getCourseDetails();
-    console.log(courseDetails)
   }, [id]);
 
   if (loading) return <div>Loading...</div>;
@@ -43,7 +40,7 @@ export default function CoursePage() {
       </div>
 
       <main className="flex-1">
-        <CourseHero {...courseDetails} />
+        <CourseHero {...courseDetails} courseId={id} />
 
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
