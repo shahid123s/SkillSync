@@ -221,6 +221,25 @@ export default function WeeklyTasksPage() {
   return (
     <div className="p-6">
       {/* Keep header section the same */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Weekly Tasks Management</h1>
+        <div className="flex items-center gap-4">
+          {useDummyData && (
+            <div className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-md text-sm">
+              Using demo data - changes won't persist
+            </div>
+          )}
+          <button
+            onClick={() => {
+              setSelectedTask(null);
+              setIsTaskModalOpen(true);
+            }}
+            className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700"
+          >
+            + New Task
+          </button>
+        </div>
+      </div>
 
       {loading ? (
         <div className="text-center py-8">Loading data...</div>
