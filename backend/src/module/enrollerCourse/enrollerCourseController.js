@@ -13,14 +13,14 @@ export const enrollerCourseController = {
                     .status(404)
                     .json({
                         success: false,
-                        message: 'Course not found',
+                        message: 'Payment Failed',
                     })
             }
             return res
                 .status(200)
                 .json({
                     success: true,
-                    message: 'Course found',
+                    message: 'Payment Success',
                     data: result
                 })
         } catch (error) {

@@ -5,6 +5,6 @@ import { enrollerCourseController } from './enrollerCourseController.js';
 const router = express.Router();
 
 
-router.post('/payment-success', enrollerCourseController.paymentSuccess);
+router.post('/purchase', enrollerCourseController.paymentSuccess);
 
 export default router;
