@@ -28,6 +28,9 @@ export default function AdminSidebar({ isOpen, setIsOpen }) {
           <Link to="/admin/courses" className={`block p-2 hover:bg-gray-700 rounded transition-colors ${isActive('/admin/courses')}`}>
             Manage Courses
           </Link>
+          <Link to="/admin/weekly-tasks" className={`block p-2 hover:bg-gray-700 rounded transition-colors ${isActive('/admin/weekly-tasks')}`}>
+            Weekly Tasks
+          </Link>
           <Link to="/admin/reviewers" className={`block p-2 hover:bg-gray-700 rounded transition-colors ${isActive('/admin/reviewers')}`}>
             Pending Reviewers
           </Link>

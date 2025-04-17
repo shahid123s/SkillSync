@@ -8,6 +8,7 @@ import PendingReviewers from "../pages/admin/PendingReviewersPage";
 import AdminLogin from "../pages/admin/AdminLogin";
 import AllReviewers from "../pages/admin/AllReviwers";
 import NotFound from "../pages/user/NotFound";
+import WeeklyTasksPage from "../pages/user/WeeklyTask";
 
 export function AdminRoutes() {
   return (
@@ -19,6 +20,7 @@ export function AdminRoutes() {
         <Route path="courses" element={<ManageCourses />} />
         <Route path="reviewers" element={<PendingReviewers />} />
         <Route path="all-reviewers" element={<AllReviewers />} />
+        <Route path="weekly-tasks" element={<WeeklyTasksPage />} />
       </Route>
       {/* Admin-specific 404 */}
       <Route path="*" element={<NotFound role="admin" />} />
