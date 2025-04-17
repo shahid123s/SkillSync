@@ -5,15 +5,24 @@ const { Schema, model } = mongoose;
 
 const enrollerCourseSchema = new Schema({
     
-    students: {
+    studentId: {
         type: Schema.Types.ObjectId, 
         ref: 'User',
         default: [],
     },
-    course: {
+    courseId: {
         type: Schema.Types.ObjectId, 
         ref: 'Course',
         default: [],
+    },
+    paymentStatus: {
+        type: String,
+        enum: ['pending', 'completed'],
+        default: 'pending',
+    },
+    price: {
+        type: Number,
+        required: true,
     }
 
 }, {

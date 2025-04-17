@@ -29,7 +29,7 @@ userAxiosInstance.interceptors.response.use(
 
           toast.info("Please login again");
           localStorage.removeItem("userSession");
-          // window.location.href = "/user/login";
+          window.location.href = "/user/auth";
           return Promise.reject(refreshError);
         }
       }
