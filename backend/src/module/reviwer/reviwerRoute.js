@@ -4,6 +4,6 @@ const router  = express.Router();
 
 
 router.get('/profile', reviewerController.getReviewer)
-
+router.get('/status', reviewerController.getReviewerStatus)
 
 export default router

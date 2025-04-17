@@ -15,6 +15,10 @@ const reviewerSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
+  isBlocked: {
+    type: Boolean,
+    default: false,
+  },
   phone: {
     type: String,
     required: true

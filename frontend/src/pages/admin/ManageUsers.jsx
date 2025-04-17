@@ -11,7 +11,7 @@ export default function ManageUsers() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await adminAxiosInstance.get('/admin/users');
+        const response = await adminAxiosInstance.get('/get-all-user');
         if (response.data.success) {
           setUsers(response.data.data);
           toast.success('Users loaded successfully');
@@ -29,7 +29,7 @@ export default function ManageUsers() {
 
   const handleBlockUser = async (userId, currentStatus) => {
     try {
-      const response = await adminAxiosInstance.put(`/admin/users/${userId}/block`, {
+      const response = await adminAxiosInstance.put(`/admin/block-user/${userId}/block`, {
         block: !currentStatus
       });
       if (response.data.success) {

@@ -1,6 +1,7 @@
 // pages/reviewer/ReviewerHome.jsx
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReviewerSidebar from '../../components/reviewer/ReviewerSidebar';
+import { fetchReviewerStatus } from '../../services/fetchData';
 
 const MeetingModal = ({ isOpen, onClose, meetingLink, setMeetingLink, onSubmit }) => {
   if (!isOpen) return null;
@@ -57,6 +58,7 @@ export default function ReviewerHome() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [meetingLink, setMeetingLink] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isActive , setIsActive] = useState(true);
   const [reviews, setReviews] = useState([
     { id: 1, student: 'John Doe', stack: 'MERN', date: '2024-03-20', status: 'pending' },
     { id: 2, student: 'Jane Smith', stack: 'Java', date: '2024-03-21', status: 'pending' },
@@ -66,6 +68,15 @@ export default function ReviewerHome() {
   const [todaysReviews, setTodaysReviews] = useState([
     { id: 4, student: 'Alice Johnson', stack: 'React', date: new Date().toISOString().split('T')[0], time: '15:00', status: 'scheduled' }
   ]);
+
+  useEffect(() => {
+    const checkReviewerStatus = async () => {
+      const result =  await fetchReviewerStatus();
+      console.log(result)
+      if(!result.isBlocked) setIsActive(false);
+    }
+  checkReviewerStatus()
+  },[])
 
   const handleReviewAction = (id, action) => {
     setReviews(reviews.map(review => 
@@ -94,7 +105,8 @@ export default function ReviewerHome() {
             ☰
           </button>
 
-          <h1 className="text-2xl font-bold mb-6">Assigned Reviews</h1>
+          {isActive ? <>
+            <h1 className="text-2xl font-bold mb-6">Assigned Reviews</h1>
           
           {/* Pending Reviews Table */}
           <div className="mb-8">
@@ -190,6 +202,7 @@ export default function ReviewerHome() {
             setMeetingLink={setMeetingLink}
             onSubmit={() => handleSubmitLink(4)}
           />
+          </> : "Your Profile is Reviwing By the Admin "}
         </div>
       </div>
     </div>

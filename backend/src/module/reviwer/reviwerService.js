@@ -12,5 +12,16 @@ export const reviewerService = {
             500,
         );
     }
+   },
+   getReviewerStatus: async (id) => {
+    try {
+        const result = await reviewerRepository.getReviewerStatus(id);
+        return result;
+    } catch (error) {
+        throw new CustomError(
+            error.message,
+            500,
+        );
+    }
    }
 }

@@ -6,7 +6,8 @@ router.get('/users', adminController.getAllUsers);
 router.get('/courses', adminController.getAllCourses);
 router.post('/course/add-course', adminController.addCourse)
 router.put('/course/update-course/:courseId', adminController.updateCourse);
-// router.get('/get-all-user')
+router.get('/get-all-user', adminController.getALlUsers)
+router.get('/get-all-reviewers',adminController.getALlReviewers)
 
 
 export default router;

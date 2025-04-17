@@ -249,6 +249,11 @@ export const reviewerLogout = async (req, res, next) => {
             secure: process.env.NODE_ENV === 'production', // Only true in production environments
             sameSite: 'Lax', // Adjust the sameSite attribute if needed
         });
+        res.clearCookie('reviewerAccessToken', {
+            httpOnly: true, // Make sure to match the options used when setting the cookie
+            secure: process.env.NODE_ENV === 'production', // Only true in production environments
+            sameSite: 'Lax', // Adjust the sameSite attribute if needed
+        });
 
         return res
             .status(200)

@@ -41,3 +41,17 @@ export const fetchPurchasedCourses = async (userId) => {
         throw new Error(error.response?.data?.message || "Failed to load courses");
     }
 }
+
+export const fetchReviewerStatus = async () => {
+    try {
+        const response = await reviewerAxiosInstance.get('/status');
+        if(!response.data.success){
+            toast.error(response.data.message);
+            return ;
+        }
+        return response.data.data;
+    } catch (error) {
+        toast.error(error.response.data.message || 'Network Error');
+        // return error.response.data.message
+    }
+}

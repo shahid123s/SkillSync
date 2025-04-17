@@ -61,7 +61,7 @@ export const adminController = {
 
     updateCourse: async (req, res, next) => {
         try {
-            const { courseId } = req.params ||  req.query;
+            const { courseId } = req.params || req.query;
             const courseData = req.body;
 
             console.log(courseId)
@@ -84,6 +84,23 @@ export const adminController = {
                 })
         } catch (error) {
             next()
+        }
+    },
+
+    getALlUsers: async (req, res, next) => {
+        try {
+            const result = await adminService.getAllUsers();
+            res.status(200).json({ message: "All users retrieved successfully", data: result, success: true });
+        } catch (error) {
+            next(error)
+        }
+    },
+    getALlReviewers: async (req, res, next) => {
+        try {
+            const result = await adminService.getAllReviewers();
+            res.status(200).json({ message: "All reviewers retrieved successfully", data: result, success: true });
+        } catch (error) {
+            next(error)
         }
     }
 }

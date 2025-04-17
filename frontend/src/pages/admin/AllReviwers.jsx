@@ -10,7 +10,7 @@ export default function AllReviewers() {
   useEffect(() => {
     const fetchReviewers = async () => {
       try {
-        const response = await adminAxiosInstance.get('/admin/reviewers');
+        const response = await adminAxiosInstance.get('/get-all-reviewers');
         if (response.data.success) {
           setReviewers(response.data.data);
           toast.success('Reviewers loaded successfully');
@@ -67,7 +67,7 @@ export default function AllReviewers() {
           <tbody className="bg-white divide-y divide-gray-200">
             {reviewers.map(reviewer => (
               <tr key={reviewer.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">{reviewer.name}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{reviewer.fullname}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{reviewer.email}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{reviewer.phone}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
