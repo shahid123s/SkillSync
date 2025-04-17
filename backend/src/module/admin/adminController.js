@@ -90,7 +90,9 @@ export const adminController = {
     getALlUsers: async (req, res, next) => {
         try {
             const result = await adminService.getAllUsers();
-            res.status(200).json({ message: "All users retrieved successfully", data: result, success: true });
+            res.status(200).json({ 
+                message: "All users retrieved successfully", 
+                data: result, success: true });
         } catch (error) {
             next(error)
         }
@@ -98,7 +100,9 @@ export const adminController = {
     getALlReviewers: async (req, res, next) => {
         try {
             const result = await adminService.getAllReviewers();
-            res.status(200).json({ message: "All reviewers retrieved successfully", data: result, success: true });
+            res.status(200).json({
+                 message: "All reviewers retrieved successfully", 
+                 data: result, success: true });
         } catch (error) {
             next(error)
         }
@@ -107,7 +111,9 @@ export const adminController = {
         try {
             const result = await adminService.getAllPendingReviewers();
             console.log(result, 'result')
-            res.status(200).json({ message: "All pending reviewers retrieved successfully", data: result, success: true });
+            res.status(200).json({ 
+                message: "All pending reviewers retrieved successfully", 
+                data: result, success: true });
         } catch (error) {
             next(error)
         }   
@@ -186,5 +192,29 @@ export const adminController = {
         } catch (error) {
             next(error);
         }
-    }
+    },
+    updateWeeklyTask : async (req, res, next) => {
+        try {
+            const {updates, taskId} = req.body;
+            const updatedTask = await adminService.updateWeeklyTask(taskId, updates);
+            if (!updatedTask) {
+                return res.status(404).json({ message: 'Task not found' });
+            }
+            res.json(updatedTask);
+        } catch (error) {
+            next(error);
+        }   
+    },
+    removeWeeklyTask: async (req, res, next) => {
+        try {
+            const { taskId } = req.body;
+            const result = await adminService.removeWeeklyTask(taskId);
+            if (!result) {
+                return res.status(404).json({ message: 'Task not found' });
+            }
+            res.status(200).json({ message: 'Task deleted successfully' });
+        } catch (error) {
+            next(error);
+        }
+    }   
 }

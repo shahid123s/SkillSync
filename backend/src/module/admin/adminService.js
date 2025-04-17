@@ -114,5 +114,23 @@ export const adminService = {
             throw new CustomError("Error fetching weekly tasks", 500);
         }
     
+    },
+    updateWeeklyTask: async (taskId, taskData) => {
+        try {
+            const result = await WeeklyTaskRepository.editTask(taskId, taskData);
+            return result
+        } catch (error) {
+            throw new CustomError("Error updating weekly task", 500);
+        }
+    }   ,
+
+    removeWeeklyTask: async (taskId) => {
+        try {
+            const result = await WeeklyTaskRepository.removeTask(taskId);
+            return result
+        } catch (error) {
+            throw new CustomError("Error removing weekly task", 500);
+        }
     }
+
 }

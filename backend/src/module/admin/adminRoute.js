@@ -14,5 +14,7 @@ router.put('/reviewer/toggle-block', adminController.toggleReviewerBlock);
 
 router.post('/weekly-task', adminController.addWeeklyTask);
 router.get('/weekly-tasks', adminController.getAllWeeklyTasks);
+router.put('/weekly-task/edit', adminController.updateWeeklyTask);
+router.delete('/weekly-task/delete', adminController.removeWeeklyTask);
 
 export default router;
