@@ -1,5 +1,6 @@
 import { toast } from "sonner";
 import { userAxiosInstance } from "../utils/userAxiosInstance";
+import { reviewerAxiosInstance } from "../utils/reviewerAxiosInstance";
 
 export const fetchCourseDetails = async (courseId) => {
     try {
@@ -10,5 +11,17 @@ export const fetchCourseDetails = async (courseId) => {
     } catch (error) {
         toast.error(error.response.data.message || 'Network Failed')
         return error.response.data.message;
+    }
+}
+
+
+export const fetchReviewerData = async (reviewerId) => {
+    try {
+        const response  = await reviewerAxiosInstance.get('/profile', {
+            params : {reviewerId}
+        })
+    } catch (error) {
+        toast.error(error.response.data.message|| 'Network Error');
+        return error.response.data.message
     }
 }

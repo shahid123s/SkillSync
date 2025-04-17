@@ -1,5 +1,5 @@
 // pages/reviewer/ReviewerProfile.jsx
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReviewerSidebar from '../../components/reviewer/ReviewerSidebar';
 
 export default function ReviewerProfile() {
@@ -11,6 +11,10 @@ export default function ReviewerProfile() {
     certificates: ['AWS Certified', 'Google Cloud Certified'],
     experience: '5 years',
   });
+
+    useEffect(() => {
+      
+    })
 
   return (
     <div className="min-h-screen flex">
