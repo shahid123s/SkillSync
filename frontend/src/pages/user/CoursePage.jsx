@@ -17,8 +17,10 @@ export default function CoursePage() {
   useEffect(() => {
     const getCourseDetails = async () => {
       try {
+        console.log(id, 'useEffect')
         const data = await fetchCourseDetails(id);
-        setCourseDetails(data);
+        console.log(data)
+        setCourseDetails(data.data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -27,6 +29,7 @@ export default function CoursePage() {
     };
 
     getCourseDetails();
+    console.log(courseDetails)
   }, [id]);
 
   if (loading) return <div>Loading...</div>;

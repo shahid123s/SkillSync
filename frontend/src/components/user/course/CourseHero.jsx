@@ -2,21 +2,23 @@ import PropTypes from 'prop-types';
 import { useMemo } from 'react';
 
 function CourseHero({
-  title = "Course Title",
+  name = "Course Title",
   description = "Course description goes here",
   imageUrl,
-  originalPrice = 0,
-  discountedPrice = 0,
+  price = 0,
+  offerPrice = 0,
   discountPercentage = 0,
   hoursLeft = 0,
   features = []
 }) {
+
+
   const defaultImage = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-0sWdtPw8W9NK61Kmn7EsqhBdbA7wXK.png";
 
   const calculatedDiscount = useMemo(() => {
     return discountPercentage || 
-      Math.round(((originalPrice - discountedPrice) / originalPrice) * 100);
-  }, [discountPercentage, originalPrice, discountedPrice]);
+      Math.round(((price - offerPrice) / price) * 100);
+  }, [discountPercentage, price, offerPrice]);
 
   return (
     <div className="relative w-full" data-testid="course-hero">
@@ -24,7 +26,7 @@ function CourseHero({
       <div className="w-full h-[300px] md:h-[400px] relative">
         <img
           src={imageUrl || defaultImage}
-          alt={title}
+          alt={name}
           className="w-full h-full object-cover brightness-90"
           onError={(e) => {
             e.target.src = defaultImage;
@@ -37,7 +39,7 @@ function CourseHero({
         <div className="relative -mt-20 md:-mt-32 flex flex-col lg:flex-row gap-8">
           {/* Left Column - Course Info */}
           <div className="lg:w-2/3">
-            <h1 className="text-3xl font-bold mb-4">{title}</h1>
+            <h1 className="text-3xl font-bold mb-4">{name}</h1>
             <p className="text-gray-600 mb-6">{description}</p>
           </div>
           
@@ -47,12 +49,12 @@ function CourseHero({
               {/* Price Display */}
               <div className="flex items-baseline justify-between mb-4">
                 <div className="text-2xl font-bold">
-                  ${discountedPrice.toFixed(2)}
+                  ${offerPrice.toFixed(2)}
                 </div>
-                {originalPrice > discountedPrice && (
+                {price > offerPrice && (
                   <>
                     <div className="text-gray-500 line-through text-sm">
-                      ${originalPrice.toFixed(2)}
+                      ${price.toFixed(2)}
                     </div>
                     <div className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">
                       {calculatedDiscount}% Off
@@ -112,8 +114,8 @@ CourseHero.propTypes = {
   title: PropTypes.string,
   description: PropTypes.string,
   imageUrl: PropTypes.string,
-  originalPrice: PropTypes.number,
-  discountedPrice: PropTypes.number,
+  price: PropTypes.number,
+  offerPrice: PropTypes.number,
   discountPercentage: PropTypes.number,
   hoursLeft: PropTypes.number,
   features: PropTypes.arrayOf(PropTypes.string),
