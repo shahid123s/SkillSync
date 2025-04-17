@@ -41,7 +41,7 @@ export const adminService = {
 
     getAllReviewers: async () => {
         try {
-            const reviewers = await Reviewer.find({isBlocked: false}).lean();
+            const reviewers = await Reviewer.find({ status: 'approved' }).lean();
             if (!reviewers) {
                 throw new CustomError("No reviewers found", 404);
             }
@@ -52,10 +52,48 @@ export const adminService = {
     },
     getAllPendingReviewers: async () => {
         try {
-            const reviewers = await Reviewer.find({isBlocked: true}).lean();
+            const reviewers = await Reviewer.find({
+                status: { $in: ['pending', 'rejected'] }
+            })
+                .sort({ status: -1 })
+                .lean();
             return reviewers;
         } catch (error) {
-            throw new  CustomError("Error retrieving pending reviewers", 500);
+            throw new CustomError("Error retrieving pending reviewers", 500);
         }
     },
+    toggleReviewerStatus: async (reviewerId, action) => {
+        try {
+            console.log(reviewerId, 'adminSerivce toggleReviewer Service ')
+            const reviewer = await Reviewer.findById(reviewerId);
+            if (!reviewer) {
+                throw new CustomError("Reviewer not found", 404);
+            }
+            if (action === "reject") {
+                reviewer.status = "rejected";;
+            } else if (action === "approve") {
+                reviewer.status = "approved";
+            } else {
+                throw new CustomError("Invalid action", 400);
+            }
+            await reviewer.save();
+            return reviewer;
+        } catch (error) {
+            throw new CustomError("Error toggling reviewer block status", 500);
+        }
+    },
+    toggleReviewerBlock: async (reviewerId, block) => {
+        try {
+            const reviewer = await Reviewer.findById(reviewerId);
+            if (!reviewer) {
+                throw new CustomError("Reviewer not found", 404);
+            }
+            reviewer.isBlocked = block;
+            await reviewer.save();
+            return reviewer;
+        } catch (error) {
+            throw new CustomError("Error toggling reviewer block status", 500);
+        }
+    },
+
 }

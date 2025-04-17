@@ -111,5 +111,53 @@ export const adminController = {
         } catch (error) {
             next(error)
         }   
+    },
+
+    toggleReviewerStatus: async(req, res, next) => {
+        try {
+            const { reviewerId, action } = req.body;
+            console.log(reviewerId, action, 'req.body in admin Controller toogleReviweBlock') 
+            const result = await adminService.toggleReviewerStatus(reviewerId, action);
+            if (!result) {
+                return res
+                    .status(404)
+                    .json({
+                        success: false,
+                        message: 'Reviewer not found',
+                    })
+            }
+            return res
+                .status(200)
+                .json({
+                    success: true,
+                    message: 'Reviewer updated successfully',
+                    data: result
+                })
+        } catch (error) {
+            next(error)
+        }
+    },
+    toggleReviewerBlock: async(req, res, next) => {
+        try {
+            const { reviewerId, block } = req.body;
+            const result = await adminService.toggleReviewerBlock(reviewerId, block);
+            if (!result) {
+                return res
+                    .status(404)
+                    .json({
+                        success: false,
+                        message: 'Reviewer not found',
+                    })
+            }
+            return res
+                .status(200)
+                .json({
+                    success: true,
+                    message: 'Reviewer updated successfully',
+                    data: result
+                })
+        } catch (error) {
+            next(error)
+        }
     }
 }

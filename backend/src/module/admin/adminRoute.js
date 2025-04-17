@@ -8,7 +8,8 @@ router.post('/course/add-course', adminController.addCourse)
 router.put('/course/update-course/:courseId', adminController.updateCourse);
 router.get('/get-all-user', adminController.getALlUsers)
 router.get('/get-all-reviewers',adminController.getALlReviewers)
-router.get('/get-all-pending-reviewers', adminController.getAllPendingReviewer)
-
+router.get('/get-all-pending-reviewers', adminController.getAllPendingReviewer);
+router.put('/reviewer/toggle-status', adminController.toggleReviewerStatus);
+router.put('/reviewer/toggle-block', adminController.toggleReviewerBlock);
 
 export default router;
