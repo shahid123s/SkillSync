@@ -99,7 +99,7 @@ const RazorPay = ({ amount, handlePlaceOrder }) => {
       onClick={handlePayment}
       aria-label="Pay with RazorPay"
     >
-      Buy Now (Rs. {amount})
+      Buy Now (Rs. {amount}) 
     </button>
   );
 };

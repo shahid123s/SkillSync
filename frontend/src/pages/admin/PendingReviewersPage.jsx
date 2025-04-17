@@ -12,7 +12,7 @@ export default function PendingReviewersPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await adminAxiosInstance.get('/admin/reviewers/pending');
+        const response = await adminAxiosInstance.get('/get-all-pending-reviewers');
         if (response.data.success) {
           setReviewers(response.data.data);
           toast.success('Pending reviewers loaded');

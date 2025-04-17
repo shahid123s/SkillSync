@@ -30,7 +30,7 @@ const MyCoursesPage = () => {
 
   const calculateProgress = (course) => {
     // Calculate percentage based on completed weeks
-    return Math.round((course.currentWeek / course.totalWeeks) * 100);
+    return Math.round(((course.currentWeek|| 1) / (course.totalWeeks || 6)) * 100);
   };
 
   if (loading) {
@@ -82,21 +82,21 @@ const MyCoursesPage = () => {
             const progress = calculateProgress(course);
             
             return (
-              <div key={course.id} className="bg-white rounded-lg shadow-sm overflow-hidden border">
+              <div key={course._id} className="bg-white rounded-lg shadow-sm overflow-hidden border">
                 <div className="h-40 bg-gray-200 relative">
                   <img 
-                    src={course.thumbnail || '/placeholder.svg'} 
-                    alt={course.title}
+                    src={course.courseId.imageUrl || '/placeholder.svg'} 
+                    alt={course.courseId.name}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute bottom-2 right-2 bg-teal-600 text-white px-2 py-1 rounded-md text-xs">
-                    Week {course.currentWeek}/{course.totalWeeks}
+                    Week {(course.currentWeek || 1)} / {course.totalWeeks || 6}
                   </div>
                 </div>
                 
                 <div className="p-4">
-                  <h3 className="font-bold text-lg mb-1">{course.title}</h3>
-                  <p className="text-gray-600 text-sm mb-3">By {course.instructor}</p>
+                  <h3 className="font-bold text-lg mb-1">{course.courseId.name}</h3>
+
                   
                   <div className="mb-3">
                     <div className="flex justify-between text-xs text-gray-500 mb-1">
@@ -116,7 +116,7 @@ const MyCoursesPage = () => {
                       Last accessed: {course.lastAccessed || 'Never'}
                     </span>
                     <Link 
-                      to={`/courses/${course.id}`}
+                      to={`/courses/${course.courseId._id}`}
                       className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md text-sm transition-colors"
                     >
                       Continue

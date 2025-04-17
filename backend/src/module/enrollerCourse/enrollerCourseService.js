@@ -17,5 +17,13 @@ export const enrollerCourseService= {
         } catch (error) {
             throw new CustomError(error.message, 500, 'Internal Server Error')
         }
+    },
+    isExist: async ({courseId, userId}) => {
+        try {
+            const result = await enrolledCourseRepository.isExist({courseId, userId});
+            return result;
+        } catch (error) {
+            throw new CustomError(error.message, 500, 'Internal Server Error')
+        }
     }
 }

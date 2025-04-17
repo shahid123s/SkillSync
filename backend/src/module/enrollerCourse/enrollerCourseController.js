@@ -7,6 +7,15 @@ export const enrollerCourseController = {
             const {courseId, paymentStatus, price} = req.body;
             const userId = req.user;
             console.log(courseId, paymentStatus, price, userId)
+            const isExist = await enrollerCourseService.isExist({courseId, userId});
+            if(isExist){
+                return res
+                    .status(400)
+                    .json({
+                        success: false,
+                        message: 'Course already bought'
+                    })
+            }
             const result = await enrollerCourseService.paymentSuccess({courseId, paymentStatus, price, userId});
             if(!result){
                 return res

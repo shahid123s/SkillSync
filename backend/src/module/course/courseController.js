@@ -27,8 +27,12 @@ export const getAllCourses = async (req, res, next ) => {
 export const getCourse = async (req, res, next) => {
     try {
         const {courseId}  = req.query ;
-    
-        const result = await courseService.getCourse(courseId);
+        
+        const [result, checkIsBought] = await Promise.all([
+            courseService.getCourse(courseId),
+            courseService.checkIsBought(courseId, req.user)
+        ]);
+
         if(!result.offerPrice ) {
             result.offerPrice = result.price
         };
@@ -46,7 +50,7 @@ export const getCourse = async (req, res, next) => {
             .json({
                 success: true,
                 message: 'Course found',
-                data: result
+                data: {...result, checkIsBought: checkIsBought ? true : false}
             })
 
 

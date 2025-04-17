@@ -63,5 +63,13 @@ export const courseService = {
         } catch (error) {
             return error;
         }
+    },
+    checkIsBought: async (courseId, userId) => {
+        try {
+            const result = await enrolledCourseRepository.checkIsBought(courseId, userId);
+            return result;
+        } catch (error) {
+            throw new CustomError(error.message, 500, 'Internal Server Error')
+        }
     }
 }   

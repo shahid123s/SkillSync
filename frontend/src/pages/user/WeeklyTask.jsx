@@ -10,9 +10,9 @@ const WeeklyTaskPage = () => {
   
   // Mock data
   const upcomingTask = {
-    weekNumber: 5,
-    reviewDate: "Not scheduled yet",
-    reviewer: "TBD",
+    weekNumber: 1,
+    reviewDate: "On Next Friday",
+    reviewer: "Not Scheduled",
     task: "Complete advanced React patterns implementation"
   };
 

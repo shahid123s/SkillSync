@@ -14,7 +14,8 @@ function CourseHero({
   discountPercentage = 0,
   hoursLeft = 0,
   features = [],
-  courseId
+  courseId,
+  checkIsBought
 }) {
   const [paymentStatus, setPaymentStatus] = useState(null);
   const defaultImage = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-0sWdtPw8W9NK61Kmn7EsqhBdbA7wXK.png";
@@ -28,10 +29,10 @@ function CourseHero({
     setPaymentStatus(status);
     
     try {
-      const response = await userAxiosInstance.post('/enroll/purchase', {
+      const response = await userAxiosInstance.post('/course-enrollment/purchase', {
         courseId,
-        amount: offerPrice,
-        paymentStatus: status
+        price: offerPrice,
+        paymentStatus: status.toLowerCase()
       });
 
       if (response.data.success) {
@@ -100,7 +101,12 @@ function CourseHero({
               )}
 
               {/* Payment Section */}
-              {paymentStatus === 'Success' ? (
+
+              {checkIsBought?<button>
+                <div className="text-center py-4 text-green-600 font-medium">
+                  You have already purchased this course!
+                </div>
+              </button>:paymentStatus === 'Success' ? (
                 <div className="text-center py-4 text-green-600 font-medium">
                   Payment successful! Thank you for your purchase.
                 </div>

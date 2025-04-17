@@ -106,6 +106,7 @@ export const adminController = {
     getAllPendingReviewer: async (req, res, next) => {
         try {
             const result = await adminService.getAllPendingReviewers();
+            console.log(result, 'result')
             res.status(200).json({ message: "All pending reviewers retrieved successfully", data: result, success: true });
         } catch (error) {
             next(error)

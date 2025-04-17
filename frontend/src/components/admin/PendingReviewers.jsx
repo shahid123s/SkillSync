@@ -13,7 +13,7 @@ export default function PendingReviewers({ reviewers, onAction }) {
           <tbody className="bg-white divide-y divide-gray-200">
             {reviewers.map(reviewer => (
               <tr key={reviewer.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">{reviewer.name}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{reviewer.fullname}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{reviewer.email}</td>
                 <td className="px-6 py-4 whitespace-nowrap space-x-2">
                   <button
