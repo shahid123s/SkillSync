@@ -103,10 +103,10 @@ export default function WeeklyTasksPage() {
   const handleSaveTask = async (taskData) => {
     if (useDummyData) {
       // Handle dummy data case
-      if (taskData._id) {
+      if (selectedTask?._id) {  // Check selectedTask instead of taskData
         // Update existing task
         setTasks(prev => prev.map(t => 
-          t._id === taskData._id ? { ...t, ...taskData } : t
+          t._id === selectedTask._id ? { ...t, ...taskData } : t
         ));
       } else {
         // Add new task
@@ -117,26 +117,28 @@ export default function WeeklyTasksPage() {
         };
         setTasks(prev => [...prev, newTask]);
       }
-      toast.success(`Task ${taskData._id ? 'updated' : 'created'} successfully`);
+      toast.success(`Task ${selectedTask?._id ? 'updated' : 'created'} successfully`);
       setIsTaskModalOpen(false);
-      // return;
+      return;
     }
-
+  
     try {
       let response;
-      if (taskData._id) {
-        response = await adminAxiosInstance.put(`/weekly-task/edit`, taskData, {
+      if (selectedTask?._id) {  // Check selectedTask instead of taskData
+        response = await adminAxiosInstance.put(`/weekly-task/edit`, {
+          ...taskData,
+          _id: selectedTask._id  // Include the ID from selectedTask
         });
       } else {
         response = await adminAxiosInstance.post('/weekly-task', taskData);
       }
-
+  
       if (response.data.success) {
-        setTasks(prev => taskData._id
-          ? prev.map(t => t._id === taskData._id ? response.data.data : t)
+        setTasks(prev => selectedTask?._id
+          ? prev.map(t => t._id === selectedTask._id ? response.data.data : t)
           : [...prev, response.data.data]
         );
-        toast.success(`Task ${taskData._id ? 'updated' : 'created'} successfully`);
+        toast.success(`Task ${selectedTask?._id ? 'updated' : 'created'} successfully`);
         setIsTaskModalOpen(false);
       }
     } catch (error) {
