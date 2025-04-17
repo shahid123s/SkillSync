@@ -43,6 +43,7 @@ export const adminService = {
     getAllReviewers: async () => {
         try {
             const reviewers = await Reviewer.find({ status: 'approved' }).lean();
+
             if (!reviewers) {
                 throw new CustomError("No reviewers found", 404);
             }

@@ -73,7 +73,7 @@ export default function ReviewerHome() {
     const checkReviewerStatus = async () => {
       const result =  await fetchReviewerStatus();
       console.log(result)
-      if(!result.isBlocked) setIsActive(false);
+      if(result.status === 'inactive') setIsActive(false);
     }
   checkReviewerStatus()
   },[])
