@@ -6,16 +6,21 @@ import { fetchReviewerData } from '../../services/fetchData';
 export default function ReviewerProfile() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [profile, setProfile] = useState({
-    name: 'John Reviewer',
-    email: 'john@reviewer.com',
-    phone: '+1 234 567 890',
-    certificates: ['AWS Certified', 'Google Cloud Certified'],
-    experience: '5 years',
+    name: '',
+    email: '',
+    phone: ',',
+    certificates: [],
+    experience: '',
   });
 
-    useEffect(() => {
-      fetchReviewerData();
-    })
+    useEffect(  () => {
+      
+      (async function(){
+        const result  = await fetchReviewerData()
+        setProfile(result)
+      })()
+      
+    },[])
 
   return (
     <div className="min-h-screen flex">
@@ -36,7 +41,7 @@ export default function ReviewerProfile() {
             <div className="space-y-4">
               <div className="pb-4 border-b">
                 <label className="block text-sm font-medium text-gray-600">Full Name</label>
-                <p className="mt-1 text-lg">{profile.name}</p>
+                <p className="mt-1 text-lg">{profile.fullname}</p>
               </div>
               
               <div className="pb-4 border-b">
@@ -53,7 +58,7 @@ export default function ReviewerProfile() {
                 <label className="block text-sm font-medium text-gray-600">Certificates</label>
                 <ul className="mt-1 space-y-1">
                   {profile.certificates.map((cert, index) => (
-                    <li key={index} className="text-lg">• {cert}</li>
+                  cert!= ''? <li key={index} className="text-lg">• {cert}</li>:''
                   ))}
                 </ul>
               </div>

@@ -21,7 +21,7 @@ export const fetchReviewerData = async (reviewerId) => {
         const response  = await reviewerAxiosInstance.get('/profile', {
             params : {reviewerId}
         })
-        return response.data; 
+        return response.data.data; 
 
     } catch (error) {
         toast.error(error.response.data.message|| 'Network Error');

@@ -2,9 +2,12 @@
  export const reviewerController = {
     getReviewer: async (req, res, next) => {
         try {
-            const {reviewerId} = req.query || req.params;
-
+            let {reviewerId} = req.params || req.reviewer;
+            reviewerId = reviewerId || req.reviewer
+            console.log(reviewerId, 'Controller Id ');
             const result = await  reviewerService.getReviewerProfile(reviewerId);
+
+            console.log(result, 'result');
 
             if(!result){
                 return res

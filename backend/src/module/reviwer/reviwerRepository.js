@@ -50,8 +50,11 @@ export const reviewerRepository = {
         }
     },
     fetchReviewerProfile: async (userId) => {
+        console.log(userId, 'repo')
         try {
-            const reviewer = await Reviwer.findById(userId, '-password');
+            const reviewer = await Reviwer.findById (userId, '-password');
+            console.log(reviewer, 'Repositoroy')
+            return reviewer;
         } catch (error) {
             throw new CustomError(
                 error.message,

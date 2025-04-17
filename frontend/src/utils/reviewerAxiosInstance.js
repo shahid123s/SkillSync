@@ -29,7 +29,7 @@ reviewerAxiosInstance.interceptors.response.use(
 
           toast.info("Please login again");
           localStorage.removeItem("reviewerSession");
-          // window.location.href = "/reviewer/login";
+          window.location.href = "/reviewer/login";
           return Promise.reject(refreshError);
         }
       }
