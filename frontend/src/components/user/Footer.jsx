@@ -1,3 +1,4 @@
+// components/user/Footer.jsx
 import React from "react";
 
 export default function Footer() {
@@ -9,20 +10,21 @@ export default function Footer() {
             <div className="relative w-10 h-10 mr-2">
               <div className="absolute inset-0 bg-gradient-to-r from-teal-400 to-blue-500 rounded-full opacity-70"></div>
               <span className="absolute inset-0 flex items-center justify-center text-white font-bold">
-                TOTC
+                SS
               </span>
             </div>
+            <span className="text-xl font-bold text-teal-400">SKILL SYNC</span>
           </div>
           <p className="text-sm text-gray-400">Virtual Class for Zoom</p>
         </div>
 
         <div className="max-w-md mx-auto mb-8">
-          <h3 className="text-center mb-4">Subscribe to get our Newsletter</h3>
+          <h3 className="text-center mb-4 text-teal-400">Subscribe to get our Newsletter</h3>
           <div className="flex gap-2">
             <input
               type="email"
               placeholder="Your email"
-              className="bg-gray-800 border border-gray-700 text-white px-4 py-2 rounded-md w-full"
+              className="bg-gray-800 border border-gray-700 text-white px-4 py-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
             <button className="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md transition duration-200">
               Subscribe
@@ -43,7 +45,7 @@ export default function Footer() {
         </div>
 
         <div className="text-center text-xs text-gray-500">
-          © 2023 Class Technologies Inc.
+          © {new Date().getFullYear()} Skill Sync Inc. All rights reserved.
         </div>
       </div>
     </footer>

@@ -1,10 +1,20 @@
+// components/user/Header.jsx
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 export default function Header() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isActive = (path) => {
+    return location.pathname === path || 
+           (path === '/courses' && location.pathname.startsWith('/courses/')) 
+           ? "text-teal-500 font-medium" 
+           : "text-gray-700 hover:text-teal-500";
+  };
+
   return (
-    <header className="flex items-center justify-between py-4 px-6 bg-white">
+    <header className="flex items-center justify-between py-4 px-6 bg-white shadow-sm">
       <div className="flex items-center">
           <div
             className="text-2xl font-bold text-teal-600 cursor-pointer"
@@ -15,20 +25,17 @@ export default function Header() {
       </div>
 
       <nav className="hidden md:flex items-center space-x-8">
-        <Link to="/home" className="text-gray-700 hover:text-teal-500">
+        <Link to="/home" className={`${isActive('/home')} transition duration-200`}>
           Home
         </Link>
-        <Link to="/courses" className="text-gray-700 hover:text-teal-500">
+        <Link to="/courses" className={`${isActive('/courses')} transition duration-200`}>
           Courses
         </Link>
-        <Link to="/careers" className="text-gray-700 hover:text-teal-500">
-          Careers
+        <Link to="/my-courses" className={`${isActive('/my-courses')} transition duration-200`}>
+          My Courses
         </Link>
-        <Link to="/blog" className="text-gray-700 hover:text-teal-500">
-          Blog
-        </Link>
-        <Link to="/about-us" className="text-gray-700 hover:text-teal-500">
-          About Us
+        <Link to="/weekly-task" className={`${isActive('/weekly-task')} transition duration-200`}>
+          Weekly Task
         </Link>
       </nav>
 
