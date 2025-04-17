@@ -90,9 +90,10 @@ export const adminController = {
     getALlUsers: async (req, res, next) => {
         try {
             const result = await adminService.getAllUsers();
-            res.status(200).json({ 
-                message: "All users retrieved successfully", 
-                data: result, success: true });
+            res.status(200).json({
+                message: "All users retrieved successfully",
+                data: result, success: true
+            });
         } catch (error) {
             next(error)
         }
@@ -101,8 +102,9 @@ export const adminController = {
         try {
             const result = await adminService.getAllReviewers();
             res.status(200).json({
-                 message: "All reviewers retrieved successfully", 
-                 data: result, success: true });
+                message: "All reviewers retrieved successfully",
+                data: result, success: true
+            });
         } catch (error) {
             next(error)
         }
@@ -111,18 +113,19 @@ export const adminController = {
         try {
             const result = await adminService.getAllPendingReviewers();
             console.log(result, 'result')
-            res.status(200).json({ 
-                message: "All pending reviewers retrieved successfully", 
-                data: result, success: true });
+            res.status(200).json({
+                message: "All pending reviewers retrieved successfully",
+                data: result, success: true
+            });
         } catch (error) {
             next(error)
-        }   
+        }
     },
 
-    toggleReviewerStatus: async(req, res, next) => {
+    toggleReviewerStatus: async (req, res, next) => {
         try {
             const { reviewerId, action } = req.body;
-            console.log(reviewerId, action, 'req.body in admin Controller toogleReviweBlock') 
+            console.log(reviewerId, action, 'req.body in admin Controller toogleReviweBlock')
             const result = await adminService.toggleReviewerStatus(reviewerId, action);
             if (!result) {
                 return res
@@ -143,7 +146,7 @@ export const adminController = {
             next(error)
         }
     },
-    toggleReviewerBlock: async(req, res, next) => {
+    toggleReviewerBlock: async (req, res, next) => {
         try {
             const { reviewerId, block } = req.body;
             const result = await adminService.toggleReviewerBlock(reviewerId, block);
@@ -171,7 +174,10 @@ export const adminController = {
             const taskData = req.body;
             const newTask = await adminService.createWeeklyTask(taskData);
             if (!newTask) {
-                return res.status(400).json({ message: 'Task creation failed' });
+                return res.status(400).json({
+                    success: true,
+                    message: 'Task creation failed'
+                });
             }
             res.status(201).json(newTask);
         } catch (error) {
@@ -186,6 +192,7 @@ export const adminController = {
                 return res.status(404).json({ message: 'No tasks found' });
             }
             res.status(200).json({
+                success: true,
                 message: 'All weekly tasks retrieved successfully',
                 data: tasks
             });
@@ -193,17 +200,21 @@ export const adminController = {
             next(error);
         }
     },
-    updateWeeklyTask : async (req, res, next) => {
+    updateWeeklyTask: async (req, res, next) => {
         try {
-            const {updates, taskId} = req.body;
+            const { updates, taskId } = req.body;
             const updatedTask = await adminService.updateWeeklyTask(taskId, updates);
             if (!updatedTask) {
-                return res.status(404).json({ message: 'Task not found' });
+                return res.status(404).json({
+                    success: true,
+                    message: 'Task not found',
+                    data: updatedTask,
+                });
             }
             res.json(updatedTask);
         } catch (error) {
             next(error);
-        }   
+        }
     },
     removeWeeklyTask: async (req, res, next) => {
         try {
@@ -216,5 +227,5 @@ export const adminController = {
         } catch (error) {
             next(error);
         }
-    }   
+    }
 }
