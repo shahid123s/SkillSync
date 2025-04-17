@@ -1,5 +1,3 @@
-import { populate } from 'dotenv';
-import { enrollerCourseController } from './enrollerCourseController.js';
 import EnrolledCourse from './enrollerCourseModel.js';
 
 const enrolledCourseRepository = {

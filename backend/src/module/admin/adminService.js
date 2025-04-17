@@ -41,7 +41,7 @@ export const adminService = {
 
     getAllReviewers: async () => {
         try {
-            const reviewers = await Reviewer.find({}).lean();
+            const reviewers = await Reviewer.find({isBlocked: false}).lean();
             if (!reviewers) {
                 throw new CustomError("No reviewers found", 404);
             }
@@ -49,5 +49,13 @@ export const adminService = {
         } catch (error) {
             throw new CustomError("Error retrieving reviewers", 500);
         }
-    }
+    },
+    getAllPendingReviewers: async () => {
+        try {
+            const reviewers = await Reviewer.find({isBlocked: true}).lean();
+            return reviewers;
+        } catch (error) {
+            throw new  CustomError("Error retrieving pending reviewers", 500);
+        }
+    },
 }
