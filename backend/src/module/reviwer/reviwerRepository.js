@@ -78,6 +78,18 @@ export const reviewerRepository = {
                 500,
             )
         }
+    },
+
+    getReviewerStatus: async (userId) => {
+        try {
+            const reviewer = await Reviwer.findById(userId, 'status');
+            return reviewer;
+        } catch (error) {
+            throw new CustomError(
+                error.message,
+                500,
+            )
+        }
     }
 
 
