@@ -10,23 +10,46 @@ export default function ManageCourses() {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [tasks, setTasks] = useState([]);
 
-  // Fetch courses on mount
   useEffect(() => {
-    const fetchCourses = async () => {
+    const fetchData = async () => {
       try {
-        const response = await adminAxiosInstance.get('/courses');
-        if (response.data.success) {
-          setCourses(response.data.data);
+        setLoading(true);
+        const [coursesRes, tasksRes] = await Promise.all([
+          adminAxiosInstance.get('/courses'),
+          adminAxiosInstance.get('/weekly-tasks')
+        ]);
+
+        if (coursesRes.data.success) {
+          setCourses(coursesRes.data.data);
+        }
+        if (tasksRes.data.success) {
+          setTasks(tasksRes.data.data);
         }
       } catch (error) {
-        toast.error('Failed to load courses');
+        toast.error('Failed to load data');
       } finally {
         setLoading(false);
       }
     };
-    fetchCourses();
+    fetchData();
   }, []);
+
+  const getTasksForCourse = (courseId) => {
+    return tasks
+      .filter(task => task.weeks?.some(week => week.courseId === courseId))
+      .flatMap(task => 
+        task.weeks
+          .filter(week => week.courseId === courseId)
+          .map(week => ({
+            ...task,
+            weekNumber: week.weekNumber,
+            weekId: week._id
+          }))
+      )
+      .sort((a, b) => a.weekNumber - b.weekNumber);
+  };
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this course?')) return;
@@ -86,14 +109,44 @@ export default function ManageCourses() {
       {loading ? (
         <div className="text-center py-8">Loading courses...</div>
       ) : (
-        <CourseTable 
-          courses={courses}
-          onEdit={(course) => {
-            setSelectedCourse(course);
-            setIsModalOpen(true);
-          }}
-          onDelete={handleDelete}
-        />
+        <div className="space-y-8">
+          <CourseTable 
+            courses={courses}
+            onEdit={(course) => {
+              setSelectedCourse(course);
+              setIsModalOpen(true);
+            }}
+            onDelete={handleDelete}
+          />
+
+          {courses.map(course => (
+            <div key={course._id} className="bg-white rounded-lg shadow-sm overflow-hidden border">
+              <div className="p-4">
+                <h3 className="font-bold text-lg mb-4">{course.name} - Weekly Tasks</h3>
+                
+                <div className="mb-4">
+                  {getTasksForCourse(course._id).length > 0 ? (
+                    <ul className="space-y-2">
+                      {getTasksForCourse(course._id).map(task => (
+                        <li key={`${task._id}-${task.weekId}`} className="border-b pb-2">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <span className="font-medium">Week {task.weekNumber}:</span>
+                              <p className="text-sm">{task.title}</p>
+                              <p className="text-sm text-gray-600">{task.description}</p>
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-gray-500">No tasks assigned to this course yet</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
 
       <CourseForm

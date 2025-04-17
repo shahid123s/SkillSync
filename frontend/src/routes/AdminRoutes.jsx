@@ -8,7 +8,7 @@ import PendingReviewers from "../pages/admin/PendingReviewersPage";
 import AdminLogin from "../pages/admin/AdminLogin";
 import AllReviewers from "../pages/admin/AllReviwers";
 import NotFound from "../pages/user/NotFound";
-import WeeklyTasksPage from "../pages/user/WeeklyTask";
+import WeeklyTasksPage from "../pages/admin/WeeklyTask";
 
 export function AdminRoutes() {
   return (

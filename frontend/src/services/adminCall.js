@@ -43,3 +43,28 @@ export const getWeeklyTasks = async () => {
         return error.response.data.message;
     }
   };
+  
+  export const addTaskWeek = async (taskId, weekData) => {
+    try {
+      const response = await adminAxiosInstance.post(
+        `/weekly-tasks/${taskId}/weeks`,
+        weekData
+      );
+      return response.data;
+    } catch (error) {
+        toast.error(error.response.data.message || 'Network Failed')
+        return error.response.data.message;
+    }
+  };
+  
+  export const removeTaskWeek = async (taskId, weekId) => {
+    try {
+      const response = await adminAxiosInstance.delete(
+        `/weekly-tasks/${taskId}/weeks/${weekId}`
+      );
+      return response.data;
+    } catch (error) {
+        toast.error(error.response.data.message || 'Network Failed')
+        return error.response.data.message;
+    }
+  };

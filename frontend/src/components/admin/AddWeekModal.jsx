@@ -1,8 +1,8 @@
-// components/admin/TaskModal.jsx
+// components/admin/AddWeekModal.jsx
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-export default function TaskModal({ isOpen, onClose, course, task, onSave, existingTasks }) {
+export default function AddWeekModal({ isOpen, onClose, task, courses, onSave }) {
   const {
     register,
     handleSubmit,
@@ -13,64 +13,88 @@ export default function TaskModal({ isOpen, onClose, course, task, onSave, exist
     formState: { errors, isSubmitting },
   } = useForm();
 
+  const [filteredCourses, setFilteredCourses] = useState(courses);
+  const [searchTerm, setSearchTerm] = useState('');
   const weekNumber = watch('weekNumber');
+  const courseId = watch('courseId');
 
-  // Initialize form
   useEffect(() => {
     if (isOpen) {
-      if (task) {
-        reset({
-          ...task,
-          courseId: course._id
-        });
-      } else {
-        reset({
-          courseId: course?._id,
-          weekNumber: '',
-          description: ''
-        });
-      }
+      reset({
+        taskId: task?._id,
+        courseId: '',
+        weekNumber: ''
+      });
+      setSearchTerm('');
     }
-  }, [isOpen, task, course, reset]);
+  }, [isOpen, task, reset]);
 
-  // Validate week number uniqueness
   useEffect(() => {
-    if (weekNumber) {
-      const isDuplicate = existingTasks.some(
-        t => t.weekNumber === parseInt(weekNumber) && (!task || t._id !== task._id)
+    if (searchTerm) {
+      setFilteredCourses(courses.filter(course =>
+        course.name.toLowerCase().includes(searchTerm.toLowerCase())
+      ));
+    } else {
+      setFilteredCourses(courses);
+    }
+  }, [searchTerm, courses]);
+
+  useEffect(() => {
+    if (weekNumber && courseId && task) {
+      const isDuplicate = task.weeks?.some(
+        week => week.weekNumber === parseInt(weekNumber) && week.courseId === courseId
       );
       
       if (isDuplicate) {
         setError('weekNumber', {
           type: 'manual',
-          message: 'This week number already exists for this course'
+          message: 'This week number already exists for the selected course'
         });
       } else {
         clearErrors('weekNumber');
       }
     }
-  }, [weekNumber, existingTasks, task, setError, clearErrors]);
+  }, [weekNumber, courseId, task, setError, clearErrors]);
 
   const onSubmit = (data) => {
     const finalData = {
       ...data,
-      weekNumber: parseInt(data.weekNumber),
-      courseId: course._id
+      weekNumber: parseInt(data.weekNumber)
     };
     onSave(finalData);
   };
 
-  if (!isOpen || !course) return null;
+  if (!isOpen || !task) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <h2 className="text-xl font-bold mb-4">
-            {task ? 'Edit Task' : 'Add New Task'} for {course.name}
+            Add Week to Task: {task.title}
           </h2>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* Course Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Course*</label>
+              
+              <select
+                {...register('courseId', { required: 'Course selection is required' })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-teal-500 p-2"
+              >
+                <option value="">Select a course</option>
+                {filteredCourses.map(course => (
+                  <option key={course._id} value={course._id}>
+                    {course.name}
+                  </option>
+                ))}
+              </select>
+              {errors.courseId && (
+                <p className="text-red-500 text-xs mt-1">{errors.courseId.message}</p>
+              )}
+            </div>
+
             {/* Week Number */}
             <div>
               <label className="block text-sm font-medium text-gray-700">Week Number*</label>
@@ -90,21 +114,8 @@ export default function TaskModal({ isOpen, onClose, course, task, onSave, exist
               )}
             </div>
 
-            {/* Description */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Task Description*</label>
-              <textarea
-                {...register('description', { required: 'Description is required' })}
-                rows={4}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-teal-500"
-              />
-              {errors.description && (
-                <p className="text-red-500 text-xs mt-1">{errors.description.message}</p>
-              )}
-            </div>
-
-            {/* Hidden course ID */}
-            <input type="hidden" {...register('courseId')} />
+            {/* Hidden task ID */}
+            <input type="hidden" {...register('taskId')} />
 
             {/* Actions */}
             <div className="mt-6 flex justify-end gap-2">
@@ -120,7 +131,7 @@ export default function TaskModal({ isOpen, onClose, course, task, onSave, exist
                 disabled={isSubmitting || errors.weekNumber}
                 className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 disabled:opacity-50"
               >
-                {isSubmitting ? 'Saving...' : 'Save Task'}
+                {isSubmitting ? 'Saving...' : 'Add Week'}
               </button>
             </div>
           </form>
