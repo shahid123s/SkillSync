@@ -33,7 +33,7 @@ export const fetchReviewerData = async (reviewerId) => {
     }
 }
 
-export const fetchPurchasedCourses = async (userId) => {
+export const fetchPurchasedCourses = async () => {
     try {
         const response = await userAxiosInstance.get(`/course/student`);
         return response.data.data;

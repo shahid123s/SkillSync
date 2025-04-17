@@ -213,8 +213,8 @@ export const reviewerRegistration = async (req, res, next) => {
 
 export const reviewrRefreshToken = async (req, res, next) => {
     try {
-        const { refreshToken } = req.cookies;
-        if (!refreshToken) {
+        const { reviewerRefreshToken } = req.cookies;
+        if (!reviewerRefreshToken) {
             return res
                 .status(401)
                 .json({
@@ -222,7 +222,7 @@ export const reviewrRefreshToken = async (req, res, next) => {
                     message: 'Unauthorised',
                 })
         }
-        const result = await reviewerAuthService.reviewrRefreshToken(refreshToken);
+        const result = await reviewerAuthService.reviewrRefreshToken(reviewerRefreshToken);
         if (!result) {
             return res
                 .status(401)

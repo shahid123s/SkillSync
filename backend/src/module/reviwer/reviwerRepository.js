@@ -51,14 +51,14 @@ export const reviewerRepository = {
         }
     },
     fetchReviewerProfile: async (userId) => {
-        console.log(userId, 'repo')
+        console.log( typeof userId, 'repo')
         try {
 
             if (!mongoose.Types.ObjectId.isValid(userId)) {
                 return null;
             }
             const reviewer = await Reviwer.findById(userId, '-password');
-            console.log(reviewer, 'Repositoroy')
+            // console.log(reviewer, 'Repositoroy')
             return reviewer;
         } catch (error) {
             throw new CustomError(
