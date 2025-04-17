@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types';
 import { useMemo, useState } from 'react';
 import { IndianRupee } from 'lucide-react';
-import RazorPay from '../../RazorPay'; // Adjust the import path as needed
+import RazorPay from '../../RazorPay';
+import { userAxiosInstance } from '../../../utils/userAxiosInstance';
+import { toast } from 'sonner';
 
 function CourseHero({
   name = "Course Title",
@@ -12,7 +14,7 @@ function CourseHero({
   discountPercentage = 0,
   hoursLeft = 0,
   features = [],
-  courseId // Add courseId prop
+  courseId
 }) {
   const [paymentStatus, setPaymentStatus] = useState(null);
   const defaultImage = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-0sWdtPw8W9NK61Kmn7EsqhBdbA7wXK.png";
@@ -22,10 +24,29 @@ function CourseHero({
       Math.round(((price - offerPrice) / price) * 100);
   }, [discountPercentage, price, offerPrice]);
 
-  const handlePlaceOrder = (status) => {
+  const handlePlaceOrder = async (status) => {
     setPaymentStatus(status);
-    // You can add additional logic here like sending the payment status to your backend
-    console.log(`Payment status: ${status}`);
+    
+    try {
+      const response = await userAxiosInstance.post('/enroll/purchase', {
+        courseId,
+        amount: offerPrice,
+        paymentStatus: status
+      });
+
+      if (response.data.success) {
+        if (status === 'Success') {
+          toast.success('Course purchased successfully!');
+        } else {
+          toast.error('Payment failed. Please try again.');
+        }
+      } else {
+        toast.error(response.data.message || 'Error processing payment');
+      }
+    } catch (error) {
+      console.error('Error sending payment data:', error);
+      toast.error('Error processing payment. Please try again.');
+    }
   };
 
   return (
@@ -83,6 +104,10 @@ function CourseHero({
                 <div className="text-center py-4 text-green-600 font-medium">
                   Payment successful! Thank you for your purchase.
                 </div>
+              ) : paymentStatus === 'Failed' ? (
+                <div className="text-center py-4 text-red-600 font-medium">
+                  Payment failed. Please try again.
+                </div>
               ) : (
                 <RazorPay 
                   amount={offerPrice} 
@@ -131,7 +156,7 @@ CourseHero.propTypes = {
   discountPercentage: PropTypes.number,
   hoursLeft: PropTypes.number,
   features: PropTypes.arrayOf(PropTypes.string),
-  courseId: PropTypes.string, // Add courseId prop type
+  courseId: PropTypes.string,
 };
 
 CourseHero.defaultProps = {
