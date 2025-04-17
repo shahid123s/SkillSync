@@ -17,7 +17,7 @@ const enrollerCourseSchema = new Schema({
     },
     paymentStatus: {
         type: String,
-        enum: ['pending', 'completed'],
+        enum: ['success', 'failed', 'pending'],
         default: 'pending',
     },
     price: {
