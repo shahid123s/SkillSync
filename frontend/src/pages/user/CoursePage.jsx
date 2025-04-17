@@ -7,6 +7,7 @@ import Header from "../../components/user/Header";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchCourseDetails } from "../../services/fetchData";
+
 export default function CoursePage() {
   const { id } = useParams();
   const [courseDetails, setCourseDetails] = useState(null);
@@ -39,47 +40,16 @@ export default function CoursePage() {
       </div>
 
       <main className="flex-1">
-        <CourseHero
-          title={courseDetails.title}
-          description={courseDetails.description}
-          imageUrl={courseDetails.imageUrl}
-          originalPrice={courseDetails.originalPrice}
-          discountedPrice={courseDetails.discountedPrice}
-          discountPercentage={courseDetails.discountPercentage}
-          hoursLeft={courseDetails.hoursLeft}
-          features={courseDetails.features}
-        />
+        <CourseHero {...courseDetails} />
 
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
               <CourseRating
-                averageRating={4.2}
-                ratingDistribution={{
-                  5: 45,
-                  4: 30,
-                  3: 15,
-                  2: 7,
-                  1: 3
-                }}
+                averageRating={courseDetails.averageRating}
+                ratingDistribution={courseDetails.ratingDistribution}
               />
-              <CourseReviews
-                reviews={[
-                  {
-                    id: 1,
-                    name: "John Doe",
-                    avatar: "/user1.jpg",
-                    date: "2 weeks ago",
-                    content: "Great course with excellent content!"
-                  },
-                  {
-                    id: 2,
-                    name: "Jane Smith",
-                    date: "1 month ago", // Missing avatar will use fallback
-                    content: "Very informative and well structured."
-                  }
-                ]}
-              />
+              <CourseReviews reviews={courseDetails.reviews || []} />
             </div>
 
             <div className="space-y-6">

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
+import { useMemo } from 'react';
 
-export default function CourseHero({
+function CourseHero({
   title = "Course Title",
   description = "Course description goes here",
   imageUrl,
@@ -10,25 +11,20 @@ export default function CourseHero({
   hoursLeft = 0,
   features = []
 }) {
-  // Calculate discount percentage if not provided
-  const calculatedDiscount = discountPercentage || 
-    Math.round(((originalPrice - discountedPrice) / originalPrice) * 100);
-
-  // Validate prices
-  const validOriginalPrice = typeof originalPrice === 'number' ? originalPrice : 0;
-  const validDiscountedPrice = typeof discountedPrice === 'number' ? discountedPrice : 0;
-
-  // Default image handling
   const defaultImage = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-0sWdtPw8W9NK61Kmn7EsqhBdbA7wXK.png";
-  const imageSrc = imageUrl || defaultImage;
+
+  const calculatedDiscount = useMemo(() => {
+    return discountPercentage || 
+      Math.round(((originalPrice - discountedPrice) / originalPrice) * 100);
+  }, [discountPercentage, originalPrice, discountedPrice]);
 
   return (
     <div className="relative w-full" data-testid="course-hero">
       {/* Hero Image Section */}
       <div className="w-full h-[300px] md:h-[400px] relative">
         <img
-          src={imageSrc}
-          alt={title || "Course hero image"}
+          src={imageUrl || defaultImage}
+          alt={title}
           className="w-full h-full object-cover brightness-90"
           onError={(e) => {
             e.target.src = defaultImage;
@@ -51,12 +47,12 @@ export default function CourseHero({
               {/* Price Display */}
               <div className="flex items-baseline justify-between mb-4">
                 <div className="text-2xl font-bold">
-                  ${validDiscountedPrice.toFixed(2)}
+                  ${discountedPrice.toFixed(2)}
                 </div>
-                {validOriginalPrice > validDiscountedPrice && (
+                {originalPrice > discountedPrice && (
                   <>
                     <div className="text-gray-500 line-through text-sm">
-                      ${validOriginalPrice.toFixed(2)}
+                      ${originalPrice.toFixed(2)}
                     </div>
                     <div className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">
                       {calculatedDiscount}% Off
@@ -126,3 +122,5 @@ CourseHero.propTypes = {
 CourseHero.defaultProps = {
   features: []
 };
+
+export default CourseHero;

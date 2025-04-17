@@ -1,29 +1,60 @@
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { memo } from 'react';
 
-export default function CourseReviews({ reviews = [] }) {
-  // Debugging useEffect
-  useEffect(() => {
-    console.group('CourseReviews Component Debug');
-    console.log('Received reviews:', reviews);
-    
-    if (!Array.isArray(reviews)) {
-      console.error('Invalid reviews prop: Expected array, received', typeof reviews);
-    } else {
-      reviews.forEach((review, index) => {
-        if (!review.id) {
-          console.warn(`Review at index ${index} is missing an id`);
-        }
-        if (!review.content) {
-          console.warn(`Review at index ${index} has empty content`);
-        }
-      });
-    }
-    
-    console.groupEnd();
-  }, [reviews]);
+function CourseReviewItem({ review }) {
+  const safeReview = {
+    id: review.id,
+    name: review.name || 'Anonymous',
+    avatar: review.avatar || '/placeholder.svg',
+    date: review.date || 'Recently',
+    content: review.content || 'No review content provided'
+  };
 
-  // Default empty state
+  return (
+    <div 
+      className="bg-blue-50 rounded-lg p-6 hover:shadow-sm transition-shadow duration-200"
+      data-review-id={safeReview.id}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <img
+            src={safeReview.avatar}
+            alt={`${safeReview.name}'s avatar`}
+            width={40}
+            height={40}
+            className="rounded-full"
+            onError={(e) => {
+              e.target.src = '/placeholder.svg';
+            }}
+          />
+          <span className="font-medium">
+            {safeReview.name}
+          </span>
+        </div>
+        <div className="text-xs text-gray-500">
+          {safeReview.date}
+        </div>
+      </div>
+      <p className="text-sm" style={{ wordBreak: 'break-word' }}>
+        {safeReview.content}
+      </p>
+    </div>
+  );
+}
+
+CourseReviewItem.propTypes = {
+  review: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    name: PropTypes.string,
+    avatar: PropTypes.string,
+    date: PropTypes.string,
+    content: PropTypes.string.isRequired
+  }).isRequired
+};
+
+const MemoizedReviewItem = memo(CourseReviewItem);
+
+function CourseReviews({ reviews = [] }) {
   if (!reviews || reviews.length === 0) {
     return (
       <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8">
@@ -45,60 +76,9 @@ export default function CourseReviews({ reviews = [] }) {
 
   return (
     <div className="space-y-4 mb-8" data-testid="course-reviews">
-      {reviews.map((review) => {
-        // Validate review object structure
-        const safeReview = {
-          id: review.id || `temp-id-${Math.random().toString(36).substr(2, 9)}`,
-          name: review.name || 'Anonymous',
-          avatar: review.avatar || '/placeholder.svg',
-          date: review.date || 'Recently',
-          content: review.content || 'No review content provided'
-        };
-
-        return (
-          <div 
-            key={safeReview.id} 
-            className="bg-blue-50 rounded-lg p-6 hover:shadow-sm transition-shadow duration-200"
-            data-review-id={safeReview.id}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <img
-                  src={safeReview.avatar}
-                  alt={`${safeReview.name}'s avatar`}
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                  onError={(e) => {
-                    e.target.src = '/placeholder.svg';
-                    // console.warn(`Failed to load avatar for review ${safeReview.id}`);
-                  }}
-                />
-                <span className="font-medium" data-testid="reviewer-name">
-                  {safeReview.name}
-                </span>
-              </div>
-              <div className="text-xs text-gray-500" data-testid="review-date">
-                {safeReview.date}
-              </div>
-            </div>
-            <p 
-              className="text-sm" 
-              data-testid="review-content"
-              style={{ wordBreak: 'break-word' }}
-            >
-              {safeReview.content}
-            </p>
-            
-            {/* Debug info badge - only visible in development */}
-            {process.env.NODE_ENV === 'development' && (
-              <div className="mt-2 text-xs text-gray-500">
-                Review ID: {safeReview.id}
-              </div>
-            )}
-          </div>
-        );
-      })}
+      {reviews.map((review) => (
+        <MemoizedReviewItem key={review.id} review={review} />
+      ))}
     </div>
   );
 }
@@ -118,3 +98,5 @@ CourseReviews.propTypes = {
 CourseReviews.defaultProps = {
   reviews: []
 };
+
+export default memo(CourseReviews);
