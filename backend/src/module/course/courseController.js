@@ -4,6 +4,7 @@ import { courseService } from "./courseService.js";
 
 export const getAllCourses = async (req, res, next ) => {
     try {
+        console.log("hi")
         const result = await courseService.getAllCourse();
         if(!result){
             return res
