@@ -12,23 +12,88 @@ const WeeklyTaskPage = () => {
   const [completedTasks, setCompletedTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [usingDummyData, setUsingDummyData] = useState(false);
   
+  // Dummy data definitions
+  const dummyUpcomingTask = {
+    id: 'dummy-1',
+    weekNumber: '5',
+    status: 'Scheduled',
+    reviewDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    reviewer: 'John Doe',
+    googleMeetLink: 'https://meet.google.com/abc-defg-hij',
+    task: 'Complete the user authentication module and prepare for code review.'
+  };
+
+  const dummyCompletedTasks = [
+    {
+      id: 'dummy-c-1',
+      date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      weekNumber: '4',
+      reviewer: 'Jane Smith',
+      type: 'Technical',
+      status: 'Passed',
+      details: {
+        mark: '8',
+        feedback: 'Good work on the frontend components. Need to improve error handling in the API calls.'
+      }
+    },
+    {
+      id: 'dummy-c-2',
+      date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      weekNumber: '3',
+      reviewer: 'Mike Johnson',
+      type: 'Technical',
+      status: 'Repeat',
+      details: {
+        mark: '5',
+        feedback: 'Several bugs were found in the implementation. Please fix and resubmit for review.'
+      }
+    },
+    {
+      id: 'dummy-c-3',
+      date: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      weekNumber: '2',
+      reviewer: 'Sarah Williams',
+      type: 'Technical',
+      status: 'Passed',
+      details: {
+        mark: '9',
+        feedback: 'Excellent work! Very clean code and good documentation.'
+      }
+    }
+  ];
+
+  const loadDummyData = () => {
+    setUsingDummyData(true);
+    if (selectedTab === 'upcoming') {
+      setUpcomingTask(dummyUpcomingTask);
+    } else {
+      setCompletedTasks(dummyCompletedTasks);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        setUsingDummyData(false);
         
         if (selectedTab === 'upcoming') {
           const taskData = await fetchWeeklyTasks();
-          setUpcomingTask(taskData);
+          setUpcomingTask(taskData || dummyUpcomingTask);
+          if (!taskData) setUsingDummyData(true);
         } else {
           const reviewsData = await fetchCompletedReviews();
-          setCompletedTasks(reviewsData);
+          setCompletedTasks(reviewsData || dummyCompletedTasks);
+          if (!reviewsData) setUsingDummyData(true);
         }
         
       } catch (err) {
         console.error("Failed to fetch data:", err);
         setError(err.message);
+        loadDummyData();
       } finally {
         setLoading(false);
       }
@@ -40,16 +105,21 @@ const WeeklyTaskPage = () => {
   const refreshData = async () => {
     try {
       setLoading(true);
+      setUsingDummyData(false);
+      
       if (selectedTab === 'upcoming') {
         const taskData = await fetchWeeklyTasks();
-        setUpcomingTask(taskData);
+        setUpcomingTask(taskData || dummyUpcomingTask);
+        if (!taskData) setUsingDummyData(true);
       } else {
         const reviewsData = await fetchCompletedReviews();
-        setCompletedTasks(reviewsData);
+        setCompletedTasks(reviewsData || dummyCompletedTasks);
+        if (!reviewsData) setUsingDummyData(true);
       }
     } catch (err) {
       console.error("Failed to refresh data:", err);
       setError(err.message);
+      loadDummyData();
     } finally {
       setLoading(false);
     }
@@ -137,7 +207,7 @@ const WeeklyTaskPage = () => {
       );
     }
 
-    if (error) {
+    if (error && !usingDummyData) {
       return (
         <div className="text-center text-red-600 py-8">
           <p>Error loading completed tasks: {error}</p>
@@ -209,7 +279,7 @@ const WeeklyTaskPage = () => {
       );
     }
 
-    if (error) {
+    if (error && !usingDummyData) {
       return (
         <div className="text-center text-red-600 py-8">
           <p>Error loading upcoming task: {error}</p>
@@ -286,16 +356,7 @@ const WeeklyTaskPage = () => {
       <Header />
       
       <main className="flex-grow container mx-auto py-6 px-4">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Reviews</h1>
-          <button 
-            className="p-2 rounded-full bg-teal-600 text-white hover:bg-teal-700"
-            onClick={refreshData}
-            disabled={loading}
-          >
-            <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
-          </button>
-        </div>
+        
 
         <div className="border-b mb-6">
           <div className="flex gap-8">

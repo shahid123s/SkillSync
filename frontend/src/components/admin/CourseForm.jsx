@@ -113,12 +113,6 @@ export default function CourseForm({ isOpen, onClose, course, onSave }) {
                   onChange={handleImageUpload}
                   className="block w-full text-sm file:py-2 file:px-4 file:rounded-md file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
                 />
-                <input
-                  {...register('imageUrl')}
-                  type="text"
-                  placeholder="Or enter image URL"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:ring-teal-500 p-2"
-                />
               </div>
               {imageUrl && (
                 <div className="mt-2">
