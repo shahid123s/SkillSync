@@ -89,6 +89,27 @@ export const studentRepository = {
                 500,
             )
         }
+    },
+    updateStatus: async (userId, block) => {
+        try {
+            const student = await Student.findById(userId);
+            return await Student.findByIdAndUpdate(userId, {isBlock: block}, { new: true });        
+        } catch (error) {
+            throw new CustomError(
+                error.message,
+                500,
+            )
+        }
+    },
+    deleteStudent: async (userId) => {
+        try {
+            return await Student.findByIdAndDelete(userId);
+        } catch (error) {
+            throw new CustomError(
+                error.message,
+                500,
+            )
+        }
     }
 
 }

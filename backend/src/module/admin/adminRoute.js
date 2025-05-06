@@ -7,6 +7,8 @@ router.get('/courses', adminController.getAllCourses);
 router.post('/course/add-course', adminController.addCourse)
 router.put('/course/update-course/:courseId', adminController.updateCourse);
 router.get('/get-all-user', adminController.getALlUsers)
+router.put('/user/toggle-status', adminController.toggleUserBlock);
+
 router.get('/get-all-reviewers',adminController.getALlReviewers)
 router.get('/get-all-pending-reviewers', adminController.getAllPendingReviewer);
 router.put('/reviewer/toggle-status', adminController.toggleReviewerStatus);

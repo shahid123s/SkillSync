@@ -4,6 +4,7 @@ import Reviewer from "../reviwer/reviwerModel.js";
 import Course from "../course/courseModel.js";
 import { courseService } from "../course/courseService.js";
 import { WeeklyTaskRepository } from "../weeklyTask/weeklyTaskRespository.js";
+import { studentRepository } from "../student/studentRepository.js";
 
 
 
@@ -141,6 +142,13 @@ export const adminService = {
         } catch (error) {
             throw new CustomError("Error adding weekly task", 500);
         }
+    },
+    toggleUserBlock: async (userId, block) => {
+        try {
+            const result = await studentRepository.updateStatus(userId, block);
+            return result;
+        } catch (error) {
+            throw new CustomError("Error toggling user block status", 500);
+        }
     }
-
 }

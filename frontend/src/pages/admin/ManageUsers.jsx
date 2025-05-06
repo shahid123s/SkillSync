@@ -4,42 +4,47 @@ import { toast } from 'sonner';
 import UserTable from '../../components/admin/UserTable';
 import { adminAxiosInstance } from '../../utils/adminAxiosInstance';
 
+
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await adminAxiosInstance.get('/get-all-user');
-        if (response.data.success) {
-          setUsers(response.data.data);
-          toast.success('Users loaded successfully');
-        } else {
-          toast.error(response.data.message || 'Failed to fetch users');
-        }
-      } catch (error) {
-        toast.error('Network error');
-      } finally {
-        setLoading(false);
+  const fetchUsers = async () => {
+    try {
+      const response = await adminAxiosInstance.get('/get-all-user');
+      if (response.data.success) {
+        setUsers(response.data.data);
+        toast.success('Users loaded successfully');
+      } else {
+        toast.error(response.data.message || 'Failed to fetch users');
       }
-    };
+    } catch (error) {
+      toast.error('Network error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchUsers();
   }, []);
 
   const handleBlockUser = async (userId, currentStatus) => {
     try {
-      const response = await adminAxiosInstance.put(`/admin/block-user/${userId}/block`, {
-        block: !currentStatus
+      console.log(userId, currentStatus)
+      const response = await adminAxiosInstance.put(`/user/toggle-status`, {
+        block: !currentStatus,
+        userId:userId ,
       });
       if (response.data.success) {
         setUsers(prev => prev.map(user => 
           user.id === userId ? { ...user, isBlocked: !currentStatus } : user
         ));
         toast.success(`User ${!currentStatus ? 'blocked' : 'unblocked'} successfully`);
-      } else {
-        toast.error(response.data.message || 'Failed to update user status');
+        fetchUsers()
       }
+      toast.error(response.data.message || 'Failed to update user status');
+        
     } catch (error) {
       toast.error('Network error');
     }

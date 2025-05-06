@@ -1,5 +1,6 @@
 // components/admin/UserTable.jsx
 export default function UserTable({ users, onBlock }) {
+  console.log(users, 'In here just check ')
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-200">
       <table className="min-w-full divide-y divide-gray-200">
@@ -20,19 +21,19 @@ export default function UserTable({ users, onBlock }) {
               <td className="px-6 py-4 whitespace-nowrap capitalize">{user.role === 'user' ? 'student': user.role}</td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <span className={`px-2 py-1 text-xs rounded-full ${
-                  user.isBlocked ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
+                  user.isBlock ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
                 }`}>
-                  {user.isBlocked ? 'Blocked' : 'Active'}
+                  {user.isBlock ? 'Blocked' : 'Active'}
                 </span>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <button
-                  onClick={() => onBlock(user.id, user.isBlocked)}
+                  onClick={() => onBlock(user._id, user.isBlock)}
                   className={`px-3 py-1 rounded-md text-sm ${
-                    user.isBlocked ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    user.isBlock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                   }`}
                 >
-                  {user.isBlocked ? 'Unblock' : 'Block'}
+                  {user.isBlock ? 'Unblock' : 'Block'}
                 </button>
               </td>
             </tr>

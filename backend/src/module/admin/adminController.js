@@ -265,5 +265,29 @@ export const adminController = {
         } catch (error) {
             next(error)
         }
+    },
+    toggleUserBlock: async (req, res, next ) => {
+        try {
+            const {userId, block} = req.body;
+            console.log(userId, block, 'req.body in admin Controller toogleUserBlock')
+            const result =  await adminService.toggleUserBlock(userId, block);
+            if(!result) {
+                return res
+                    .status(404)
+                    .json({
+                        success: false,
+                        message: 'User not found',
+                    })
+            }
+            return res
+                .status(200)
+                .json({
+                    success: true,
+                    message: 'User updated successfully',
+                    data: result
+                })
+        } catch (error) {
+            next(error)
+        }
     }
 }
