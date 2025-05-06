@@ -146,8 +146,9 @@ export const authServices = {
         adminLogin: async (email, password) => {
             try {
                 const reviewer = await adminRepository.findAdminForAuthentication(email);
-                console.log(reviewer.role)
+                console.log(reviewer)
                 if (!reviewer || reviewer.role != 'admin') {
+                  
                     throw new CustomError('Invalide Crendentials', 406);
                 }
                 console.log('my')

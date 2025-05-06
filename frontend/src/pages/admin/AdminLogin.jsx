@@ -22,9 +22,9 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      const response = await adminAxiosInstance.post('/auth/admin/login', formData);
+      const response = await adminAxiosInstance.post('/auth/login', formData);
       toast.success(response.data.message);
-      navigate("/admin/dashboard");
+      navigate("/admin");
     } catch (err) {
       toast.error(err.response?.data?.message || 'Login failed');
     } finally {

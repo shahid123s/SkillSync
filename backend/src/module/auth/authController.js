@@ -293,6 +293,8 @@ export const adminLogin = async (req, res, next) => {
                     message: 'Invalid Crendtials my',
                 })
         }
+        console.log(email, password)
+        
         const { accessToken, refreshToken, username } = await adminAuthService.adminLogin(email, password);
         res.cookie('adminRefreshToken', refreshToken, {
             httpOnly: true,

@@ -4,6 +4,7 @@ import Admin from './adminModel.js';
 export const adminRepository ={
     findAdminForAuthentication : async (email) => {
         try {
+            console.log(email, 'email in repo ')
             return await Admin.findOne({ email });
         } catch (error) {
             throw new CustomError(
