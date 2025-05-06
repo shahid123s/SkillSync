@@ -248,7 +248,7 @@ export const adminController = {
         try {
             const data = req.body;
             const result = await adminService.addTaskToCourse(data)
-            console.log(result, 'result in admin')
+            console.log(result, 'result in admin')        
             if (!result) {
                 return res
                     .status(400)

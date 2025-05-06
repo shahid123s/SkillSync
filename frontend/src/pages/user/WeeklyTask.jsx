@@ -3,7 +3,20 @@ import React, { useState, useEffect } from "react";
 import { X, RefreshCw, Clock, FileText, ExternalLink } from "lucide-react";
 import Header from "../../components/user/Header";
 import Footer from "../../components/user/Footer";
-import { fetchWeeklyTasks, fetchCompletedReviews } from "../../services/fetchData";
+import { fetchWeeklyTasks, fetchCompletedReviews, fetchReviews, upcommingReviews } from "../../services/fetchData";
+
+
+function formatDate (dateString)  {
+  console.log(dateString, 'date')
+  const futureDate = new Date(dateString.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+// Format as dd mm yy
+const dd = String(futureDate.getDate()).padStart(2, '0');
+const mm = String(futureDate.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+const yy = String(futureDate.getFullYear()).slice(-2);
+
+const formattedDate = `${dd}-${mm}-${yy}`;
+}
 
 const WeeklyTaskPage = () => {
   const [selectedTab, setSelectedTab] = useState('upcoming');
@@ -24,6 +37,32 @@ const WeeklyTaskPage = () => {
     googleMeetLink: 'https://meet.google.com/abc-defg-hij',
     task: 'Complete the user authentication module and prepare for code review.'
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        const result = await upcommingReviews();
+        if (result) {
+          setUpcomingTask(result);
+          console.log(result)
+        } else {
+          loadDummyData();
+        }
+
+      } catch (err) {
+        console.error("Failed to fetch data:", err);
+        setError(err.message);
+        loadDummyData();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [selectedTab])
+
 
   const dummyCompletedTasks = [
     {
@@ -309,13 +348,13 @@ const WeeklyTaskPage = () => {
             <Clock className="h-4 w-4" />
             {upcomingTask.status || 'Not Scheduled'}
           </span>
-          <h2 className="text-xl font-semibold">Week {upcomingTask.weekNumber}</h2>
+          <h2 className="text-xl font-semibold">Week {Number(upcomingTask.week) + 1 }</h2>
         </div>
 
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div className="bg-white rounded-md p-4 shadow-sm">
             <p className="text-sm text-gray-500 mb-1">Review Date</p>
-            <p className="font-medium">{upcomingTask.reviewDate || 'Not scheduled'}</p>
+            <p className="font-medium">{upcomingTask.reviewDate.split('T')[0]|| 'Not scheduled'}</p>
           </div>
           <div className="bg-white rounded-md p-4 shadow-sm">
             <p className="text-sm text-gray-500 mb-1">Reviewer</p>
@@ -345,7 +384,7 @@ const WeeklyTaskPage = () => {
             <FileText className="h-4 w-4 text-gray-500" />
             <p className="text-sm text-gray-500">Task Details</p>
           </div>
-          <p className="font-medium">{upcomingTask.task || 'No task details available'}</p>
+          <p className="font-medium">{upcomingTask.taskId.description || 'No task details available'}</p>
         </div>
       </div>
     );

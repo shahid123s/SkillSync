@@ -74,3 +74,30 @@ export const fetchCompletedReviews = async () => {
         throw new Error(error.response?.data?.message || "Failed to load completed reviews");
     }
 }
+
+
+export const fetchReviews = async () => {
+    try {
+        const response = await userAxiosInstance.get('/student/reviews');
+        if (!response.data.success) {
+            throw new Error(response.data.message);
+        }
+        return response.data.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Failed to load reviews");
+    }
+
+}
+
+
+export const upcommingReviews = async () => {
+    try {
+        const response = await userAxiosInstance.get('/student/reviews/upcoming');
+        if (!response.data.success) {
+            throw new Error(response.data.message);
+        }
+        return response.data.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Failed to load reviews");
+    }
+}

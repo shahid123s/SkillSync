@@ -1,3 +1,5 @@
+import { nextWeeekTask } from "../../utils/giveNextWeekTask.js";
+import { reviewsService } from "../reviews/reviewsService.js";
 import { enrollerCourseService } from "./enrollerCourseService.js";
 
 
@@ -16,7 +18,12 @@ export const enrollerCourseController = {
                         message: 'Course already bought'
                     })
             }
+            const nextTask = await nextWeeekTask(0, courseId);
+            console.log(nextTask, 'nextTask')
+            await reviewsService.createReviews({studentId: userId, taskId: nextTask._id, week: 0 ,});
             const result = await enrollerCourseService.paymentSuccess({courseId, paymentStatus, price, userId});
+
+            
             if(!result){
                 return res
                     .status(404)
@@ -25,6 +32,9 @@ export const enrollerCourseController = {
                         message: 'Payment Failed',
                     })
             }
+
+            
+
             return res
                 .status(200)
                 .json({

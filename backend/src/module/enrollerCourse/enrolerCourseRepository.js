@@ -33,7 +33,7 @@ const enrolledCourseRepository = {
     },
     isExist: async ({courseId, userId}) => {
         try {
-            const course = await EnrolledCourse.findOne({ courseId, studentId: userId });
+            const course = await EnrolledCourse.findOne({ courseId, studentId: userId , paymentStatus: 'success'});
             return course;
         } catch (error) {
             throw new Error('Failed to check if course is bought');

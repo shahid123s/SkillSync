@@ -104,5 +104,19 @@ export const WeeklyTaskRepository = {
     } catch (error) {
       throw new CustomError('Error fetching tasks: ' + error.message, 500);
     }
+  },
+  getNextTask: async (weekNum, courseId) => {
+    try {
+        const nextTask = await WeeklyTaskCourse.findOne({
+            weekNum,
+            courseId
+        })
+        .populate('weeklyTaskId');
+
+        return nextTask ? nextTask.weeklyTaskId : null;
+    } catch (error) {
+        throw new CustomError('Error fetching next task: ' + error.message, 500);
+    }
+
   }
 };

@@ -37,6 +37,9 @@ export default function AdminSidebar({ isOpen, setIsOpen }) {
           <Link to="/admin/all-reviewers" className={`block p-2 hover:bg-gray-700 rounded transition-colors ${isActive('/admin/all-reviewers')}`}>
             All Reviewers
           </Link>
+          <Link to="/admin/pending-reviews" className={`block p-2 hover:bg-gray-700 rounded transition-colors ${isActive('/admin/pending-reviews')}`}>
+            Pending Reviews
+          </Link>
         </nav>
       </div>
     </div>

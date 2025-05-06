@@ -34,6 +34,7 @@ export default function TaskFormModal({ isOpen, onClose, task, onSave }) {
     // Convert newlines to array and clean up
     const processedData = {
       ...data,
+      
       description: data.description
         .split('\n')
         .map(line => line.trim())
