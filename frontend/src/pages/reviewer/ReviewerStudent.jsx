@@ -1,18 +1,26 @@
 // pages/reviewer/ReviewerStudents.jsx
 import { Link } from 'react-router-dom';
 import ReviewerSidebar from '../../components/reviewer/ReviewerSidebar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { reviewerAxiosInstance } from '../../utils/reviewerAxiosInstance';
 
 export default function ReviewerStudents() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
   // Sample student data
-  const [students] = useState([
+  const [students, setStudents] = useState([
     { id: 1, name: 'John Doe', weekno: 5, email: 'john@example.com' },
     { id: 2, name: 'Jane Smith', weekno: 3, email: 'jane@example.com' },
     { id: 3, name: 'Bob Wilson', weekno: 7, email: 'bob@example.com' },
     { id: 4, name: 'Alice Johnson', weekno: 2, email: 'alice@example.com' },
   ]);
+
+   useEffect(() => {
+    const fetchStudent = async () => {
+      const result = reviewerAxiosInstance.get('/students');
+    }
+    fetchStudent();
+   }, [])
 
   return (
     <div className="min-h-screen flex">
