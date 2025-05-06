@@ -384,7 +384,7 @@ const WeeklyTaskPage = () => {
             <FileText className="h-4 w-4 text-gray-500" />
             <p className="text-sm text-gray-500">Task Details</p>
           </div>
-          <p className="font-medium">{upcomingTask.taskId.description || 'No task details available'}</p>
+          <p className="font-medium">{upcomingTask?.taskId?.description || 'No task details available'}</p>
         </div>
       </div>
     );
