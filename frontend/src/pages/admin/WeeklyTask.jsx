@@ -310,12 +310,7 @@ export default function WeeklyTasksPage() {
                       >
                         Edit
                       </button>
-                      <button
-                        onClick={() => handleDeleteTask(task._id)}
-                        className="px-3 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200"
-                      >
-                        Delete
-                      </button>
+                      
                     </div>
                   </div>
                 </div>
