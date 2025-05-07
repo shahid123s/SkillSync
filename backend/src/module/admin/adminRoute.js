@@ -6,6 +6,7 @@ router.get('/users', adminController.getAllUsers);
 router.get('/courses', adminController.getAllCourses);
 router.post('/course/add-course', adminController.addCourse)
 router.put('/course/update-course/:courseId', adminController.updateCourse);
+router.delete('/course/delete-course', adminController.deleteCourse)
 router.get('/get-all-user', adminController.getALlUsers)
 router.put('/user/toggle-status', adminController.toggleUserBlock);
 
@@ -18,6 +19,7 @@ router.post('/weekly-task', adminController.addWeeklyTask);
 router.get('/weekly-tasks', adminController.getAllWeeklyTasks);
 router.put('/weekly-task/edit', adminController.updateWeeklyTask);
 router.delete('/weekly-task/delete', adminController.removeWeeklyTask);
+router.delete('/remove/tast', adminController.removeTask)
 
 router.post('/weekly-task/add-week', adminController.addTaskToCourse);
 router.get('/pending-reviews', adminController.getPendingReviews)

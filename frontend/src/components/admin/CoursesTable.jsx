@@ -33,7 +33,7 @@ export default function CourseTable({ courses, onEdit, onDelete }) {
                     Edit
                   </button>
                   <button
-                    onClick={() => onDelete(course.id)}
+                    onClick={() => onDelete(course._id)}
                     className="px-3 py-1 bg-red-100 text-red-800 rounded-md hover:bg-red-200"
                   >
                     Delete

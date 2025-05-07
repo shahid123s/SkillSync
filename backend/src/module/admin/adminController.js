@@ -1,4 +1,5 @@
 
+import { response } from "express";
 import { adminService } from "./adminService.js";
 
 export const adminController = {
@@ -325,5 +326,51 @@ export const adminController = {
             next(error)
         }
     
+    }, 
+    deleteCourse: async (req, res, next) => {
+       try {
+        const {courseId} = req.query;
+        const result = await adminService.deleteCourse(courseId);
+        if(!result) {
+            return res
+                .status(404)
+                .json({
+                    success: false,
+                    message: 'Course not found',
+                })
+        }
+        return res
+        .status(200)
+        .json({
+            success: true,
+            message: 'Review updated successfully',
+            data: result
+        })
+       } catch (error) {
+        next(error)
+       }
+    }, 
+    removeTask: async (req, res, next) => {
+        try {
+            const {taskId, courseId} = req.query;
+            const result = await adminService.removeTask(taskId, courseId);
+            if(!result) {
+                return res
+                    .status(404)
+                    .json({
+                        success: false,
+                        message: 'Course not found',
+                    })
+            }
+            return res
+            .status(200)
+            .json({
+                success: true,
+                message: 'Task updated successfully',
+                data: result
+            })
+        } catch (error) {
+            next(error)
+        }
     }
 }

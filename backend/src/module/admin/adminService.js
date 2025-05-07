@@ -169,5 +169,22 @@ export const adminService = {
             throw new CustomError("Error assigning reviewer", 500);
         }
     
+    }, 
+    deleteCourse: async(courseId) => {
+        try {
+            const result = await courseService.deleteCourse(courseId);
+            return result;
+        } catch (error) {
+            throw new CustomError("Error deleting course", 500);
+        }
+    }, 
+    removeTask: async (taskId, courseId) => {
+        try {
+            const result = await WeeklyTaskRepository.removeTaskCourseRelation(taskId, courseId);
+            return result
+        } catch (error) {
+            throw new CustomError("Error removing weekly task", 500);
+        }
+    
     }
 }

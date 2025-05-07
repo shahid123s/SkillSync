@@ -83,8 +83,9 @@
     }, 
     toggleStatus: async(req, res, next) => {
         try {
-            const {reviweId, status} = req.body;
-        const result = await reviewerService.updateReviews(reviweId, status);
+
+            console.log(req.body,  'Controller Id ');
+        const result = await reviewerService.updateReviews(reviewsId, status);
         if(!result){
             return res
                 .status(404)

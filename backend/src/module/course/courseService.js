@@ -71,5 +71,13 @@ export const courseService = {
         } catch (error) {
             throw new CustomError(error.message, 500, 'Internal Server Error')
         }
+    }, 
+    deleteCourse: async (courseId) => {
+        try {
+            const result = await courseRepository.deleteCourse(courseId);
+            return result;
+        } catch (error) {
+            throw new CustomError(error.message, 500, 'Internal Server Error')
+        }
     }
 }   

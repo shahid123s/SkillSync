@@ -35,7 +35,9 @@ export const reviewsRepositorty = {
 
     }, 
     updateStatus: async (reviewId, status) => {
+        console.log(reviewId, status)
         const review = await Review.findByIdAndUpdate(reviewId, { status }, { new: true });
+        console.log(review, 'in repo'   )
         return review;
     }
  }

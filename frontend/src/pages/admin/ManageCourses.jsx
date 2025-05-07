@@ -12,27 +12,28 @@ export default function ManageCourses() {
   const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [coursesRes, tasksRes] = await Promise.all([
-          adminAxiosInstance.get('/courses'),
-          adminAxiosInstance.get('/weekly-tasks')
-        ]);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [coursesRes, tasksRes] = await Promise.all([
+        adminAxiosInstance.get('/courses'),
+        adminAxiosInstance.get('/weekly-tasks')
+      ]);
 
-        if (coursesRes.data.success) {
-          setCourses(coursesRes.data.data);
-        }
-        if (tasksRes.data.success) {
-          setTasks(tasksRes.data.data);
-        }
-      } catch (error) {
-        toast.error('Failed to load data');
-      } finally {
-        setLoading(false);
+      if (coursesRes.data.success) {
+        setCourses(coursesRes.data.data);
       }
-    };
+      if (tasksRes.data.success) {
+        setTasks(tasksRes.data.data);
+      }
+    } catch (error) {
+      toast.error('Failed to load data');
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    
     fetchData();
   }, []);
 
@@ -52,13 +53,14 @@ export default function ManageCourses() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this course?')) return;
+
     
     try {
-      const response = await adminAxiosInstance.delete(`/courses/${id}`);
+      const response = await adminAxiosInstance.delete(`/course/delete-course`, {params: {courseId: id}});
       if (response.data.success) {
         setCourses(prev => prev.filter(course => course.id !== id));
         toast.success('Course deleted successfully');
+        fetchData()
       }
     } catch (error) {
       toast.error('Failed to delete course');
@@ -119,7 +121,7 @@ export default function ManageCourses() {
             onDelete={handleDelete}
           />
 
-          {courses.map(course => (
+          {/* {courses.map(course => (
             <div key={course._id} className="bg-white rounded-lg shadow-sm overflow-hidden border">
               <div className="p-4">
                 <h3 className="font-bold text-lg mb-4">{course.name} - Weekly Tasks</h3>
@@ -145,7 +147,7 @@ export default function ManageCourses() {
                 </div>
               </div>
             </div>
-          ))}
+          ))} */}
         </div>
       )}
 

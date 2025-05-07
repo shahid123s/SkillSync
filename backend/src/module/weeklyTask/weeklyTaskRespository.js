@@ -55,10 +55,12 @@ export const WeeklyTaskRepository = {
   // Remove task-course relation
   async removeTaskCourseRelation(taskId, courseId) {
     try {
-      await WeeklyTaskCourse.findOneAndDelete({
-        taskId,
+      console.log(taskId, courseId, 'in repo')
+      const result = await WeeklyTaskCourse.findOneAndDelete({
+        weeklyTaskId:taskId,
         courseId
       });
+      console.log(result, 'result in repo')
       return true;
     } catch (error) {
       throw new CustomError('Error removing task-course relation: ' + error.message, 500);

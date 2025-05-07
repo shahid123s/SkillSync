@@ -68,35 +68,35 @@ export default function WeeklyTasksPage() {
   const [isWeekModalOpen, setIsWeekModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [useDummyData, setUseDummyData] = useState(false);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [tasksRes, coursesRes] = await Promise.all([
+        adminAxiosInstance.get('/weekly-tasks'),
+        adminAxiosInstance.get('/courses')
+      ]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [tasksRes, coursesRes] = await Promise.all([
-          adminAxiosInstance.get('/weekly-tasks'),
-          adminAxiosInstance.get('/courses')
-        ]);
-
-        if (tasksRes.data.success && coursesRes.data.success) {
-          const normalizedTasks = tasksRes.data.data.map(normalizeTask);
-          setTasks(normalizedTasks);
-          setCourses(coursesRes.data.data);
-          setUseDummyData(false);
-        } else {
-          setTasks(dummyTasks.map(normalizeTask));
-          setCourses(dummyCourses);
-          setUseDummyData(true);
-        }
-      } catch (error) {
-        console.error('Using dummy data due to error:', error);
+      if (tasksRes.data.success && coursesRes.data.success) {
+        const normalizedTasks = tasksRes.data.data.map(normalizeTask);
+        setTasks(normalizedTasks);
+        setCourses(coursesRes.data.data);
+        setUseDummyData(false);
+      } else {
         setTasks(dummyTasks.map(normalizeTask));
         setCourses(dummyCourses);
         setUseDummyData(true);
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (error) {
+      console.error('Using dummy data due to error:', error);
+      setTasks(dummyTasks.map(normalizeTask));
+      setCourses(dummyCourses);
+      setUseDummyData(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    
     fetchData();
   }, []);
 
@@ -187,31 +187,30 @@ export default function WeeklyTasksPage() {
   };
 
   const handleDeleteWeek = async (taskId, weekId) => {
-    if (!window.confirm('Are you sure you want to remove this week assignment?')) return;
-
-    if (useDummyData) {
-      setTasks(prev => prev.map(task => {
-        if (task._id === taskId) {
-          return {
-            ...task,
-            assignedWeeks: task.assignedWeeks.filter(week => week._id !== weekId)
-          };
-        }
-        return task;
-      }));
-      toast.success('Week assignment removed successfully');
-      return;
-    }
+    if (!window.confirm('Are you sure you want to remove this week assignment?')) ;
+    console.log(taskId, weekId)
+    // if (useDummyData) {
+    //   setTasks(prev => prev.map(task => {
+    //     if (task._id === taskId) {
+    //       return {
+    //         ...task,
+    //         assignedWeeks: task.assignedWeeks.filter(week => week._id !== weekId)
+    //       };
+    //     }
+    //     return task;
+    //   }));
+    //   toast.success('Week assignment removed successfully');
+    //   return;
+    // }
 
     try {
       const response = await adminAxiosInstance.delete(
-        `/weekly-tasks/${taskId}/weeks/${weekId}`
+        '/remove/tast', {params: {taskId, courseId: weekId.course._id}}
       );
       if (response.data.success) {
-        setTasks(prev => prev.map(task =>
-          task._id === taskId ? response.data.data : task
-        ));
+        
         toast.success('Week assignment removed successfully');
+        fetchData()
       }
     } catch (error) {
       toast.error('Failed to remove week assignment');
@@ -277,7 +276,7 @@ export default function WeeklyTasksPage() {
                                 </span>
                               </div>
                               <button
-                                onClick={() => handleDeleteWeek(normalizedTask._id, week._id)}
+                                onClick={() => handleDeleteWeek(normalizedTask._id, week)}
                                 className="text-red-600 hover:text-red-800 text-sm"
                               >
                                 Remove

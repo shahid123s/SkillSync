@@ -39,7 +39,9 @@ export const reviewerService = {
    } , 
    updateReviews: async (reviewerId, status) => {
         try {
-            return await reviewsRepositorty.updateStatus(reviewerId, status)
+            const result = await reviewsRepositorty.updateStatus(reviewerId, status);
+            console.log(result, 'service')
+            return result;
         } catch (error) {
             throw new CustomError(
                 error.message,
