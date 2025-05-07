@@ -107,8 +107,9 @@ export default function ReviewerHome() {
   const handleReviewAction = async (id, action) => {
     try {
       // Update status in backend
-      await reviewerAxiosInstance.patch(`/reviews/${id}`, { 
-        status: action === 'accepted' ? 'accepted' : 'declined' 
+      await reviewerAxiosInstance.patch(`/reviews`, { 
+        status: action === 'accepted' ? 'accepted' : 'reject' , 
+        reviewsId: id
       });
       
       // Update local state
@@ -219,7 +220,7 @@ export default function ReviewerHome() {
                     {reviews
                       .filter(review => review.status === 'pending')
                       .map(review => (
-                        <tr key={review._id} className="hover:bg-gray-50">
+                        <tr key={review.id} className="hover:bg-gray-50">
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{review.student}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{review.stack}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{review.date}</td>

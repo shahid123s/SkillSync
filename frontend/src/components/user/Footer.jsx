@@ -18,7 +18,7 @@ export default function Footer() {
           <p className="text-sm text-gray-400">Virtual Class for Zoom</p>
         </div>
 
-        <div className="max-w-md mx-auto mb-8">
+        {/* <div className="max-w-md mx-auto mb-8">
           <h3 className="text-center mb-4 text-teal-400">Subscribe to get our Newsletter</h3>
           <div className="flex gap-2">
             <input
@@ -30,7 +30,7 @@ export default function Footer() {
               Subscribe
             </button>
           </div>
-        </div>
+        </div> */}
 
         <div className="flex justify-center space-x-6 text-sm text-gray-400 mb-4">
           <a href="/careers" className="hover:text-teal-400">

@@ -36,5 +36,15 @@ export const reviewerService = {
             500,
         );
     }
-   } 
+   } , 
+   updateReviews: async (reviewerId, status) => {
+        try {
+            return await reviewsRepositorty.updateStatus(reviewerId, status)
+        } catch (error) {
+            throw new CustomError(
+                error.message,
+                500,
+            );
+        }
+   }
 }

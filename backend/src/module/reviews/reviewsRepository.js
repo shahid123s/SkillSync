@@ -33,5 +33,9 @@ export const reviewsRepositorty = {
         const reviews = await Review.find({reviewerId: reviwerId, status: 'assigned'}).populate('taskId').populate('studentId', '-password');
         return reviews;
 
+    }, 
+    updateStatus: async (reviewId, status) => {
+        const review = await Review.findByIdAndUpdate(reviewId, { status }, { new: true });
+        return review;
     }
  }
