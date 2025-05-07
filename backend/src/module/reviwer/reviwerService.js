@@ -1,3 +1,5 @@
+import CustomError from "../../utils/customError.js";
+import { reviewsRepositorty } from "../reviews/reviewsRepository.js";
 import { reviewerRepository } from "./reviwerRepository.js";
 
 export const reviewerService = {
@@ -23,5 +25,16 @@ export const reviewerService = {
             500,
         );
     }
-   }
+   }, 
+   getPendingReviews: async (id) => {
+    try {
+        const result = await reviewsRepositorty.getReviewsForReviewer(id);
+        return result;
+    } catch (error) {
+        throw new CustomError(
+            error.message,
+            500,
+        );
+    }
+   } 
 }

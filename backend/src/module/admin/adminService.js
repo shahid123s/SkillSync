@@ -5,6 +5,7 @@ import Course from "../course/courseModel.js";
 import { courseService } from "../course/courseService.js";
 import { WeeklyTaskRepository } from "../weeklyTask/weeklyTaskRespository.js";
 import { studentRepository } from "../student/studentRepository.js";
+import { reviewsRepositorty } from "../reviews/reviewsRepository.js";
 
 
 
@@ -150,5 +151,23 @@ export const adminService = {
         } catch (error) {
             throw new CustomError("Error toggling user block status", 500);
         }
+    },
+    getPendingReviews : async () => {
+        try {
+            const result = await reviewsRepositorty.getAllReviews();
+            return result;
+        } catch (error) {
+            throw new CustomError("Error fetching pending reviews", 500);
+        }
+    }, 
+    assignReviwer: async (reviewId , reviewerId , reviewerName, time) => {
+        try {
+            const review = await reviewsRepositorty.assingReviwer(reviewId, {reviewerName, reviewerId,  time});
+            return review;
+        } catch (error) {
+            console.log(error, 'error in adminService assignReviwer')
+            throw new CustomError("Error assigning reviewer", 500);
+        }
+    
     }
 }

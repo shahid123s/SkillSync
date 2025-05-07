@@ -1,7 +1,8 @@
 // pages/admin/PendingReviewsPage.jsx
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { PendingReviewsTable } from '../../components/admin/PendingReviewsTable';
+import { adminAxiosInstance } from '../../utils/adminAxiosInstance';
 
 export default function PendingReviewsPage() {
   const [reviews, setReviews] = useState([
@@ -45,7 +46,7 @@ export default function PendingReviewsPage() {
     }
   ]);
 
-  const [reviewers] = useState([
+  const [reviewers, setReviewers] = useState([
     {
       _id: "rev1",
       name: "Dr. Smith",
@@ -60,24 +61,28 @@ export default function PendingReviewsPage() {
     }
   ]);
 
-  const handleAssignReviewer = (reviewId, reviewerId, time) => {
-    const review = reviews.find(r => r._id === reviewId);
-    const reviewer = reviewers.find(r => r._id === reviewerId);
-    
-    // Combine original date with new time
-    const [hours, minutes] = time.split(':');
-    const assignedDateTime = new Date(review.reviewDate);
-    assignedDateTime.setHours(hours);
-    assignedDateTime.setMinutes(minutes);
+  useEffect(() => {
+    const fetchPendingReviews = async () => {
+            const result = await adminAxiosInstance.get('/pending-reviews')
+            setReviews(result.data.data) 
+    }
 
-    setReviews(reviews.map(r => 
-      r._id === reviewId ? {
-        ...r,
-        reviewerName: reviewer.name,
-        reviewDate: assignedDateTime,
-        status: "assigned"
-      } : r
-    ));
+    const fetchReviewrs = async () => {
+        const response = await adminAxiosInstance.get('/get-all-reviewers');
+        setReviewers(response.data.data)
+    }
+    fetchPendingReviews()
+    fetchReviewrs()
+
+    // return () => clearInterval(interval);
+  }, []);
+
+
+
+
+
+  const handleAssignReviewer =  async(reviewId, reviewerId ,reviewerName, time) => {
+    const result = await adminAxiosInstance.put('/assign-reviewer', {reviewId,reviewerId ,reviewerName, time})
 
     toast.success(`Assigned to ${reviewer.name} at ${time}`);
   };

@@ -289,5 +289,41 @@ export const adminController = {
         } catch (error) {
             next(error)
         }
+    },
+    getPendingReviews: async (req, res, next) => {
+        try {
+            const result = await adminService.getPendingReviews();
+            res.status(200).json({
+                message: "All pending reviews retrieved successfully",
+                data: result, success: true
+            });
+        } catch (error) {
+            next(error)
+        }
+    }, 
+    assignReviwer: async (req, res, next) => {
+        try {
+            const {reviewId, reviewerName, reviewerId ,time} = req.body;
+            console.log(req.body, 'what is here ')
+            const result = await adminService.assignReviwer(reviewId,  reviewerId ,reviewerName, time);
+            if(!result) {
+                return res
+                    .status(404)
+                    .json({
+                        success: false,
+                        message: 'Review not found',
+                    })
+            }
+            return res
+                .status(200)
+                .json({
+                    success: true,
+                    message: 'Review updated successfully',
+                    data: result
+                })
+        } catch (error) {
+            next(error)
+        }
+    
     }
 }

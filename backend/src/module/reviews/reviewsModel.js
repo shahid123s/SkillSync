@@ -20,6 +20,10 @@ const reviewSchema = new mongoose.Schema({
     type: String,
     default: 'Checking'
   },
+  reviewerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Reviewer'
+  },
   feedback: {
     type: String,
     required: function() {
@@ -34,7 +38,7 @@ const reviewSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'passed', 'repeat', 'cancelled', 'accepted'],
+    enum: ['pending', 'passed', 'repeat', 'cancelled', 'accepted', 'assigned'],
     default: 'pending'
   },
   reviewDate: {
@@ -43,6 +47,12 @@ const reviewSchema = new mongoose.Schema({
       const date = new Date();
       date.setDate(date.getDate() + 7);
       return date;
+    }
+  }, 
+  time: {
+    type: String,
+    required: function() {
+      return this.status === 'assigned';
     }
   }
 }, {

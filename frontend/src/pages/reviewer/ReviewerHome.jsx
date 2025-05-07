@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import ReviewerSidebar from '../../components/reviewer/ReviewerSidebar';
 import { fetchReviewerStatus } from '../../services/fetchData';
+import { reviewerAxiosInstance } from '../../utils/reviewerAxiosInstance';
 
 const MeetingModal = ({ isOpen, onClose, meetingLink, setMeetingLink, onSubmit }) => {
   if (!isOpen) return null;
@@ -58,39 +59,130 @@ export default function ReviewerHome() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [meetingLink, setMeetingLink] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isActive , setIsActive] = useState(true);
-  const [reviews, setReviews] = useState([
-    { id: 1, student: 'John Doe', stack: 'MERN', date: '2024-03-20', status: 'pending' },
-    { id: 2, student: 'Jane Smith', stack: 'Java', date: '2024-03-21', status: 'pending' },
-    { id: 3, student: 'Bob Wilson', stack: 'Python', date: '2024-03-22', status: 'accepted' },
-  ]);
-
-  const [todaysReviews, setTodaysReviews] = useState([
-    { id: 4, student: 'Alice Johnson', stack: 'React', date: new Date().toISOString().split('T')[0], time: '15:00', status: 'scheduled' }
-  ]);
+  const [isActive, setIsActive] = useState(true);
+  const [reviews, setReviews] = useState([]);
+  const [todaysReviews, setTodaysReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const checkReviewerStatus = async () => {
-      const result =  await fetchReviewerStatus();
-      console.log(result)
-      if(result.status === 'inactive') setIsActive(false);
+    const fetchData = async () => {
+      try {
+        // Check reviewer status
+        const statusResult = await fetchReviewerStatus();
+        setIsActive(statusResult.status === 'approved');
+
+        // Fetch reviews
+        const response = await reviewerAxiosInstance.get('/pending-reviews');
+        const mappedReviews = response.data.data.map(review => ({
+          id: review._id,
+          studentId: review.studentId?._id,
+          student: review.studentId?.fullname || 'N/A',
+          stack: review.taskId?.title || 'N/A',
+          date: new Date(review.reviewDate).toISOString().split('T')[0],
+          status: review.status === 'assigned' ? 'pending' : review.status,
+          time: review.time || '10:00' // Default time if not provided
+        }));
+        
+        setReviews(mappedReviews);
+        
+        // Filter today's reviews
+        const today = new Date().toISOString().split('T')[0];
+        const todays = mappedReviews.filter(review => 
+          review.date === today && review.status !== 'pending'
+        );
+        setTodaysReviews(todays);
+        
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError('Failed to fetch reviews. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleReviewAction = async (id, action) => {
+    try {
+      // Update status in backend
+      await reviewerAxiosInstance.patch(`/reviews/${id}`, { 
+        status: action === 'accepted' ? 'accepted' : 'declined' 
+      });
+      
+      // Update local state
+      setReviews(reviews.map(review => 
+        review.id === id ? { ...review, status: action } : review
+      ));
+      
+      // If accepted and it's today's review, add to today's reviews
+      if (action === 'accepted') {
+        const acceptedReview = reviews.find(review => review.id === id);
+        const today = new Date().toISOString().split('T')[0];
+        if (acceptedReview.date === today) {
+          setTodaysReviews([...todaysReviews, { ...acceptedReview, status: 'scheduled' }]);
+        }
+      }
+    } catch (err) {
+      console.error('Error updating review status:', err);
+      alert('Failed to update review status');
     }
-  checkReviewerStatus()
-  },[])
-
-  const handleReviewAction = (id, action) => {
-    setReviews(reviews.map(review => 
-      review.id === id ? { ...review, status: action } : review
-    ));
   };
 
-  const handleSubmitLink = (id) => {
-    setTodaysReviews(todaysReviews.map(review =>
-      review.id === id ? { ...review, status: 'completed', meetingLink } : review
-    ));
-    setMeetingLink('');
-    setIsModalOpen(false);
+  const handleSubmitLink = async (id) => {
+    try {
+      // Update meeting link in backend
+      await reviewerAxiosInstance.patch(`/reviews/${id}`, { 
+        meetingLink,
+        status: 'completed' 
+      });
+      
+      // Update local state
+      setTodaysReviews(todaysReviews.map(review =>
+        review.id === id ? { ...review, status: 'completed', meetingLink } : review
+      ));
+      
+      setMeetingLink('');
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error('Error submitting meeting link:', err);
+      alert('Failed to submit meeting link');
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex">
+        <ReviewerSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+        <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-0 md:ml-64' : 'ml-0'} flex items-center justify-center`}>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex">
+        <ReviewerSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+        <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-0 md:ml-64' : 'ml-0'} flex items-center justify-center`}>
+          <div className="text-red-500 text-lg">{error}</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isActive) {
+    return (
+      <div className="min-h-screen flex">
+        <ReviewerSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+        <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-0 md:ml-64' : 'ml-0'} flex items-center justify-center`}>
+          <div className="text-gray-700 text-lg">Your profile is under review by the admin</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex">
@@ -105,94 +197,97 @@ export default function ReviewerHome() {
             ☰
           </button>
 
-          {isActive ? <>
-            <h1 className="text-2xl font-bold mb-6">Assigned Reviews</h1>
+          <h1 className="text-2xl font-bold mb-6">Assigned Reviews</h1>
           
           {/* Pending Reviews Table */}
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Pending Reviews</h2>
-            <div className="overflow-x-auto rounded-lg border border-gray-200">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stack</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Review Date</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {reviews.map(review => (
-                    <tr key={review.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{review.student}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{review.stack}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{review.date}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {review.status === 'pending' ? (
-                          <div className="flex gap-2">
-                            <button 
-                              onClick={() => handleReviewAction(review.id, 'accepted')}
-                              className="px-3 py-1 bg-green-100 text-green-800 rounded-md hover:bg-green-200 transition-colors"
-                            >
-                              Accept
-                            </button>
-                            <button 
-                              onClick={() => handleReviewAction(review.id, 'declined')}
-                              className="px-3 py-1 bg-red-100 text-red-800 rounded-md hover:bg-red-200 transition-colors"
-                            >
-                              Decline
-                            </button>
-                          </div>
-                        ) : (
-                          <span className={`capitalize ${review.status === 'accepted' ? 'text-green-600' : 'text-red-600'}`}>
-                            {review.status}
-                          </span>
-                        )}
-                      </td>
+            {reviews.filter(review => review.status === 'pending').length === 0 ? (
+              <div className="text-gray-500 py-4">No pending reviews available</div>
+            ) : (
+              <div className="overflow-x-auto rounded-lg border border-gray-200">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stack</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Review Date</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {reviews
+                      .filter(review => review.status === 'pending')
+                      .map(review => (
+                        <tr key={review._id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{review.student}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{review.stack}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{review.date}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <div className="flex gap-2">
+                              <button 
+                                onClick={() => handleReviewAction(review.id, 'accepted')}
+                                className="px-3 py-1 bg-green-100 text-green-800 rounded-md hover:bg-green-200 transition-colors"
+                              >
+                                Accept
+                              </button>
+                              <button 
+                                onClick={() => handleReviewAction(review.id, 'declined')}
+                                className="px-3 py-1 bg-red-100 text-red-800 rounded-md hover:bg-red-200 transition-colors"
+                              >
+                                Decline
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
 
           {/* Today's Reviews */}
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Today's Schedule</h2>
-            <div className="overflow-x-auto rounded-lg border border-gray-200">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {todaysReviews.map(review => (
-                    <tr key={review.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{review.student}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{review.time}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{review.status}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {review.status === 'scheduled' && (
-                          <button
-                            className="px-3 py-1 bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 transition-colors"
-                            onClick={() => setIsModalOpen(true)}
-                          >
-                            Meet Link
-                          </button>
-                        )}
-                        {review.status === 'completed' && (
-                          <span className="text-green-600">Completed</span>
-                        )}
-                      </td>
+            {todaysReviews.length === 0 ? (
+              <div className="text-gray-500 py-4">No reviews scheduled for today</div>
+            ) : (
+              <div className="overflow-x-auto rounded-lg border border-gray-200">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {todaysReviews.map(review => (
+                      <tr key={review.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{review.student}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{review.time}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{review.status}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {review.status === 'scheduled' && (
+                            <button
+                              className="px-3 py-1 bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 transition-colors"
+                              onClick={() => setIsModalOpen(true)}
+                            >
+                              Meet Link
+                            </button>
+                          )}
+                          {review.status === 'completed' && (
+                            <span className="text-green-600">Completed</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
 
           <MeetingModal
@@ -200,9 +295,8 @@ export default function ReviewerHome() {
             onClose={() => setIsModalOpen(false)}
             meetingLink={meetingLink}
             setMeetingLink={setMeetingLink}
-            onSubmit={() => handleSubmitLink(4)}
+            onSubmit={() => handleSubmitLink(todaysReviews[0]?.id)}
           />
-          </> : "Your Profile is Reviwing By the Admin "}
         </div>
       </div>
     </div>

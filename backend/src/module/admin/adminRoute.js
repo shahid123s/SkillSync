@@ -19,6 +19,8 @@ router.get('/weekly-tasks', adminController.getAllWeeklyTasks);
 router.put('/weekly-task/edit', adminController.updateWeeklyTask);
 router.delete('/weekly-task/delete', adminController.removeWeeklyTask);
 
-router.post('/weekly-task/add-week', adminController.addTaskToCourse)
+router.post('/weekly-task/add-week', adminController.addTaskToCourse);
+router.get('/pending-reviews', adminController.getPendingReviews)
+router.put('/assign-reviewer', adminController.assignReviwer)
 
 export default router;
